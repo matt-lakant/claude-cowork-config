@@ -1,0 +1,158 @@
+---
+name: resume-tailor
+description: "Tailors Matt Cornet's master resume to a specific job posting, optimizing for ATS keywords and recruiter signal while preserving truthfulness. Use this skill whenever Matt mentions tailoring, customizing, or rewriting his resume for a posting, applying to a role, or asks to \"make my resume match this job\" — even if he doesn't say the word \"tailor\". Also use when he pastes a job description and his master resume in the same turn."
+---
+
+# Resume Tailor
+
+## What this skill does
+
+Produces a tailored version of Matt's master resume for a specific job posting. The output preserves all factual content from the master but reorders, rewrites, and reweights bullets so the most relevant experience leads, ATS keywords from the posting are surfaced naturally, and the profile paragraph speaks to the role.
+
+## Inputs Matt will give you
+
+- **Required:** the job posting (URL, pasted text, or PDF). If Matt only gives a URL and you can't fetch it, ask him to paste the text.
+- **Optional:** company notes, hiring manager name, application deadline.
+
+## Source materials (read these every run)
+
+> All paths in this skill are relative to the **Job Applications project root** — the folder that contains this `skills/` directory. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications").
+
+1. `_assets/candidate_profile.md` — canonical experience, voice rules, target roles. **Read this first.**
+2. `_assets/master_resume.docx` — the formatted master. Use this as the template for the .docx output (preserve fonts, table layout, section structure).
+
+## Workflow
+
+### Step 0 — Company overview (prerequisite)
+
+This skill relies on the application's `company_overview.md`. **If `applications/<company>-<role-slug>/company_overview.md` does not exist, run the `company-overview` skill first** to research the company and create it. If it already exists (e.g. from a prior `job-fit-analyzer` run), read and reuse it. Carry its insights into the profile paragraph, the narrative angle, the ATS keyword choices, and the cover-letter framing.
+
+### Step 1 — Parse the posting
+Extract:
+- Role title, level, function
+- Hard requirements (must-have skills, certifications, years of experience)
+- Soft requirements (nice-to-haves)
+- Top 15–25 ATS keywords (skills, tools, methodologies, domain terms — verbatim phrasing)
+- Hiring signal: what would make a candidate stand out (impact metrics, scale, geos, regulatory, AI/ML, etc.)
+- Tone of the JD (corporate, startup, consulting) — match it in the cover sections
+
+If the posting is a URL, fetch it. If fetching fails, ask Matt to paste it rather than guessing.
+
+**LinkedIn postings (`linkedin.com/jobs/view/<id>/`) — use this exact method, don't retry server fetches:**
+1. Do NOT use server-side web fetch. The job URL and the guest endpoint (`linkedin.com/jobs-guest/jobs/api/jobPosting/<id>`) both return empty — LinkedIn gates it and the page is client-rendered.
+2. Use the Claude in Chrome browser tools: open/get a tab, navigate to the job URL, then read the page text. The first read returns only the header (title, company, location); the description body is lazy-loaded and not yet in the DOM.
+3. **Scroll down the page about twice, then read the page text again.** The "About the job" card (FR: "Description du poste" / "Qualifications") only renders after scrolling. That second read has the full description.
+4. If the Chrome extension isn't connected, ask Matt to paste the posting text.
+
+**Re-posted roles.** Before tailoring, check `applications_tracker.md` and the `applications/` folders for a prior application to the same company under a similar title. Companies re-post unfilled roles under a new name, often with a harder required profile. If you find one, diff the two postings and lead the diagnostic with what changed in the *required profile*, not in the missions — that delta is the whole tailoring brief. Treat the earlier application as a fact to handle (it is sitting in their ATS), not as something to quietly repeat.
+
+### Step 2 — Score Matt against the posting (briefly, in chat)
+
+Before generating, give Matt a **1-paragraph diagnostic** in chat:
+- Strong-fit dimensions (3–5 bullets)
+- Gap dimensions where the resume needs to lean harder or where a skill is genuinely missing (2–3 bullets)
+- Top 10 ATS keywords from the JD that should appear in the tailored resume
+- Recommended angle / narrative thread for this application
+
+This lets Matt sanity-check before you spend tokens generating the .docx. Pause for confirmation only if the angle is non-obvious or the gap is significant; otherwise proceed.
+
+### Step 2b — Mine every requirement (ask Matt before generating)
+
+Matt has 20+ years of broad experience; the master resume captures only the headline version. The goal of this step is that **no requirement is left weakly evidenced when he actually has the experience to back it** — for the resume *and* the cover letter. So work requirement-by-requirement, not by a fixed quota of questions.
+
+1. **Build the requirement checklist.** List every requirement the posting states — each hard requirement, each soft / "nice-to-have", and every named tool, platform, method, certification, regulation, sector, and scope/scale bar. If `job-fit-analyzer` already produced a Requirement coverage matrix for this role, start from it.
+2. **Classify each against `_assets/candidate_profile.md` + `master_resume.docx`:**
+   - **Strong** — already clearly evidenced with specifics. No question needed.
+   - **Partial / Absent / Unknown** — adjacent, missing, or plausibly-in-his-background-but-undocumented. **Each of these gets a question.**
+3. **Question Matt on every Partial / Absent / Unknown requirement** using the `AskUserQuestion` tool. The tool allows max 4 questions per call, so **batch them into successive rounds of up to 4 and keep going until every such requirement has been put to him** — do not stop at an arbitrary 3–5. Make each option concrete and grounded in something plausibly in his background so he can confirm in one click; use multi-select where natural; always leave room for him to add detail. For each requirement, probe what he actually did and at what scope:
+   - **Named tools/platforms** (e.g. Jira / JSM, CI-CD, specific clouds, AI labs/hyperscalers, ITSM/SDLC tooling) — what did he build or run, and at what scope?
+   - **Sector / domain** framing, and any non-finance work to surface.
+   - **Scope & scale** (team size, budget, P&L, regions, client tier) where the JD implies a bar. When the JD's scale is *smaller* than Matt's headline numbers, ask for the intermediate figure — direct reports, missions run in parallel, typical engagement length — because the headline alone reads as overqualification and invites "why would you come here, and for how long?".
+   - **Regulations, risk controls, and operating models** the JD names — which has he dealt with hands-on?
+   - **Adjacent / non-obvious work** the headline resume omits.
+4. **Asking a lot is expected.** A senior role with 10+ requirements may warrant 2–3 rounds of questions. One extra question costs far less than shipping a resume or cover letter that under-sells real experience. The only requirements you skip are those already rated **Strong**.
+5. **Record every confirmed answer in `candidate_profile.md`** (standing rule, 2026-06-25): append each answer (dated) to the `## Confirmed details from tailoring Q&A (append-only log)` section, and promote durable items into the relevant Experience bullets / master via `asset-updater`. Then **fold them into the rewrite as real, specific bullets — and reuse the same confirmed specifics in the cover letter.** Never invent — surface only what Matt confirms. If he confirms nothing for a requirement, keep it as a stated gap in the memo.
+
+This step is **mandatory on every run** (not just for out-of-track or tool-heavy roles). It can be abbreviated only for a near-identical re-tailor of a role he has already been fully mined on — and even then, re-ask any requirement the prior run left Partial / Absent. (Implements the `feedback_tailoring_alignment_questions` practice.)
+
+### Step 3 — Rewrite with these rules
+
+**Profile paragraph (3–4 sentences, impersonal voice — NEVER third person):**
+- Follow the voice rules in `candidate_profile.md`: impersonal/participial constructions ("Professional-services and product leader with 20+ years…", "Specialist in…"); use "I" only if a pronoun is unavoidable; never "Matt specializes…"
+- Lead with the role's central challenge translated into Matt's idiom
+- Name 2–3 of his most relevant past contexts (e.g., "post-merger integration at BlueMatrix", "Global Director at FactSet")
+- Close with a hook tying his unique combo (fintech + AI + international P&L) to the role
+- No self-awarded adjectives ("demanding and supportive manager", "culture of excellence") and no repeat of the degrees already listed under Education. Both spend the most expensive lines on the page for zero signal.
+
+**Areas of expertise (6 bullets):**
+- Reorder/reword the master's 6 expertise lines so the top 3 hit the JD's must-haves
+- Use JD verbiage where natural; never invent expertise he doesn't have
+- Cut a line rather than keep one the skills matrix and the experience bullets already make. Stating the same claim in the profile, the expertise list and the matrix is not emphasis; it is paying three times for one point.
+
+**Experience bullets:**
+- Each role keeps ≥2 bullets; the most relevant role gets up to 8
+- Lead bullets with action verbs from the JD when accurate ("Spearheaded", "Drove", "Reorganized", "Designed", "Architected")
+- Embed JD keywords inside real achievements, not as a stuffed keyword list
+- Quantify wherever the master has a number — never invent metrics
+- Drop bullets that are irrelevant to this role to keep length tight (target 2 pages max)
+- Put the bullet answering the JD's entry criterion in the top three of its role. A line sitting seventh on page two does not exist during a six-second screen.
+
+**Skills matrix:**
+- Reorder so the top row hits JD must-haves; cells unchanged in content
+- If the JD names a tool/method that Matt has used (per `candidate_profile.md`) but isn't in the matrix, add it; if he hasn't used it, do not add it
+
+**Education and footer:** unchanged.
+
+### Step 4 — Generate the .docx
+
+Use `_assets/master_resume.docx` as the formatting template. Open it with `python-docx`, replace text in place where possible to preserve styles, fonts, and table layout. Don't rebuild from scratch — that loses the master's polish.
+
+Save to: `applications/<company>-<role-slug>/CORNET_<Company>_<Role>_<YYYY-MM-DD>.docx`
+
+**Never produce a PDF.** Matt makes his own PDF from Word, after he has validated and reformatted the `.docx`. Do not save a `.pdf` beside the `.docx`, do not attach one, and do not offer one. If you need a PDF to check pagination, convert into a temp directory **outside** the project folder (e.g. `$HOME/tmp`), read the page count there, and leave nothing behind. A `.pdf` in an application folder is a stale copy of a document that is about to change, and on Matt's machine a session cannot delete files, so it becomes his cleanup.
+
+Where:
+- All CV/cover-letter filenames start with the `CORNET_` prefix (see `feedback_filename_convention`). If a same-dated file already exists and is locked (OneDrive placeholder) or you've materially revised it, save a `_v2` / `_v3` copy rather than overwriting — the per-application folder doubles as version history.
+- `<role-slug>` is a kebab-cased short version of the role title (e.g., `head-of-product`).
+- `<YYYY-MM-DD>` is **the date the file is being generated today** — i.e. today's date in the user's timezone, not the JD posting date, the application deadline, or any date pulled from the posting itself. Run `date +%Y-%m-%d` (or check `currentDate` in env) at generation time. If the resume is regenerated later (e.g., after Matt's manual edits or a JD update), save under a new file with the new date and leave the older one in place — the per-application folder doubles as a version history.
+
+### Step 5 — Write a tailoring memo
+
+Save alongside the resume: `applications/<company>-<role-slug>/tailoring_notes.md`
+
+Contents:
+- JD summary (3 sentences)
+- Top 10 ATS keywords used + where they appear in the resume
+- Trade-offs made (what was de-emphasized, what got cut)
+- Open questions / things to verify before submitting
+- Recommended cover letter angle (2 sentences)
+
+This memo is for Matt to skim before submitting and is invaluable when he prepares for the interview weeks later.
+
+### Step 6 — Update the tracker
+
+Update `applications_tracker.md` at the project root (the tracker is now markdown, not the legacy `.xlsx`) — add a row via the `application-tracker` skill. Include: company, role, date applied (or "drafted"), source URL, status = "drafted", notes pointer.
+
+### Step 7 — Adversarial red-team (mandatory gate, before presenting)
+
+**Do not hand the resume to Matt until it has survived an adversarial review.** Run the `resume-redteam` skill on the tailored `.docx` as the final gate. It re-reads the JD, `company_overview.md`, and `candidate_profile.md`, attacks the resume in a fresh-context subagent (what's weakest, vaguest, removable, missing, over-claimed), redlines it with tracked changes authored "Recruiter", and asks Matt questions where a fix needs a fact not yet on record. Fold its confirmed answers back into the resume and `candidate_profile.md` before presenting. This gate is the reason tailoring isn't "done" at Step 6 — a self-written resume hasn't been stress-tested until something independent has tried to break it.
+
+**When the red-team finds a factual error rather than a weakness** — a certification he does not hold, a stale claim, a guardrail decided but never applied — fix it at the source in the same run: `_assets/candidate_profile.md` **and** `_assets/master_resume.docx`, not just the CV in hand. A guardrail written only into the Q&A log does not propagate itself, and the error comes back on the next tailoring run.
+
+## Output: present to Matt
+
+Give him links to the red-teamed `.docx` (with the recruiter's tracked changes), the tailoring memo, the `redteam_notes.md` critique, and the `company_overview.md` company brief (from Step 0), plus a 3-line summary of the angle taken and the biggest weakness the red-team flagged. Don't paste the resume text into chat — the .docx is the deliverable.
+
+## Hard rules
+
+- **Never invent experience, metrics, employers, dates, or certifications.** If the JD asks for something Matt doesn't have, surface it as a gap in the diagnostic — do not paper over it.
+- **Never use "I" in resume bullets.** Profile is third person; bullets are implicit-first-person action verbs.
+- **Two pages max** for senior roles unless Matt asks otherwise. If the master overflows, cut the oldest/least-relevant role bullets first.
+- **Preserve formatting** by editing `master_resume.docx` in place rather than rebuilding.
+- **Deliver the `.docx` and nothing else — never a PDF.** See Step 4.
+
+## Edge cases
+
+- **JD is for a role well outside fintech (e.g., pure tech, generic consulting):** Lead the diagnostic with this fit gap. Ask Matt to confirm before tailoring.
+- **JD requires a tool Matt hasn't used (e.g., Snowflake specifically vs. his MS Fabric / Spark experience):** Surface honestly; suggest "transferable from MS Fabric / Spark" framing rather than implying direct experience.
+- **JD is in French:** Generate the resume in French. Matt is bilingual — ask him to confirm if the formal/informal register isn't obvious from the JD.

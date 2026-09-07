@@ -1,0 +1,16 @@
+# OS / editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+
+# Microsoft Office lock & temp files
+~$*
+*.tmp
+
+# The job-search skills treat PDFs as stale copies of a .docx that is about
+# to change. Keep the .docx as the source of truth; don't version the export.
+*.pdf
+
+# Local scratch
+/tmp/

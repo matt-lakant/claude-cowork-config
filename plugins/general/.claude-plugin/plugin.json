@@ -1,0 +1,13 @@
+{
+  "name": "general",
+  "description": "General-purpose working skills that are not tied to a single domain.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Matt Cornet",
+    "email": "matt.cornet@lakant.com"
+  },
+  "keywords": [
+    "productivity",
+    "workflow"
+  ]
+}
