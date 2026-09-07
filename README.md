@@ -43,10 +43,11 @@ The pipeline, roughly in the order it runs:
 | `application-tracker` | Maintains `applications_tracker.md` and follow-up due dates |
 | `asset-updater` | Closes the loop: propagates Matt's edits back into the master assets |
 
-### `general` (1 skill)
+### `general` (2 skills)
 
 | Skill | Purpose |
 |---|---|
+| `config-sync` | Mirrors a saved skill into this repo and commits it, so Matt only runs `git push` |
 | `tackle-task` | Kickoff for work no dedicated skill covers: frames task + success criteria, gathers context before starting |
 
 ## Not in this repo
