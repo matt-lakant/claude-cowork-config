@@ -19,7 +19,8 @@ Produces a tailored version of Matt's master resume for a specific job posting. 
 > All paths in this skill are relative to the **Job Applications project root** — the folder that contains this `skills/` directory. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications").
 
 1. `_assets/candidate_profile.md` — canonical experience, voice rules, target roles. **Read this first.**
-2. `_assets/master_resume.docx` — the formatted master. Use this as the template for the .docx output (preserve fonts, table layout, section structure).
+2. `_assets/voice_matt.md` — the voice reference. Governs every line of **prose**: the profile paragraph, the cover letter, form answers. Corpus of Matt's own sentences, literal list of banned constructions, review test. CV bullets stay governed by `candidate_profile.md`.
+3. `_assets/master_resume.docx` — the formatted master. Use this as the template for the .docx output (preserve fonts, table layout, section structure).
 
 ## Workflow
 
@@ -35,6 +36,7 @@ Extract:
 - Top 15–25 ATS keywords (skills, tools, methodologies, domain terms — verbatim phrasing)
 - Hiring signal: what would make a candidate stand out (impact metrics, scale, geos, regulatory, AI/ML, etc.)
 - Tone of the JD (corporate, startup, consulting) — match it in the cover sections
+- **Every question the application asks, verbatim.** Form fields ("why do you want to join us?") are deliverables in their own right, governed by Step 4b.
 
 If the posting is a URL, fetch it. If fetching fails, ask Matt to paste it rather than guessing.
 
@@ -45,6 +47,8 @@ If the posting is a URL, fetch it. If fetching fails, ask Matt to paste it rathe
 4. If the Chrome extension isn't connected, ask Matt to paste the posting text.
 
 **Re-posted roles.** Before tailoring, check `applications_tracker.md` and the `applications/` folders for a prior application to the same company under a similar title. Companies re-post unfilled roles under a new name, often with a harder required profile. If you find one, diff the two postings and lead the diagnostic with what changed in the *required profile*, not in the missions — that delta is the whole tailoring brief. Treat the earlier application as a fact to handle (it is sitting in their ATS), not as something to quietly repeat.
+
+**Two postings are not proof of one re-post.** Identical missions are suggestive, not conclusive. The decisive check is whether the older posting is still live: two live postings mean two roles. State the inference as an inference in `job_description.md` and name the check; on 2026-09-04 a re-post was assumed and written up as fact, and five days later the new posting vanished while the old one stayed up — the opposite conclusion. A hypothesis written as a finding is a hypothesis nobody will question at interview time.
 
 ### Step 2 — Score Matt against the posting (briefly, in chat)
 
@@ -78,7 +82,7 @@ This step is **mandatory on every run** (not just for out-of-track or tool-heavy
 ### Step 3 — Rewrite with these rules
 
 **Profile paragraph (3–4 sentences, impersonal voice — NEVER third person):**
-- Follow the voice rules in `candidate_profile.md`: impersonal/participial constructions ("Professional-services and product leader with 20+ years…", "Specialist in…"); use "I" only if a pronoun is unavoidable; never "Matt specializes…"
+- Follow the voice rules in `candidate_profile.md` and the banned-construction table in `_assets/voice_matt.md`: impersonal/participial constructions ("Professional-services and product leader with 20+ years…", "Specialist in…"); use "I" only if a pronoun is unavoidable; never "Matt specializes…"
 - Lead with the role's central challenge translated into Matt's idiom
 - Name 2–3 of his most relevant past contexts (e.g., "post-merger integration at BlueMatrix", "Global Director at FactSet")
 - Close with a hook tying his unique combo (fintech + AI + international P&L) to the role
@@ -116,6 +120,26 @@ Where:
 - `<role-slug>` is a kebab-cased short version of the role title (e.g., `head-of-product`).
 - `<YYYY-MM-DD>` is **the date the file is being generated today** — i.e. today's date in the user's timezone, not the JD posting date, the application deadline, or any date pulled from the posting itself. Run `date +%Y-%m-%d` (or check `currentDate` in env) at generation time. If the resume is regenerated later (e.g., after Matt's manual edits or a JD update), save under a new file with the new date and leave the older one in place — the per-application folder doubles as a version history.
 
+### Step 4b — The prose pieces: facts travel, sentences do not
+
+Write every prose piece in Matt's voice per `_assets/voice_matt.md`. Then give each piece its own job and let it draw from the shared stock of evidence whatever serves that job. **The same fact may appear in two pieces**, provided each does something different with it. What must never repeat is a sentence or a framing.
+
+| Piece | Its job | What it takes |
+|---|---|---|
+| **CV** | Inventory the facts, scannable | Everything, no prose |
+| **Cover letter** | Select 2–3 of the CV's strongest facts and make them mean something for this employer | Whatever carries the argument |
+| **Form field** | **Answer the question it asks**, and nothing else | Whatever answers that question, from the CV or the letter |
+
+**The letter must pick up the CV's key elements.** The CV is scanned; the letter is read. A letter that reuses nothing leaves its strongest evidence uninterpreted, and uninterpreted evidence does not weigh. Give the cause, the consequence, and why it answers this employer's problem: the CV states "margin taken from roughly 27 to 32 points in three years", the letter says what produced it and what it proves about how he runs a P&L. Select two or three facts, never the list. What to avoid is the letter that paraphrases the CV in sentences — a prose inventory with no cause, no consequence, no judgement.
+
+**The form field is not held to novelty.** It answers a specific question, and to do so it reuses the key elements of the CV or the letter that answer it. Its constraint is the question, not freshness. Read the question literally and answer that; never drop a generic pitch beside it.
+
+**Order of drafting:** CV first (it fixes the stock of facts), then the letter, then the form field, which picks last whatever best answers its question.
+
+**Before delivering, read the pieces back to back looking for twin sentences, not for shared facts.** Rewrite any repeated phrasing or framing outright. And never announce the division of labour to the reader: a letter opening with "the form says why, this letter says what" explains its plan instead of executing it, which also breaks the `voice_matt.md` rule against sentences that announce the next one.
+
+Note in the file which anchoring sentence to restore if a piece is later sent on its own. Deliver short texts to the outputs panel with `SendUserFile` so Matt can open and copy them, and keep a copy in the application folder.
+
 ### Step 5 — Write a tailoring memo
 
 Save alongside the resume: `applications/<company>-<role-slug>/tailoring_notes.md`
@@ -124,6 +148,8 @@ Contents:
 - JD summary (3 sentences)
 - Top 10 ATS keywords used + where they appear in the resume
 - Trade-offs made (what was de-emphasized, what got cut)
+- Which CV facts the letter picked up, and what each one was made to mean
+- The exact question each form field asked, and which facts were used to answer it
 - Open questions / things to verify before submitting
 - Recommended cover letter angle (2 sentences)
 
@@ -139,14 +165,21 @@ Update `applications_tracker.md` at the project root (the tracker is now markdow
 
 **When the red-team finds a factual error rather than a weakness** — a certification he does not hold, a stale claim, a guardrail decided but never applied — fix it at the source in the same run: `_assets/candidate_profile.md` **and** `_assets/master_resume.docx`, not just the CV in hand. A guardrail written only into the Q&A log does not propagate itself, and the error comes back on the next tailoring run.
 
+### Step 8 — Feed the voice corpus
+
+If Matt rewrites any sentence of the prose, **add his version verbatim to section 2 of `_assets/voice_matt.md`** in the same turn, and hand the rest to `asset-updater`. A sample needs no threshold to be worth keeping; a banned-construction rule waits for the pattern to repeat twice.
+
 ## Output: present to Matt
 
-Give him links to the red-teamed `.docx` (with the recruiter's tracked changes), the tailoring memo, the `redteam_notes.md` critique, and the `company_overview.md` company brief (from Step 0), plus a 3-line summary of the angle taken and the biggest weakness the red-team flagged. Don't paste the resume text into chat — the .docx is the deliverable.
+Give him links to the red-teamed `.docx` (with the recruiter's tracked changes), the tailoring memo, the `redteam_notes.md` critique, and the `company_overview.md` company brief (from Step 0), plus a 3-line summary of the angle taken and the biggest weakness the red-team flagged. Don't paste the resume text into chat — the .docx is the deliverable. Short prose pieces go to the outputs panel, not into the conversation.
 
 ## Hard rules
 
 - **Never invent experience, metrics, employers, dates, or certifications.** If the JD asks for something Matt doesn't have, surface it as a gap in the diagnostic — do not paper over it.
 - **Never use "I" in resume bullets.** Profile is third person; bullets are implicit-first-person action verbs.
+- **No figures of speech in the prose.** No metaphor, no calque of an English idiom, no defining Matt against an implied lesser peer, no sentence announcing what the next one will do. See `_assets/voice_matt.md`.
+- **Facts travel between pieces; sentences and framings never repeat.** Each piece does its own job. See Step 4b.
+- **A form field answers its question.** Never substitute a generic pitch for an answer to what was actually asked.
 - **Two pages max** for senior roles unless Matt asks otherwise. If the master overflows, cut the oldest/least-relevant role bullets first.
 - **Preserve formatting** by editing `master_resume.docx` in place rather than rebuilding.
 - **Deliver the `.docx` and nothing else — never a PDF.** See Step 4.
