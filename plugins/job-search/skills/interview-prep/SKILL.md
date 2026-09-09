@@ -16,9 +16,10 @@ The grounding is what makes this useful — generic STAR prompts produce generic
 > All paths in this skill are relative to the **Job Applications project root** — the folder that contains this `skills/` directory. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications").
 
 1. `_assets/candidate_profile.md`
-2. The job posting (Matt should provide; if missing, ask)
-3. Optional: the tailored resume from `applications/<company>-<role>/` — read it if it exists, since the interviewer probably read it too
-4. Optional: `applications/<company>-<role>/redteam_notes.md` — if a red-team ran on this application, its "gaps assumed" and "prepare for interview" sections are the hostile questions, already identified by something trying to reject him. Start there.
+2. `_assets/voice_matt.md` — **model answers are spoken aloud by Matt.** A sentence he would not say is worse here than in any written deliverable: he has to deliver it out loud, under pressure, to someone watching his face. Corpus, banned constructions, review test.
+3. The job posting (Matt should provide; if missing, ask)
+4. Optional: the tailored resume from `applications/<company>-<role>/` — read it if it exists, since the interviewer probably read it too
+5. Optional: `applications/<company>-<role>/redteam_notes.md` — if a red-team ran on this application, its "gaps assumed" and "prepare for interview" sections are the hostile questions, already identified by something trying to reject him. Start there.
 
 ## Inputs Matt will give you
 
@@ -56,6 +57,8 @@ For each behavioral/situational question, draft a 4–6 sentence model answer us
 - Keep it conversational — bullet-form STAR answers sound robotic when spoken
 - Close with the lesson or the link to "and that's why I'd approach this role's challenge by..."
 
+**Write every answer in Matt's voice, per `_assets/voice_matt.md`.** Plain declaratives, ordinary verbs, no metaphor, no calque of an English idiom, no defining himself against an implied lesser candidate, no announcing what he is about to say. Read each answer aloud in your head: if it needs a run-up before it says anything, cut the run-up.
+
 For "why this company / why this role" questions, leave a short framework but ask Matt to fill in the specific motivation — that part can't be ghosted.
 
 **Every name on the CV creates a follow-up question.** Wherever the resume cites a client, a partner, or a firm by name, prepare the second question rather than the first: what the engagement actually was, what he personally decided, what he pushed back on. The name proves nothing on its own; the detail behind it is what shows he held the role instead of watching it.
@@ -79,12 +82,17 @@ Save to `applications/<company>-<role>/interview_prep/`:
 
 **Never produce a PDF.** If Matt wants to print the one-pager, hand him the `.md` (or a `.docx` if he asks for one) and let him make the PDF himself from Word. Do not use the `pdf` skill for deliverables in this project.
 
-Present computer:// links in chat plus a 3-line summary of the angle of the prep.
+Deliver both to the outputs panel with `SendUserFile` so he can open them from the conversation, plus a 3-line summary of the angle of the prep.
+
+### Step 5 — Feed the voice corpus
+
+If Matt rewrites a model answer, or reports back after the interview how he actually phrased something, **add his wording verbatim to section 2 of `_assets/voice_matt.md`**. Spoken answers are the richest source of his real voice available anywhere in this project, and they are the ones most often lost.
 
 ## Hard rules
 
 - **Never invent stories.** Every STAR answer must be traceable to a real engagement in `candidate_profile.md`. If a question requires experience he doesn't have (e.g., "tell me about scaling a 200-person team"), draft a thoughtful answer that reframes around what he *has* done — and flag this as a gap.
 - **Match register to interviewer level.** Exec-round answers are more strategic and concise; hiring-manager answers are more operational. Adapt accordingly.
+- **Answers must sound like Matt, out loud.** See `_assets/voice_matt.md`. A line he would not say is unusable regardless of how well it reads.
 - **Don't write a script.** Model answers are starting points; Matt should sound like himself. Note this at the top of the output.
 - **For technical/case rounds**, include 2–3 frameworks he can lean on (e.g., for "how would you approach a data-quality issue in research", offer a 4-step framework grounded in his FactSet work).
 - **Never produce a PDF.** See Step 4.

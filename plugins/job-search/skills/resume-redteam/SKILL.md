@@ -24,6 +24,8 @@ If the same context that wrote (or just read the rationale for) the resume also 
 3. `_assets/candidate_profile.md` — the **ground truth** of what Matt has really done, including the append-only Q&A log. Used to tell "unsupported claim" apart from "under-sold real experience."
 4. The tailored resume `.docx` produced by `resume-tailor` (extract its text).
 
+Claude (not the subagent) also reads `_assets/voice_matt.md` before writing any replacement text in Step 3.
+
 ## Workflow
 
 ### Step 1 — Assemble the adversary's packet
@@ -53,6 +55,8 @@ The subagent argues from dated entries in `candidate_profile.md`. **Check that t
 ### Step 3 — Apply the redline as tracked changes
 Bring the subagent's `OLD → NEW` / `CUT` edits into the `.docx` as **Word tracked changes** (see the `docx` skill: `<w:ins>` / `<w:del>`), authored **"Recruiter"** so Matt can accept/reject each one and see exactly what was attacked. Apply only edits grounded in `candidate_profile.md`; hold back any edit that would require an unconfirmed fact and route it to Step 4 instead.
 
+**Every `NEW` string lands in Matt's resume, so it follows `_assets/voice_matt.md`** — no metaphor, no calque of an English idiom, no self-definition against an implied lesser candidate, no sentence announcing what the next one will do. An adversary optimizing for punch will happily write a flourish; rewrite it plain before it goes in the file.
+
 Save a redline copy — never overwrite the tailored file: `applications/<slug>/CORNET_<...>_redline.docx` (or `_vN` if a redline already exists). Office files are versioned, never edited in place.
 
 **Never produce a PDF.** Matt makes his own PDF from Word, after he has validated and reformatted the `.docx`. Do not save a `.pdf` beside the `.docx`, do not attach one, and do not offer one. If you need a PDF to check pagination, convert into a temp directory **outside** the project folder (e.g. `$HOME/tmp`), read the page count there, and leave nothing behind. A `.pdf` in an application folder is a stale copy of a document that is about to change, and on Matt's machine a session cannot delete files, so it becomes his cleanup.
@@ -68,6 +72,7 @@ Ask the subagent's questions with `AskUserQuestion` (batch into rounds of up to 
 - Append it (dated) to the `## Confirmed details from tailoring Q&A (append-only log)` in `candidate_profile.md` (standing rule), and promote durable items via `asset-updater`.
 - Convert "under-sold real experience" flags into real, specific tracked-change edits. Never invent — if Matt confirms nothing, leave the gap and name it in the memo.
 - **If a finding is a factual error rather than a weakness** — a certification he does not hold, a guardrail decided but never applied — fix it at the source in the same run: `_assets/candidate_profile.md` and `_assets/master_resume.docx`, not only the CV in hand. Otherwise it returns on the next tailoring run.
+- **If Matt rewrites one of the redline strings**, add his version verbatim to section 2 of `_assets/voice_matt.md` in the same turn.
 
 ### Step 5 — Present to Matt
 Save a short critique memo: `applications/<slug>/redteam_notes.md` — the prioritized problem list with severities, what was redlined, what was cut, open gaps, and the verdict + biggest blocker. Present the **redlined `.docx`** and the memo, with a 3-line summary of the most important attacks. Do not paste the full resume into chat.
@@ -76,6 +81,7 @@ Save a short critique memo: `applications/<slug>/redteam_notes.md` — the prior
 - **Find problems — never rubber-stamp.** ≥5 substantive issues per run, or an explicit, specific justification for why a category is genuinely clean.
 - **Independence is mandatory.** The critique runs in a fresh-context subagent; do not let prior drafting rationale leak into its packet.
 - **Truth ceiling holds.** Tracked-change edits may cut, sharpen, and reorder freely, but must not invent experience, metrics, employers, dates, or certifications. Under-selling becomes a question, not a fabrication. Respect the accuracy guardrails in `candidate_profile.md`.
+- **Replacement text follows `voice_matt.md`.** A sharper line that Matt would never say is not an improvement.
 - **Redline, don't overwrite.** Tracked changes authored "Recruiter"; save a new `_redline` / `_vN` file; `CORNET_` filename prefix.
 - **No PDF, ever.** The redlined `.docx` is the deliverable; tracked changes are meaningless in a PDF anyway. See Step 3.
 - **Match the application language** (EN posting → EN edits; FR posting → FR edits).
