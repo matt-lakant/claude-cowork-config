@@ -5,7 +5,9 @@ description: "Adversarial recruiter review of a resume produced by `resume-tailo
 
 # Resume Red-Team (Adversarial Recruiter)
 
-> All paths in this skill are relative to the **Job Applications project root** — the folder that contains this `skills/` directory. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications").
+> Paths marked *(project)* are relative to the **Job Applications project root** — the folder that contains this `skills/` directory. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications"). Paths marked *(vault)* are relative to the connected `obsidian-vault` folder.
+
+> **Voice reference moved, 2026-09-10.** Replacement text is governed by *(vault)* `Notes/Writing voice.md`: §2 corpus, §3 banned constructions, §4 review test, §5.2 resume surface. Run `ls $HOME/mnt/` and check for `obsidian-vault`; if it is not connected, ask Matt to connect `C:\Users\mattc\Obsidian\obsidian-vault` before writing any replacement string. `_assets/voice_matt.md` and the "Voice & style guidelines" section of `candidate_profile.md` are stubs — never read them as rules, never write to them.
 
 ## Purpose & stance
 
@@ -21,41 +23,42 @@ If the same context that wrote (or just read the rationale for) the resume also 
 
 1. The job description (`applications/<slug>/job_description.*`, or the posting Matt provided).
 2. `applications/<slug>/company_overview.md` — what the company actually wants and screens for.
-3. `_assets/candidate_profile.md` — the **ground truth** of what Matt has really done, including the append-only Q&A log. Used to tell "unsupported claim" apart from "under-sold real experience."
-4. The tailored resume `.docx` produced by `resume-tailor` (extract its text).
+3. *(project)* `_assets/candidate_profile.md` — the **ground truth** of what Matt has really done, including the append-only Q&A log. Used to tell "unsupported claim" apart from "under-sold real experience."
+4. *(vault)* `Notes/Matt Cornet.md` — the **"Technology and scope ceilings" section is the truth ceiling**. Any resume line that exceeds a ceiling is a High-severity credibility risk, not a matter of taste. Include this section in the subagent's packet.
+5. The tailored resume `.docx` produced by `resume-tailor` (extract its text).
 
-Claude (not the subagent) also reads `_assets/voice_matt.md` before writing any replacement text in Step 3.
+Claude (not the subagent) also reads *(vault)* `Notes/Writing voice.md` before writing any replacement text in Step 3.
 
 ## Workflow
 
 ### Step 1 — Assemble the adversary's packet
-Extract the tailored resume to plain text (`extract-text` or unpack). Gather the JD, `company_overview.md`, and `candidate_profile.md`. Do **not** include the fit score, the tailoring memo, or any "this is why it fits" narrative. If the JD file carries an internal coverage or fit matrix, tell the subagent explicitly to ignore that section — it is your own note, not a primary source, and it leaks the drafting rationale into the adversary's packet.
+Extract the tailored resume to plain text (`extract-text` or unpack). Gather the JD, `company_overview.md`, `candidate_profile.md`, and the ceilings section of `Notes/Matt Cornet.md`. Do **not** include the fit score, the tailoring memo, or any "this is why it fits" narrative. If the JD file carries an internal coverage or fit matrix, tell the subagent explicitly to ignore that section — it is your own note, not a primary source, and it leaks the drafting rationale into the adversary's packet.
 
 ### Step 2 — Spawn the adversarial subagent
 Use the `Task` tool (subagent type `general-purpose`). Give it this brief (fill the braces):
 
 > You are a skeptical hiring manager screening for **{role}** at **{company}**. You reject most resumes in 6 seconds. Your job is to find every reason this candidate would NOT make the shortlist — do not praise, do not validate.
-> Inputs: [paste JD] / [paste company_overview.md] / [paste candidate_profile.md as ground truth] / [paste the tailored resume text].
+> Inputs: [paste JD] / [paste company_overview.md] / [paste candidate_profile.md as ground truth] / [paste the Technology and scope ceilings section as the hard truth ceiling] / [paste the tailored resume text].
 > Do two reads: (1) a 6-second skim — does the top third earn a deep read for THIS role? (2) a deep read against every JD requirement.
 > Return, with severity (High/Med/Low) on each item:
 > 1. **Weakest bullets** — limp, generic, or low-signal lines that waste prime space.
 > 2. **Vague / filler** — unquantified claims, buzzwords, hedges, anything a skeptic would not believe without proof.
 > 3. **Removable** — lines that add nothing for THIS JD and should be cut to tighten the read.
-> 4. **Missing** — JD must-haves, company-overview signals, and ATS keywords absent or buried; note which are likely real-but-undocumented (check candidate_profile) vs genuine gaps.
-> 5. **Credibility risks** — over-claims, unsupported scope/scale, seniority mismatch, or anything that invites a hostile interview question.
-> Then produce: (a) a prioritized **redline plan** as specific `OLD → NEW` text edits (or `CUT`), each grounded only in facts present in candidate_profile — never invent. Copy the `OLD` text verbatim from the resume so each edit can be applied automatically. (b) a short list of **questions for the candidate** where a line could be stronger but you lack the fact to fix it.
+> 4. **Missing** — JD must-haves, company-overview signals, and ATS keywords absent or buried; note which are likely real-but-undocumented (check candidate_profile) vs genuine gaps vs blocked by a stated ceiling.
+> 5. **Credibility risks** — over-claims, unsupported scope/scale, seniority mismatch, any line that breaches a ceiling, or anything that invites a hostile interview question.
+> Then produce: (a) a prioritized **redline plan** as specific `OLD → NEW` text edits (or `CUT`), each grounded only in facts present in candidate_profile and within the ceilings — never invent. Copy the `OLD` text verbatim from the resume so each edit can be applied automatically. (b) a short list of **questions for the candidate** where a line could be stronger but you lack the fact to fix it.
 > End with a one-line verdict: shortlist / borderline / reject, and the single biggest thing holding it back.
 
 Require at least **5 substantive problems**. If the subagent returns a thin or congratulatory critique, push back and re-run — that is a failed adversary, not a clean resume.
 
 ### Step 2b — Verify the critique before acting on it
 
-The subagent argues from dated entries in `candidate_profile.md`. **Check that the entries behind the edits you are about to apply actually say what it claims.** One grep on the dates it cites is enough. An adversary reasoning from a misread guardrail produces a confident, wrong edit, and this check is what separates a redline Matt can trust from one he has to audit himself.
+The subagent argues from dated entries in `candidate_profile.md` and from the vault ceilings. **Check that the entries behind the edits you are about to apply actually say what it claims.** One grep on the dates it cites is enough. Watch for superseded entries in particular: the log is append-only, so a later entry can annul an earlier one, and an adversary reading only the earlier one will produce a confident, wrong edit. This check is what separates a redline Matt can trust from one he has to audit himself.
 
 ### Step 3 — Apply the redline as tracked changes
-Bring the subagent's `OLD → NEW` / `CUT` edits into the `.docx` as **Word tracked changes** (see the `docx` skill: `<w:ins>` / `<w:del>`), authored **"Recruiter"** so Matt can accept/reject each one and see exactly what was attacked. Apply only edits grounded in `candidate_profile.md`; hold back any edit that would require an unconfirmed fact and route it to Step 4 instead.
+Bring the subagent's `OLD → NEW` / `CUT` edits into the `.docx` as **Word tracked changes** (see the `docx` skill: `<w:ins>` / `<w:del>`), authored **"Recruiter"** so Matt can accept/reject each one and see exactly what was attacked. Apply only edits grounded in `candidate_profile.md` and within the vault ceilings; hold back any edit that would require an unconfirmed fact and route it to Step 4 instead.
 
-**Every `NEW` string lands in Matt's resume, so it follows `_assets/voice_matt.md`** — no metaphor, no calque of an English idiom, no self-definition against an implied lesser candidate, no sentence announcing what the next one will do. An adversary optimizing for punch will happily write a flourish; rewrite it plain before it goes in the file.
+**Every `NEW` string lands in Matt's resume, so it follows *(vault)* `Notes/Writing voice.md`** — no metaphor, no calque of an English idiom, no self-definition against an implied lesser candidate, no sentence announcing what the next one will do, and §5.2's resume rules on top. An adversary optimizing for punch will happily write a flourish; run the §4 review test over every `NEW` string and rewrite it plain before it goes in the file.
 
 Save a redline copy — never overwrite the tailored file: `applications/<slug>/CORNET_<...>_redline.docx` (or `_vN` if a redline already exists). Office files are versioned, never edited in place.
 
@@ -71,8 +74,9 @@ Save a redline copy — never overwrite the tailored file: `applications/<slug>/
 Ask the subagent's questions with `AskUserQuestion` (batch into rounds of up to 4; grounded, one-click options; room to add detail). For every answer:
 - Append it (dated) to the `## Confirmed details from tailoring Q&A (append-only log)` in `candidate_profile.md` (standing rule), and promote durable items via `asset-updater`.
 - Convert "under-sold real experience" flags into real, specific tracked-change edits. Never invent — if Matt confirms nothing, leave the gap and name it in the memo.
-- **If a finding is a factual error rather than a weakness** — a certification he does not hold, a guardrail decided but never applied — fix it at the source in the same run: `_assets/candidate_profile.md` and `_assets/master_resume.docx`, not only the CV in hand. Otherwise it returns on the next tailoring run.
-- **If Matt rewrites one of the redline strings**, add his version verbatim to section 2 of `_assets/voice_matt.md` in the same turn.
+- **If a finding is a factual error rather than a weakness** — a certification he does not hold, a guardrail decided but never applied — fix it at the source in the same run: *(project)* `_assets/candidate_profile.md`, *(project)* `_assets/master_resume.docx`, and *(vault)* `Notes/Matt Cornet.md` when it is a ceiling, not only the CV in hand. Otherwise it returns on the next tailoring run.
+- **If an answer moves a ceiling** — he has in fact done the thing a ceiling said he had not — update the ceilings section in the same run and note which log entry it supersedes. A stale ceiling silently under-sells him on every future application.
+- **If Matt rewrites one of the redline strings**, add his version verbatim to §2 of *(vault)* `Notes/Writing voice.md` in the same turn.
 
 ### Step 5 — Present to Matt
 Save a short critique memo: `applications/<slug>/redteam_notes.md` — the prioritized problem list with severities, what was redlined, what was cut, open gaps, and the verdict + biggest blocker. Present the **redlined `.docx`** and the memo, with a 3-line summary of the most important attacks. Do not paste the full resume into chat.
@@ -80,8 +84,9 @@ Save a short critique memo: `applications/<slug>/redteam_notes.md` — the prior
 ## Hard rules
 - **Find problems — never rubber-stamp.** ≥5 substantive issues per run, or an explicit, specific justification for why a category is genuinely clean.
 - **Independence is mandatory.** The critique runs in a fresh-context subagent; do not let prior drafting rationale leak into its packet.
-- **Truth ceiling holds.** Tracked-change edits may cut, sharpen, and reorder freely, but must not invent experience, metrics, employers, dates, or certifications. Under-selling becomes a question, not a fabrication. Respect the accuracy guardrails in `candidate_profile.md`.
-- **Replacement text follows `voice_matt.md`.** A sharper line that Matt would never say is not an improvement.
+- **Truth ceiling holds.** Tracked-change edits may cut, sharpen, and reorder freely, but must not invent experience, metrics, employers, dates, or certifications, and must not breach the ceilings in `Notes/Matt Cornet.md`. Under-selling becomes a question, not a fabrication. Respect the accuracy guardrails in `candidate_profile.md`.
+- **Replacement text follows `Notes/Writing voice.md`.** A sharper line that Matt would never say is not an improvement.
+- **Never read voice rules from `_assets/voice_matt.md` or from `candidate_profile.md`.** Both are stubs as of 2026-09-10.
 - **Redline, don't overwrite.** Tracked changes authored "Recruiter"; save a new `_redline` / `_vN` file; `CORNET_` filename prefix.
 - **No PDF, ever.** The redlined `.docx` is the deliverable; tracked changes are meaningless in a PDF anyway. See Step 3.
 - **Match the application language** (EN posting → EN edits; FR posting → FR edits).

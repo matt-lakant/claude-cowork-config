@@ -37,9 +37,14 @@ repo and expect it to reach his skills; it will not.
 | What | Where |
 |---|---|
 | Local clone (his machine) | `C:\Users\mattc\repos\claude-cowork-config` |
-| Same path in `device_bash` | `$HOME/mnt/repos/claude-cowork-config` |
 | Live skills (read-only cache, this container) | `~/.claude/skills/synced/<uuid>/<skill-name>/SKILL.md` |
 | Remote | `https://github.com/matt-lakant/claude-cowork-config` (private) |
+
+In `device_bash` the clone sits under `$HOME/mnt/<connected-folder-name>`, and
+the folder name is whichever one Matt connected: `claude-cowork-config` if he
+connected the repo itself, `repos/claude-cowork-config` if he connected the
+parent. **Run `ls $HOME/mnt/` first and use what is actually there** rather than
+assuming either shape.
 
 The synced cache is **read-only and rebuilt each session**. It is the best
 available copy of what Matt actually saved, so it is what you mirror from.
@@ -47,15 +52,17 @@ Editing it changes nothing.
 
 ## Repo layout
 
-Skills are grouped as plugins, never as nested category folders — discovery is
+Skills are grouped as plugins, never as nested category folders. Discovery is
 flat at `skills/<skill-name>/SKILL.md`, so a category directory would hide them.
 
 ```
 .claude-plugin/marketplace.json
 plugins/job-search/{.claude-plugin/plugin.json, skills/<name>/SKILL.md}
 plugins/general/{.claude-plugin/plugin.json, skills/<name>/SKILL.md}
-Personal Data/_assets/          candidate_profile.md, voice_matt.md, master_resume*.docx
 ```
+
+**This repo holds configuration only.** Personal data was removed on 2026-09-10
+and `/Personal Data/` is in `.gitignore`. See "Where personal data lives" below.
 
 Placement rule: anything in the job application pipeline goes in `job-search`;
 domain-agnostic skills go in `general`. If a new skill fits neither, ask Matt
@@ -65,14 +72,30 @@ rather than inventing a third plugin.
 `pdf`, `skill-creator`, `morning`, `import-memory`). Check `source` in the
 synced `manifest.json`: only `custom` and `plugin` entries are Matt's.
 
+## Where personal data lives (changed 2026-09-10)
+
+The repo used to carry a `Personal Data/` mirror of the Job Applications assets.
+It went stale within two days of being created and nothing ever read it. It is
+gone, and it does not come back.
+
+| Content | Single source of truth |
+|---|---|
+| Who Matt is: bio, background, education, scope and technology ceilings, target roles | Obsidian vault, `Notes/Matt Cornet.md` |
+| How Matt writes: corpus, banned constructions, review test, per-surface rules | Obsidian vault, `Notes/Writing voice.md` |
+| Job-search working files: tailoring Q&A log, master resumes, tracker, applications | OneDrive, `Projects/Job Applications/` |
+
+The vault is its own private git repo (`obsidian-vault`), so identity data is
+still versioned, just not here.
+
 ## Workflow
 
 ### Step 1 — Confirm the folder is reachable
 
-If `C:\Users\mattc\repos` is not connected, call
-`device_request_folder_access` on it. If that fails because the session has no
-linked computer, say so plainly and hand Matt the file instead of pretending the
-mirror happened.
+Run `ls $HOME/mnt/` to see what is connected. If the clone is not there, call
+`device_request_folder_access` on
+`C:\Users\mattc\repos\claude-cowork-config`. If that fails because the session
+has no linked computer, say so plainly and hand Matt the file instead of
+pretending the mirror happened.
 
 ### Step 2 — Mirror the files
 
@@ -81,7 +104,7 @@ from the synced cache to `plugins/<group>/skills/<skill-name>/`. Overwrite in
 place. Drop `LICENSE.txt` from Anthropic-derived scaffolding.
 
 The reliable route is to stage the file under `/mnt/user-data/outputs/` in the
-container, then `device_commit_files` with `stagedPath` → `devicePath`. Writing
+container, then `device_commit_files` with `stagedPath` to `devicePath`. Writing
 large markdown through a `device_bash` heredoc invites escaping bugs.
 
 For a **new** skill, also bump the `version` in that plugin's
@@ -95,11 +118,11 @@ rejection, and the files on disk still held the previous version. The identical
 call a moment later worked.
 
 So never trust the tool's own report, and never conclude anything from
-`git status` alone — on this mount its stat cache misleads in both directions.
+`git status` alone. On this mount its stat cache misleads in both directions.
 Compare content:
 
 ```bash
-cd "$HOME/mnt/repos/claude-cowork-config"
+cd "$HOME/mnt/<connected-folder>"
 md5sum plugins/<group>/skills/<name>/SKILL.md      # then compare with the source
 grep -c "<a distinctive string from the new version>" plugins/<group>/skills/<name>/SKILL.md
 ```
@@ -117,7 +140,7 @@ rather than the file move. Append the co-author trailer.
 ```
 <skill-name>: <what changed>
 
-<why it changed, in a sentence or two — the reason is what future-Matt needs>
+<why it changed, in a sentence or two, the reason is what future-Matt needs>
 
 Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
 ```
@@ -139,7 +162,7 @@ the repo but no longer in his account, and which are new. Mirror the drift and
 suggest one message: `sync: reconcile <n> skills with live account`.
 
 A skill present in the repo but gone from the account was probably deleted
-deliberately — ask before removing it, since the git history is the only
+deliberately. Ask before removing it, since the git history is the only
 remaining copy.
 
 ## Git identity, for reference only
@@ -147,8 +170,8 @@ remaining copy.
 The repo's **local** config is `Matt Cornet <matt.cornet@lakant.io>` (set
 2026-09-09). Commits made before that date are authored `Claude
 <noreply@anthropic.com>`, which is why the history is mixed and why GitHub
-Desktop once warned about misattribution. This is settled — do not
-"fix" it, and do not rewrite history to make it uniform unless Matt asks.
+Desktop once warned about misattribution. This is settled: do not "fix" it, and
+do not rewrite history to make it uniform unless Matt asks.
 
 ## Hard rules
 
@@ -161,11 +184,12 @@ Desktop once warned about misattribution. This is settled — do not
 - **Mirror only what Matt saved.** Do not mirror a skill you merely proposed. If
   you are unsure whether he saved it, check the synced cache for the change, and
   ask if it is not there.
-- **Never write into `Personal Data/` casually.** Those files are refreshed
-  from `C:\Users\mattc\OneDrive\Documents\Claude\Projects\Job Applications\_assets`
-  only when Matt asks, or when `asset-updater` has changed the master. Never
-  copy repo → OneDrive; that direction clobbers in-flight work.
+- **Never version personal data here.** No `Personal Data/`, no profile, no
+  voice reference, no resume, no application material, whoever asks and however
+  convenient a mirror would look. Those live in the vault and in OneDrive, and a
+  second copy here is exactly the drift this repo just got rid of. If a skill or
+  a session tries to write one, stop and say why.
 - **`applications_tracker.md` and `applications/` are not versioned.** Matt's
   decision. Do not add them.
-- **The repo is private and holds his full career history.** Do not suggest
-  making it public, adding collaborators, or mirroring it elsewhere.
+- **The repo is private.** Do not suggest making it public, adding
+  collaborators, or mirroring it elsewhere.

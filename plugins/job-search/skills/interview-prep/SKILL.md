@@ -13,13 +13,16 @@ The grounding is what makes this useful — generic STAR prompts produce generic
 
 ## Source materials
 
-> All paths in this skill are relative to the **Job Applications project root** — the folder that contains this `skills/` directory. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications").
+> Paths marked *(project)* are relative to the **Job Applications project root** — the folder that contains this `skills/` directory. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications"). Paths marked *(vault)* are relative to the connected `obsidian-vault` folder.
 
-1. `_assets/candidate_profile.md`
-2. `_assets/voice_matt.md` — **model answers are spoken aloud by Matt.** A sentence he would not say is worse here than in any written deliverable: he has to deliver it out loud, under pressure, to someone watching his face. Corpus, banned constructions, review test.
-3. The job posting (Matt should provide; if missing, ask)
-4. Optional: the tailored resume from `applications/<company>-<role>/` — read it if it exists, since the interviewer probably read it too
-5. Optional: `applications/<company>-<role>/redteam_notes.md` — if a red-team ran on this application, its "gaps assumed" and "prepare for interview" sections are the hostile questions, already identified by something trying to reject him. Start there.
+> **Voice reference moved, 2026-09-10.** How Matt speaks and writes lives in *(vault)* `Notes/Writing voice.md`: §2 corpus, §3 banned constructions, §4 review test, §5.1 the candidature-prose surface that spoken answers follow. Run `ls $HOME/mnt/` and check for `obsidian-vault`; if it is not connected, ask Matt to connect `C:\Users\mattc\Obsidian\obsidian-vault` before drafting answers. `_assets/voice_matt.md` and the "Voice & style guidelines" section of `candidate_profile.md` are stubs — never read them as rules, never write to them.
+
+1. *(vault)* `Notes/Writing voice.md` — **model answers are spoken aloud by Matt.** A sentence he would not say is worse here than in any written deliverable: he has to deliver it out loud, under pressure, to someone watching his face. Corpus, banned constructions, review test.
+2. *(vault)* `Notes/Matt Cornet.md` — durable identity and the "Technology and scope ceilings" list. In an interview a breached ceiling is not a bad line, it is a claim he will be asked to defend and cannot. Read it before drafting any answer about a tool, a certification, a sector or a scope.
+3. *(project)* `_assets/candidate_profile.md` — real engagements, metrics, and the append-only Q&A log
+4. The job posting (Matt should provide; if missing, ask)
+5. Optional: the tailored resume from `applications/<company>-<role>/` — read it if it exists, since the interviewer probably read it too
+6. Optional: `applications/<company>-<role>/redteam_notes.md` — if a red-team ran on this application, its "gaps assumed" and "prepare for interview" sections are the hostile questions, already identified by something trying to reject him. Start there.
 
 ## Inputs Matt will give you
 
@@ -46,7 +49,7 @@ Generate 15 likely questions split across these buckets:
 6. **Tough / risk** (1) — "tell me about a failure", "why are you leaving"
 7. **Questions he should ask back** (1 slot, 5+ candidate questions)
 
-Bias the predictions toward what *this specific JD* signals — not a generic top-15 list. Any gap the application file already names — a missing pedigree, a sector he has never worked in, a scale mismatch between his past scope and the role — **will** be asked. Draft its answer whether or not it fits the buckets above.
+Bias the predictions toward what *this specific JD* signals — not a generic top-15 list. Any gap the application file already names — a missing pedigree, a sector he has never worked in, a scale mismatch between his past scope and the role — **will** be asked. Draft its answer whether or not it fits the buckets above. Every ceiling in `Notes/Matt Cornet.md` that the JD touches is a predicted question too: the interviewer will ask about the tool the resume does not claim.
 
 ### Step 2 — Draft model answers (STAR where applicable)
 
@@ -57,11 +60,13 @@ For each behavioral/situational question, draft a 4–6 sentence model answer us
 - Keep it conversational — bullet-form STAR answers sound robotic when spoken
 - Close with the lesson or the link to "and that's why I'd approach this role's challenge by..."
 
-**Write every answer in Matt's voice, per `_assets/voice_matt.md`.** Plain declaratives, ordinary verbs, no metaphor, no calque of an English idiom, no defining himself against an implied lesser candidate, no announcing what he is about to say. Read each answer aloud in your head: if it needs a run-up before it says anything, cut the run-up.
+**Write every answer in Matt's voice, per *(vault)* `Notes/Writing voice.md`.** Plain declaratives, ordinary verbs, no metaphor, no calque of an English idiom, no defining himself against an implied lesser candidate, no announcing what he is about to say. Run the §4 review test over each answer. Then read it aloud in your head: if it needs a run-up before it says anything, cut the run-up.
 
 For "why this company / why this role" questions, leave a short framework but ask Matt to fill in the specific motivation — that part can't be ghosted.
 
 **Every name on the CV creates a follow-up question.** Wherever the resume cites a client, a partner, or a firm by name, prepare the second question rather than the first: what the engagement actually was, what he personally decided, what he pushed back on. The name proves nothing on its own; the detail behind it is what shows he held the role instead of watching it.
+
+**Where a ceiling is the honest answer, draft the honest answer.** "I have benchmarked it, I have not delivered on it" is a usable sentence and a strong one; an evasive answer is what loses the room. Pair each with what he *has* done that is nearest.
 
 ### Step 3 — Build the cheat sheet
 
@@ -86,13 +91,15 @@ Deliver both to the outputs panel with `SendUserFile` so he can open them from t
 
 ### Step 5 — Feed the voice corpus
 
-If Matt rewrites a model answer, or reports back after the interview how he actually phrased something, **add his wording verbatim to section 2 of `_assets/voice_matt.md`**. Spoken answers are the richest source of his real voice available anywhere in this project, and they are the ones most often lost.
+If Matt rewrites a model answer, or reports back after the interview how he actually phrased something, **add his wording verbatim to §2 of *(vault)* `Notes/Writing voice.md`**. Spoken answers are the richest source of his real voice available anywhere in this project, and they are the ones most often lost. If the vault is not connected, hand him the sentence and say it still needs filing rather than writing it into `_assets/`.
 
 ## Hard rules
 
 - **Never invent stories.** Every STAR answer must be traceable to a real engagement in `candidate_profile.md`. If a question requires experience he doesn't have (e.g., "tell me about scaling a 200-person team"), draft a thoughtful answer that reframes around what he *has* done — and flag this as a gap.
+- **Respect the vault ceilings.** An answer that claims past a ceiling sets him up to be caught live. See `Notes/Matt Cornet.md`.
 - **Match register to interviewer level.** Exec-round answers are more strategic and concise; hiring-manager answers are more operational. Adapt accordingly.
-- **Answers must sound like Matt, out loud.** See `_assets/voice_matt.md`. A line he would not say is unusable regardless of how well it reads.
+- **Answers must sound like Matt, out loud.** See `Notes/Writing voice.md`. A line he would not say is unusable regardless of how well it reads.
+- **Never read voice rules from `_assets/voice_matt.md` or from `candidate_profile.md`.** Both are stubs as of 2026-09-10.
 - **Don't write a script.** Model answers are starting points; Matt should sound like himself. Note this at the top of the output.
 - **For technical/case rounds**, include 2–3 frameworks he can lean on (e.g., for "how would you approach a data-quality issue in research", offer a 4-step framework grounded in his FactSet work).
 - **Never produce a PDF.** See Step 4.

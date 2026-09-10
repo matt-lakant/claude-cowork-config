@@ -14,3 +14,8 @@ desktop.ini
 
 # Local scratch
 /tmp/
+
+# Personal data lives in the Obsidian vault (single source of truth) and in
+# OneDrive for job-search working files. It was removed from this repo on
+# 2026-09-10 so identity and application data are not versioned here.
+/Personal Data/

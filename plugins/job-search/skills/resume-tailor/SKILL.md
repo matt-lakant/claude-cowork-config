@@ -16,11 +16,14 @@ Produces a tailored version of Matt's master resume for a specific job posting. 
 
 ## Source materials (read these every run)
 
-> All paths in this skill are relative to the **Job Applications project root** — the folder that contains this `skills/` directory. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications").
+> Paths marked *(project)* are relative to the **Job Applications project root** — the folder that contains this `skills/` directory. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications"). Paths marked *(vault)* are relative to the connected `obsidian-vault` folder.
 
-1. `_assets/candidate_profile.md` — canonical experience, voice rules, target roles. **Read this first.**
-2. `_assets/voice_matt.md` — the voice reference. Governs every line of **prose**: the profile paragraph, the cover letter, form answers. Corpus of Matt's own sentences, literal list of banned constructions, review test. CV bullets stay governed by `candidate_profile.md`.
-3. `_assets/master_resume.docx` — the formatted master. Use this as the template for the .docx output (preserve fonts, table layout, section structure).
+> **Voice reference moved, 2026-09-10.** How Matt writes now lives in *(vault)* `Notes/Writing voice.md`, not in this project. §2 is the corpus of his own sentences, §3 the banned-construction table, §4 the review test, §5 the per-surface rules (5.1 candidature prose, 5.2 resume, 5.3 LinkedIn post). Run `ls $HOME/mnt/` and check for `obsidian-vault`; if it is not connected, ask Matt to connect `C:\Users\mattc\Obsidian\obsidian-vault` before drafting any prose, or call `device_request_folder_access` on it. `_assets/voice_matt.md` and the "Voice & style guidelines" section of `candidate_profile.md` are stubs pointing there — never read them as rules, never write to them.
+
+1. *(vault)* `Notes/Writing voice.md` — the voice reference. Governs **every line of prose** (profile paragraph, cover letter, form answers) via §5.1, and **every resume bullet** via §5.2.
+2. *(vault)* `Notes/Matt Cornet.md` — durable identity and the "Technology and scope ceilings" list. Read the ceilings before writing any claim about a tool, a certification, a sector or a scope.
+3. *(project)* `_assets/candidate_profile.md` — canonical experience, target roles, accuracy guardrails, and the append-only tailoring Q&A log. **Read this first.**
+4. *(project)* `_assets/master_resume.docx` — the formatted master. Use this as the template for the .docx output (preserve fonts, table layout, section structure).
 
 ## Workflow
 
@@ -65,7 +68,8 @@ This lets Matt sanity-check before you spend tokens generating the .docx. Pause 
 Matt has 20+ years of broad experience; the master resume captures only the headline version. The goal of this step is that **no requirement is left weakly evidenced when he actually has the experience to back it** — for the resume *and* the cover letter. So work requirement-by-requirement, not by a fixed quota of questions.
 
 1. **Build the requirement checklist.** List every requirement the posting states — each hard requirement, each soft / "nice-to-have", and every named tool, platform, method, certification, regulation, sector, and scope/scale bar. If `job-fit-analyzer` already produced a Requirement coverage matrix for this role, start from it.
-2. **Classify each against `_assets/candidate_profile.md` + `master_resume.docx`:**
+2. **Classify each against the vault ceilings + `_assets/candidate_profile.md` + `master_resume.docx`:**
+   - **Blocked** — the "Technology and scope ceilings" section of *(vault)* `Notes/Matt Cornet.md` says it cannot be claimed. Do not question, do not soften; it is a stated gap.
    - **Strong** — already clearly evidenced with specifics. No question needed.
    - **Partial / Absent / Unknown** — adjacent, missing, or plausibly-in-his-background-but-undocumented. **Each of these gets a question.**
 3. **Question Matt on every Partial / Absent / Unknown requirement** using the `AskUserQuestion` tool. The tool allows max 4 questions per call, so **batch them into successive rounds of up to 4 and keep going until every such requirement has been put to him** — do not stop at an arbitrary 3–5. Make each option concrete and grounded in something plausibly in his background so he can confirm in one click; use multi-select where natural; always leave room for him to add detail. For each requirement, probe what he actually did and at what scope:
@@ -74,15 +78,15 @@ Matt has 20+ years of broad experience; the master resume captures only the head
    - **Scope & scale** (team size, budget, P&L, regions, client tier) where the JD implies a bar. When the JD's scale is *smaller* than Matt's headline numbers, ask for the intermediate figure — direct reports, missions run in parallel, typical engagement length — because the headline alone reads as overqualification and invites "why would you come here, and for how long?".
    - **Regulations, risk controls, and operating models** the JD names — which has he dealt with hands-on?
    - **Adjacent / non-obvious work** the headline resume omits.
-4. **Asking a lot is expected.** A senior role with 10+ requirements may warrant 2–3 rounds of questions. One extra question costs far less than shipping a resume or cover letter that under-sells real experience. The only requirements you skip are those already rated **Strong**.
-5. **Record every confirmed answer in `candidate_profile.md`** (standing rule, 2026-06-25): append each answer (dated) to the `## Confirmed details from tailoring Q&A (append-only log)` section, and promote durable items into the relevant Experience bullets / master via `asset-updater`. Then **fold them into the rewrite as real, specific bullets — and reuse the same confirmed specifics in the cover letter.** Never invent — surface only what Matt confirms. If he confirms nothing for a requirement, keep it as a stated gap in the memo.
+4. **Asking a lot is expected.** A senior role with 10+ requirements may warrant 2–3 rounds of questions. One extra question costs far less than shipping a resume or cover letter that under-sells real experience. The only requirements you skip are those already rated **Strong** or **Blocked**.
+5. **Record every confirmed answer in `candidate_profile.md`** (standing rule, 2026-06-25): append each answer (dated) to the `## Confirmed details from tailoring Q&A (append-only log)` section, and promote durable items into the relevant Experience bullets / master via `asset-updater`. A confirmed answer that raises or lowers a ceiling belongs in *(vault)* `Notes/Matt Cornet.md` too — hand that to `asset-updater`. Then **fold them into the rewrite as real, specific bullets — and reuse the same confirmed specifics in the cover letter.** Never invent — surface only what Matt confirms. If he confirms nothing for a requirement, keep it as a stated gap in the memo.
 
 This step is **mandatory on every run** (not just for out-of-track or tool-heavy roles). It can be abbreviated only for a near-identical re-tailor of a role he has already been fully mined on — and even then, re-ask any requirement the prior run left Partial / Absent. (Implements the `feedback_tailoring_alignment_questions` practice.)
 
 ### Step 3 — Rewrite with these rules
 
 **Profile paragraph (3–4 sentences, impersonal voice — NEVER third person):**
-- Follow the voice rules in `candidate_profile.md` and the banned-construction table in `_assets/voice_matt.md`: impersonal/participial constructions ("Professional-services and product leader with 20+ years…", "Specialist in…"); use "I" only if a pronoun is unavoidable; never "Matt specializes…"
+- Follow §5.2 and the banned-construction table in §3 of *(vault)* `Notes/Writing voice.md`: impersonal/participial constructions ("Professional-services and product leader with 20+ years…", "Specialist in…"); use "I" only if a pronoun is unavoidable; never "Matt specializes…"
 - Lead with the role's central challenge translated into Matt's idiom
 - Name 2–3 of his most relevant past contexts (e.g., "post-merger integration at BlueMatrix", "Global Director at FactSet")
 - Close with a hook tying his unique combo (fintech + AI + international P&L) to the role
@@ -103,7 +107,7 @@ This step is **mandatory on every run** (not just for out-of-track or tool-heavy
 
 **Skills matrix:**
 - Reorder so the top row hits JD must-haves; cells unchanged in content
-- If the JD names a tool/method that Matt has used (per `candidate_profile.md`) but isn't in the matrix, add it; if he hasn't used it, do not add it
+- If the JD names a tool/method that Matt has used (per `candidate_profile.md` and the vault ceilings) but isn't in the matrix, add it; if he hasn't used it, or a ceiling blocks it, do not add it
 
 **Education and footer:** unchanged.
 
@@ -122,7 +126,7 @@ Where:
 
 ### Step 4b — The prose pieces: facts travel, sentences do not
 
-Write every prose piece in Matt's voice per `_assets/voice_matt.md`. Then give each piece its own job and let it draw from the shared stock of evidence whatever serves that job. **The same fact may appear in two pieces**, provided each does something different with it. What must never repeat is a sentence or a framing.
+Write every prose piece in Matt's voice per *(vault)* `Notes/Writing voice.md`, §5.1 for the surface rules. Then give each piece its own job and let it draw from the shared stock of evidence whatever serves that job. **The same fact may appear in two pieces**, provided each does something different with it. What must never repeat is a sentence or a framing.
 
 | Piece | Its job | What it takes |
 |---|---|---|
@@ -136,7 +140,7 @@ Write every prose piece in Matt's voice per `_assets/voice_matt.md`. Then give e
 
 **Order of drafting:** CV first (it fixes the stock of facts), then the letter, then the form field, which picks last whatever best answers its question.
 
-**Before delivering, read the pieces back to back looking for twin sentences, not for shared facts.** Rewrite any repeated phrasing or framing outright. And never announce the division of labour to the reader: a letter opening with "the form says why, this letter says what" explains its plan instead of executing it, which also breaks the `voice_matt.md` rule against sentences that announce the next one.
+**Before delivering, read the pieces back to back looking for twin sentences, not for shared facts.** Rewrite any repeated phrasing or framing outright. Then run the §4 review test over all of them. And never announce the division of labour to the reader: a letter opening with "the form says why, this letter says what" explains its plan instead of executing it, which also breaks the §3 rule against sentences that announce the next one.
 
 Note in the file which anchoring sentence to restore if a piece is later sent on its own. Deliver short texts to the outputs panel with `SendUserFile` so Matt can open and copy them, and keep a copy in the application folder.
 
@@ -163,11 +167,11 @@ Update `applications_tracker.md` at the project root (the tracker is now markdow
 
 **Do not hand the resume to Matt until it has survived an adversarial review.** Run the `resume-redteam` skill on the tailored `.docx` as the final gate. It re-reads the JD, `company_overview.md`, and `candidate_profile.md`, attacks the resume in a fresh-context subagent (what's weakest, vaguest, removable, missing, over-claimed), redlines it with tracked changes authored "Recruiter", and asks Matt questions where a fix needs a fact not yet on record. Fold its confirmed answers back into the resume and `candidate_profile.md` before presenting. This gate is the reason tailoring isn't "done" at Step 6 — a self-written resume hasn't been stress-tested until something independent has tried to break it.
 
-**When the red-team finds a factual error rather than a weakness** — a certification he does not hold, a stale claim, a guardrail decided but never applied — fix it at the source in the same run: `_assets/candidate_profile.md` **and** `_assets/master_resume.docx`, not just the CV in hand. A guardrail written only into the Q&A log does not propagate itself, and the error comes back on the next tailoring run.
+**When the red-team finds a factual error rather than a weakness** — a certification he does not hold, a stale claim, a guardrail decided but never applied — fix it at the source in the same run: *(project)* `_assets/candidate_profile.md`, *(project)* `_assets/master_resume.docx`, and *(vault)* `Notes/Matt Cornet.md` if it is a ceiling, not just the CV in hand. A guardrail written only into the Q&A log does not propagate itself, and the error comes back on the next tailoring run.
 
 ### Step 8 — Feed the voice corpus
 
-If Matt rewrites any sentence of the prose, **add his version verbatim to section 2 of `_assets/voice_matt.md`** in the same turn, and hand the rest to `asset-updater`. A sample needs no threshold to be worth keeping; a banned-construction rule waits for the pattern to repeat twice.
+If Matt rewrites any sentence of the prose, **add his version verbatim to §2 of *(vault)* `Notes/Writing voice.md`** in the same turn, and hand the rest to `asset-updater`. A sample needs no threshold to be worth keeping; a banned-construction rule waits for the pattern to repeat twice. If the vault is not connected, say so and hand Matt the sentence rather than writing it into `_assets/`.
 
 ## Output: present to Matt
 
@@ -176,8 +180,10 @@ Give him links to the red-teamed `.docx` (with the recruiter's tracked changes),
 ## Hard rules
 
 - **Never invent experience, metrics, employers, dates, or certifications.** If the JD asks for something Matt doesn't have, surface it as a gap in the diagnostic — do not paper over it.
+- **Respect the vault ceilings.** The "Technology and scope ceilings" section of `Notes/Matt Cornet.md` is a hard limit on every claim, however well the JD would be served by exceeding it.
 - **Never use "I" in resume bullets.** Profile is third person; bullets are implicit-first-person action verbs.
-- **No figures of speech in the prose.** No metaphor, no calque of an English idiom, no defining Matt against an implied lesser peer, no sentence announcing what the next one will do. See `_assets/voice_matt.md`.
+- **No figures of speech in the prose.** No metaphor, no calque of an English idiom, no defining Matt against an implied lesser peer, no sentence announcing what the next one will do. See `Notes/Writing voice.md` §3.
+- **Never read voice rules from `_assets/voice_matt.md` or from `candidate_profile.md`.** Both are stubs as of 2026-09-10. The vault note is the only source.
 - **Facts travel between pieces; sentences and framings never repeat.** Each piece does its own job. See Step 4b.
 - **A form field answers its question.** Never substitute a generic pitch for an answer to what was actually asked.
 - **Two pages max** for senior roles unless Matt asks otherwise. If the master overflows, cut the oldest/least-relevant role bullets first.
@@ -186,6 +192,7 @@ Give him links to the red-teamed `.docx` (with the recruiter's tracked changes),
 
 ## Edge cases
 
+- **The vault is not connected:** ask Matt to connect it before drafting prose. Do not fall back to the stubs, and do not draft from memory of the voice rules.
 - **JD is for a role well outside fintech (e.g., pure tech, generic consulting):** Lead the diagnostic with this fit gap. Ask Matt to confirm before tailoring.
 - **JD requires a tool Matt hasn't used (e.g., Snowflake specifically vs. his MS Fabric / Spark experience):** Surface honestly; suggest "transferable from MS Fabric / Spark" framing rather than implying direct experience.
 - **JD is in French:** Generate the resume in French. Matt is bilingual — ask him to confirm if the formal/informal register isn't obvious from the JD.

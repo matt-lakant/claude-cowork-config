@@ -17,8 +17,12 @@ plugins/
   general/                         domain-agnostic working skills
     .claude-plugin/plugin.json
     skills/<skill-name>/SKILL.md
-Personal Data/                     mirror of the Job Applications folder
 ```
+
+> Personal data is **not** versioned here. Removed 2026-09-10. Matt's identity and
+> writing voice live in the Obsidian vault (`Notes/Matt Cornet.md`, `Notes/Writing voice.md`),
+> which is versioned in its own private repo. Job-search working files stay in OneDrive under
+> `Projects/Job Applications/`. This repo holds configuration only.
 
 Skills are discovered one level deep: `skills/<skill-name>/SKILL.md`. The
 directory name is the skill name. A category folder cannot be inserted between

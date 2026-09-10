@@ -13,11 +13,14 @@ Drafts short, in-voice follow-up messages for the four most common recruiter tou
 
 ## Source materials
 
-> All paths in this skill are relative to the **Job Applications project root** — the folder that contains this `skills/` directory. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications").
+> Paths marked *(project)* are relative to the **Job Applications project root** — the folder that contains this `skills/` directory. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications"). Paths marked *(vault)* are relative to the connected `obsidian-vault` folder.
 
-1. **`_assets/voice_matt.md` — read this before writing a single sentence.** It holds the corpus of Matt's own sentences, the literal list of constructions never to write, and the review test. Abstract guidance ("sober, no hype") has repeatedly failed to prevent the specific turns of phrase he cuts; the corpus and the banned-construction table are what actually work.
-2. `_assets/candidate_profile.md` — for concrete hooks and factual guardrails
-3. Any prior thread context Matt provides (paste of original message, last reply, etc.)
+> **Voice reference moved, 2026-09-10.** How Matt writes lives in *(vault)* `Notes/Writing voice.md`: §2 corpus, §3 banned constructions, §4 review test, §5.1 the candidature-prose surface, §5.3 for a LinkedIn post rather than a message. Run `ls $HOME/mnt/` and check for `obsidian-vault`; if it is not connected, ask Matt to connect `C:\Users\mattc\Obsidian\obsidian-vault` before writing. `_assets/voice_matt.md` and the "Voice & style guidelines" section of `candidate_profile.md` are stubs — never read them as rules, never write to them.
+
+1. ***(vault)* `Notes/Writing voice.md` — read this before writing a single sentence.** It holds the corpus of Matt's own sentences, the literal list of constructions never to write, and the review test. Abstract guidance ("sober, no hype") has repeatedly failed to prevent the specific turns of phrase he cuts; the corpus and the banned-construction table are what actually work. The §2 corpus already contains a LinkedIn connection note he wrote himself — start from it for that channel.
+2. *(vault)* `Notes/Matt Cornet.md` — durable identity and the "Technology and scope ceilings" list. A hook that breaches a ceiling turns a follow-up into a claim he has to walk back.
+3. *(project)* `_assets/candidate_profile.md` — for concrete hooks and factual guardrails
+4. Any prior thread context Matt provides (paste of original message, last reply, etc.)
 
 ## Inputs to gather
 
@@ -51,7 +54,7 @@ This skill relies on the application's `company_overview.md`. **If `applications
 - **Open:** name a specific thing from the last interaction. Generic "hope you're well" is dead weight.
 - **Middle:** one concrete value-add — a recent relevant insight, a link, a clarification, or a fresh data point. Never just "checking in."
 - **Close:** a clear, low-friction ask. Specific question or concrete CTA, not "let me know."
-- **Voice: follow `_assets/voice_matt.md`.** Matt writes plain declaratives. No metaphor, no image, no calque of an English idiom, no defining himself against an implied lesser peer, no sentence announcing what the next one will do, no self-commentary. Facts carry the message; figures of speech get cut.
+- **Voice: follow *(vault)* `Notes/Writing voice.md`.** Matt writes plain declaratives. No metaphor, no image, no calque of an English idiom, no defining himself against an implied lesser peer, no sentence announcing what the next one will do, no self-commentary. Facts carry the message; figures of speech get cut.
 - **Sign-off:** "Best, Matt" in English, "Matthieu" or "Matthieu Cornet" + phone in French correspondence.
 
 ### Step 3 — Templates (use as starting points, customize per context)
@@ -76,17 +79,18 @@ Under 300 characters. State the concrete reason for reaching out, ask one answer
 
 ### Step 4 — Review against the voice test, then deliver
 
-Before output, run the review test in `_assets/voice_matt.md`: strike every image, every "I am not the kind of person who…", every sentence that announces the next one, every verb of certainty that should be an observation. Count characters if there is a cap.
+Before output, run the §4 review test in *(vault)* `Notes/Writing voice.md`: strike every image, every "I am not the kind of person who…", every sentence that announces the next one, every verb of certainty that should be an observation. Count characters if there is a cap.
 
 Deliver the message to the outputs panel with `SendUserFile` so Matt can open and copy it (see the `feedback_show_short_texts_in_chat` guidance), and keep a copy under `applications/<company>-<role>/correspondence/<YYYY-MM-DD>_<recipient>.md`. Never produce a PDF.
 
 ### Step 5 — Feed the corpus
 
-If Matt rewrites any part of the message, **add his version verbatim to section 2 of `_assets/voice_matt.md`** in the same turn. A sample needs no threshold to be worth keeping. If his edit reveals a recurring construction to avoid, add a row to the banned table in section 3.
+If Matt rewrites any part of the message, **add his version verbatim to §2 of *(vault)* `Notes/Writing voice.md`** in the same turn. A sample needs no threshold to be worth keeping. If his edit reveals a recurring construction to avoid, add a row to the banned table in §3. If the edit is about how this *channel* is shaped rather than a turn of phrase, it belongs in §5. If the vault is not connected, hand him the sentence and say it still needs filing rather than writing it into `_assets/`.
 
 ## Hard rules
 
 - **No figures of speech.** If a word does not mean literally what it says, cut it. This is the single most frequent correction Matt makes.
+- **Never read voice rules from `_assets/voice_matt.md` or from `candidate_profile.md`.** Both are stubs as of 2026-09-10.
 - **Never claim "I have a competing offer" if he doesn't.** Reputational damage is permanent.
 - **Don't apologize for following up.** "Sorry to bother you" weakens the message.
 - **Don't oversell.** A senior candidate over-pitching reads as desperate. State value once, clearly.
