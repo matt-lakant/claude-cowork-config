@@ -50,7 +50,7 @@ Per-application detail table fields:
 
 ## Workflow
 
-## Opportunity name — MANDATORY
+### Opportunity name — MANDATORY
 
 **Before any other step,** check whether Matt has already provided an opportunity name in this conversation.
 
@@ -95,4 +95,40 @@ When Matt asks what's open or what to do this week:
 
 1. Read the file.
 2. Filter rows where Next-action-due ≤ today + 7 days, grouped by status.
-3. Render a markdown table in chat: ID | 
+3. Render a markdown table in chat: ID | Company | Role | Status | Next action | Due | Late by. Sort by due date ascending, overdue rows first.
+4. Group into three blocks, in this order:
+   - **Overdue** — `Next action due` < today. Show how many days late.
+   - **This week** — due between today and today + 7.
+   - **Waiting** — status `applied`, `screen` or `interview-*` with no `Next action due` set, so nothing falls silently out of view.
+5. For each row, name the skill that resolves it: `recruiter-followup` for a follow-up or a thank-you, `interview-prep` for an interview, `offer-negotiator` for an offer, `resume-tailor` for a `drafted` row that was never submitted.
+6. Close with a one-line count: "N overdue, N this week, N waiting."
+7. A weekly review is read-only. Do not write to the file unless a status actually changed in the same turn.
+
+### Answering "did I apply to X?"
+
+1. Read the file.
+2. Match X against Company and Role across the summary table, fuzzy.
+3. If found, answer with the ID, Status, Date applied and Next action, plus a `computer://` link to the application folder.
+4. If not found, say so plainly and offer to add it. Never infer an application from the existence of a folder under `applications/` — the row is the record, the folder is not.
+
+## Delivery
+
+- The tracker file is the deliverable. After every write, confirm in one line in chat with a `computer://` link to it.
+- Chat output is a table, never a prose summary.
+- Never produce a PDF, and never export the tracker back to xlsx. See the format note above.
+
+## Hard rules
+
+- **Notes are append-only.** Add a date-stamped line; never rewrite or delete an existing one. A later line may supersede an earlier one, and that history is what makes the record trustworthy.
+- **Both places or neither.** Status, Last touch, Next action and Next action due exist in the summary table *and* in the detail section. Updating one without the other corrupts the tracker silently.
+- **Never invent a date.** If Matt says "I applied last week", ask him for the date rather than computing one.
+- **Never change an ID**, and never reuse the ID of a withdrawn or rejected application.
+- **Do not edit `applications_tracker.xlsx`.** It is a frozen archive.
+- **Confirm before acting on a fuzzy match that hits more than one row.** Two applications at the same company are common.
+
+## Edge cases
+
+- **The tracker file does not exist yet:** create it with both sections and an empty "What's open this week" sub-block, then add the first application. Do not silently start a different file name.
+- **Matt reports an outcome for an application that has no row:** add the row retroactively, ask for the dates rather than guessing them, and stamp the Notes with the date he told you.
+- **A status moves backwards** (e.g. `interview-2` → `screen`): allow it, but append a Notes line saying so. It usually means a process restarted or a second role at the same company.
+- **`ghosted` vs `rejected`:** use `rejected` only for an explicit rejection. No answer after two follow-ups is `ghosted`.
