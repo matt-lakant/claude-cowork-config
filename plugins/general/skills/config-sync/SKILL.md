@@ -157,6 +157,34 @@ Then tell him which files are waiting, and nothing more:
 Do not say it is committed, and do not say it is on GitHub. Neither is true
 until he does it.
 
+## The `Claude outputs/` folder
+
+Observed twice on 2026-09-10: a `Claude outputs/` directory at the repo root
+holding copies of files Claude had just delivered in chat.
+
+**Claude did not write it. The desktop app did.** Every `SendUserFile` delivery is
+mirrored by the app into `Claude outputs/` inside a connected folder. The first
+occurrence got committed. The second came back within three minutes of the folder
+being deleted, holding the two files from that same turn, timestamped to the second
+of the `SendUserFile` call.
+
+Which connected folder the app picks is **not established**. Both
+`claude-cowork-config` and `Documents\Claude\Projects` were connected and it chose
+the repo. Do not assume that connecting the project folder is enough to steer it
+elsewhere.
+
+What follows from that:
+
+- **Do not send a mirrored `SKILL.md` as a chat card.** It is already on Matt's disk
+  under `plugins/`; the card buys a duplicate in a folder that should not exist.
+  Give him the path. This is the one place where his standing preference for a file
+  card on every deliverable does not apply, because the file already landed where he
+  wanted it.
+- `/Claude outputs/` is in `.gitignore`. That is the durable guard: a recurrence
+  stays untracked and never reaches a commit. Deleting the folder is cosmetic.
+- If it does reappear and Matt wants it gone, delete it **at the very end of the
+  turn**, after the last `SendUserFile`, or it returns before the turn is over.
+
 ## Reconciling the whole repo
 
 When Matt asks whether the repo is current, or a skill was saved in a session
@@ -188,16 +216,16 @@ do not rewrite history to make it uniform unless Matt asks.
 - **Mirror only what Matt saved.** Do not mirror a skill you merely proposed. If
   you are unsure whether he saved it, check the synced cache for the change, and
   ask if it is not there.
-- **Never write session outputs into this repo.** No `Claude outputs/` folder, no
-  report, no draft, no scratch copy of a file that already lives under `plugins/`.
-  Session deliverables go to
+- **Never write session outputs into this repo.** No report, no draft, no scratch
+  copy of a file that already lives under `plugins/`. Session deliverables go to
   `C:\Users\mattc\OneDrive\Documents\Claude\Projects\<Project Name>\`, kept
   flat, and they go there **even when this repo is the only folder connected**. A
-  mounted repo is not a reason to write into it: if the project folder is not
-  connected, request it or hand Matt the file as a chat card, and say why. This
-  happened on 2026-09-10, when a session left a `Claude outputs/` folder holding a
-  duplicate of a `SKILL.md` that was already mirrored correctly, and the duplicate
-  got committed.
+  mounted repo is not a reason to write into it.
+- **Do not call `SendUserFile` on a file mirrored into this repo.** This is the rule
+  that actually bites, and it is not about Claude's own writes: the desktop app
+  copies every `SendUserFile` delivery into a `Claude outputs/` folder inside a
+  connected folder, and on 2026-09-10 it chose this repo. Hand Matt the repo path
+  instead. See "The `Claude outputs/` folder" below.
 - **Never version personal data here.** No `Personal Data/`, no profile, no
   voice reference, no resume, no application material, whoever asks and however
   convenient a mirror would look. Those live in the vault and in OneDrive, and a
