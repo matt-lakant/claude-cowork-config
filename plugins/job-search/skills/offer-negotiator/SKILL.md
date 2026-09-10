@@ -7,111 +7,207 @@ description: "Helps Matt Cornet negotiate a job offer — drafts counter-offer e
 
 ## What this skill does
 
-Drafts negotiation collateral grounded in:
-- The offer details (base, bonus, equity, signing, benefits, level, start date)
-- Matt's BATNA — current consulting income, other interviews in flight, his last comp at FactSet
-- Market data for the role/level/geography
-- His actual leverage points (bilingual, NY/Paris flexibility, post-merger integration scarcity, immediate availability)
+Drafts negotiation collateral grounded in three things: the offer as stated, Matt's BATNA as he
+reports it this run, and the durable profile held in the vault note. Market data for the role,
+level and geography is researched per run, never carried in this file.
 
-The deliverable is a tailored email + a verbal script + an "if they say X, you say Y" cheat sheet.
+The deliverable is a tailored email, a verbal script, and an "if they say X, you say Y" cheat
+sheet.
 
-**The email and the script are spoken and signed by Matt.** A counter-offer that does not sound like him is worse than a plain one: the person reading it has already met him.
+**The email and the script are spoken and signed by Matt.** A counter-offer that does not sound
+like him is worse than a plain one: the person reading it has already met him.
 
-## Source materials
+## Source materials (read these every run)
 
-> Paths marked *(project)* are relative to the **Job Applications project root** — the folder that contains this `skills/` directory. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications"). Paths marked *(vault)* are relative to the connected `obsidian-vault` folder.
+> Paths marked *(vault)* are relative to the connected `obsidian-vault` folder. Paths marked
+> *(project)* are relative to the **Job Applications project root**, the folder that contains the
+> application folders and `_assets/`. Resolve those against whichever folder Matt has connected
+> for the current session (typically the one named "Job Applications").
 
-> **Voice reference moved, 2026-09-10.** How Matt writes lives in *(vault)* `Notes/Writing voice.md`: §2 corpus, §3 banned constructions, §4 review test, §5.1 the candidature-prose surface this skill writes in. Run `ls $HOME/mnt/` and check for `obsidian-vault`; if it is not connected, ask Matt to connect `C:\Users\mattc\Obsidian\obsidian-vault` before drafting. `_assets/voice_matt.md` and the "Voice & style guidelines" section of `candidate_profile.md` are stubs — never read them as rules, never write to them.
+1. *(vault)* `Notes/Matt Cornet.md` **read this first**. Every fact about who Matt is comes from
+   here: `## Background`, `## Strengths`, `## Education`, `## Current focus`, `## Target roles`,
+   `## Framing guardrails`, `## Technology and scope ceilings`. A leverage claim that breaches a
+   ceiling is a claim he cannot defend on the call that follows.
+2. *(vault)* `Notes/Writing voice.md` **read before drafting the email or the script**. §2 the
+   corpus of his own sentences, §3 the banned-construction table, §4 the review test, §5.1 the
+   candidature-prose surface this skill writes in.
+3. *(project)* `_assets/candidate_profile.md` evidence at the engagement level: what he actually
+   delivered where. Use it for detail, never for identity.
+4. The offer details and his BATNA, as Matt states them this run. Comp figures live nowhere in
+   this repo, in this file or in the vault. If a number is needed and Matt has not given it, ask.
+5. Optional, researched per run: public market comp data. Cite the source and its date.
 
-1. ***(vault)* `Notes/Writing voice.md` — read before drafting the email or the script.** Corpus of Matt's own sentences, the literal list of constructions never to write, and the review test.
-2. *(vault)* `Notes/Matt Cornet.md` — durable identity, target roles, and the "Technology and scope ceilings" list. A leverage claim that breaches a ceiling is a claim he cannot defend on the call that follows.
-3. *(project)* `_assets/candidate_profile.md` — for leverage framing and factual guardrails
-4. The offer details (Matt provides)
-5. Optional: market comp data from public sources (Levels.fyi, BLS, recent role-specific surveys)
+### The vault is a hard requirement
+
+Run `ls $HOME/mnt/` and check for `obsidian-vault`. If it is not connected, ask Matt to connect
+`C:\Users\mattc\Obsidian\obsidian-vault`, or call `device_request_folder_access` on it.
+**Do not draft the email, the script or the playbook without it.** There is no fallback: this
+skill carries no sectors, no seniority band, no capability list and no scarcity claim of its own,
+so without the note it has nothing to build leverage from and no ceiling to stay inside.
+
+`_assets/voice_matt.md` and the "Voice & style guidelines" section of `candidate_profile.md` are
+stubs pointing to the vault. Never read them as rules, never write to them.
+
+### No identity in this file
+
+If a step below needs a fact about Matt, it names the vault section to read it from. Nothing
+about his sectors, levels, geographies, languages, years, strengths, employers or compensation is
+written into this skill. When the note changes, the negotiation posture changes with it and this
+file stays untouched.
 
 ## Inputs to gather (ask if missing)
 
-- Company, role, level
-- Full offer breakdown: base, target bonus %, equity (RSUs/options, vesting, refresh), signing, relocation, benefits delta vs. current
-- Geography (NY, Paris, remote, hybrid)
-- Other offers or active processes (BATNA)
-- Matt's target / floor numbers
-- Tone he wants — collaborative, firm, walk-away-ready
+- Company, role, level, and the geography and work pattern the offer specifies
+- Full offer breakdown: base, target bonus %, equity (RSUs or options, vesting, refresh), signing,
+  relocation, benefits delta against his current situation
+- BATNA: other offers or live processes, and his current income position as he describes it
+- His target number and his floor
+- Tone he wants: collaborative, firm, or walk-away-ready
 - Whether the offer was verbal or written, and the deadline
 
-If Matt only gives the headline number, push gently for the full package — equity and bonus can swing total comp by 30%+ at his level.
+If Matt gives only the headline number, push for the full package. Equity and bonus can swing
+total comp materially at the levels listed in `## Target roles`.
 
 ## Workflow
 
 ### Step 0 — Company overview (prerequisite)
 
-This skill relies on the application's `company_overview.md`. **If `applications/<company>-<role>/company_overview.md` does not exist, run the `company-overview` skill first** to research the company and create it; otherwise read and reuse it. Use the company's stage, funding, ownership, and business model to calibrate leverage, comp expectations, and equity framing.
+This skill relies on the application's `company_overview.md`. **If
+`applications/<company>-<role-slug>/company_overview.md` does not exist, run the
+`company-overview` skill first** to research the company and create it. If it already exists,
+read and reuse it, refreshing it via `company-overview` if it is clearly stale. Use the company's
+stage, funding, ownership and business model to calibrate leverage, comp expectations and equity
+framing.
 
 ### Step 1 — Sanity-check the offer
 
 Quick analysis in chat:
-- Is the level appropriate (vs. his last FactSet Global Director role)?
-- Is the base in market range for role/geo? Use public comp data; cite sources.
-- What's the all-in TC (base + bonus + equity/4)?
-- What looks soft and likely negotiable? (Almost always: base, signing, equity, start date. Rarely: title, level, bonus structure.)
+
+- **Is the level appropriate?** Compare the offered level and scope against the most recent rows
+  of `## Background` in the vault note, and against `## Target roles`. Name the row you compared
+  to. Do not assert a past title or scope from memory of an earlier run.
+- **Is the base in market range** for the role, level and geography? Use public comp data and
+  cite sources with dates.
+- **What is the all-in TC** (base + bonus + equity/4)?
+- **What looks soft and likely negotiable?** Usually base, signing, equity, start date. Rarely
+  title, level, bonus structure.
 
 ### Step 2 — Identify leverage
 
-Match Matt's leverage to the gap he's asking to close:
-- **Other offers / processes:** name them generically ("a competing offer at a similar-stage firm")
-- **Scarcity of his combo:** post-merger integration + AI productization + bilingual + NY/Paris is genuinely rare
-- **Immediate availability:** at his level, this is worth real money
-- **His current consulting rate as anchor:** if the offer is below his blended consulting rate, that's a fact, not a bluff
+Match Matt's leverage to the gap he is asking to close. Every leverage line must trace to a
+source, and the source is named in the strategy summary:
+
+| Leverage type | Where it comes from | Guardrail |
+|---|---|---|
+| **Other offers or live processes** | Matt, this run | Name them generically ("a competing offer at a similar-stage firm"). Never invent one. |
+| **Scarcity of his combination** | `## Strengths` crossed with `## Background` | A strength listed in the note with a matching row in the Background table is defensible. One with neither is not a leverage point. |
+| **Availability** | `## Current focus` | State it as the note states it. Do not embellish the timeline. |
+| **Income position as anchor** | Matt, this run | Use only figures he has given you in this session. |
+
+**Check `## Technology and scope ceilings` and `## Framing guardrails` before writing any
+leverage line.** A ceiling item cannot be leverage, however well it would serve the ask. A
+negotiation claim is the one place where an overreach gets tested immediately: they will ask him
+about it on the call, and the offer is still revocable.
+
+If the note supports no strong leverage for the gap Matt wants to close, say so plainly and
+recommend a smaller ask, rather than manufacturing a claim.
 
 ### Step 3 — Draft the counter
 
 **Email format (default):**
-- 4–6 short paragraphs
-- Open: enthusiasm + reaffirmation of mutual fit (1 paragraph)
-- Middle: specific asks with rationale grounded in market + his leverage (2–3 paragraphs, max 2–3 specific asks — bundling is fine, scattershot is bad)
-- Close: collaborative framing, propose a specific next step (call, written response by date)
 
-**Write it in Matt's voice, per *(vault)* `Notes/Writing voice.md`.** Plain declaratives, no metaphor, no image, no defining himself against an implied lesser candidate, no sentence announcing what the next one will do. In a negotiation this matters twice over: rhetorical flourish reads as pressure, and pressure invites resistance. The number and the reason carry the ask.
+- 4 to 6 short paragraphs
+- Open: enthusiasm and reaffirmation of mutual fit, one paragraph
+- Middle: specific asks with rationale grounded in market data and the Step 2 leverage table.
+  Two to three paragraphs, two to three asks maximum. Bundling is fine, scattershot is bad.
+- Close: collaborative framing, propose a specific next step (call, or written response by a date)
 
-Save: `applications/<company>-<role>/negotiation/counter_email_<date>.md`
+**Write it in Matt's voice, per *(vault)* `Notes/Writing voice.md`.** Plain declaratives, no
+metaphor, no image, no defining himself against an implied lesser candidate, no sentence
+announcing what the next one will do. In a negotiation this matters twice over: rhetorical
+flourish reads as pressure, and pressure invites resistance. The number and the reason carry the
+ask.
 
-**Verbal script:** for the follow-up call, a 60-second opening + bullet talking points. Written to be spoken aloud, so short sentences and ordinary verbs matter more here than anywhere else. Save: `applications/<company>-<role>/negotiation/verbal_script.md`
+Save: `applications/<company>-<role-slug>/negotiation/counter_email_<date>.md`
 
-**Pushback playbook:** "if they say X, you say Y" for the 6 most likely responses (e.g., "we don't move on base" → pivot to signing/equity; "this is our best offer" → silence + restate top priority; "we need an answer today" → buy 24-48h with a specific reason).
+**Verbal script:** for the follow-up call, a 60-second opening plus bullet talking points.
+Written to be spoken aloud, so short sentences and ordinary verbs matter more here than anywhere
+else. Save: `applications/<company>-<role-slug>/negotiation/verbal_script.md`
+
+**Pushback playbook:** "if they say X, you say Y" for the 6 most likely responses. For example
+"we don't move on base" pivots to signing or equity; "this is our best offer" gets silence and a
+restatement of the top priority; "we need an answer today" buys 24 to 48 hours with a specific
+reason.
 
 ### Step 4 — Decision framework
 
-If Matt has multiple offers or is weighing this against staying independent, give him a comparison table:
-- All-in TC year 1, year 4
-- Cash vs. equity mix
-- Career optionality (does the role open or close future moves?)
-- Risk profile (early-stage vs. established)
-- Lifestyle (geo, travel, hours)
+If Matt has multiple offers, or is weighing this against staying independent, give him a
+comparison table:
+
+- All-in TC year 1 and year 4
+- Cash versus equity mix
+- Career optionality, read against `## Target roles`: does the role open or close the moves that
+  note prioritises?
+- Risk profile (early-stage versus established)
+- Lifestyle: geography, travel, hours, against what `## Current focus` says he is optimising for
+
+Lay out the numbers and the trade-offs. The decision is his.
 
 ### Step 5 — Review against the voice test, then deliver
 
-Run the §4 review test in *(vault)* `Notes/Writing voice.md` over the email and the script before showing them: strike every image, every self-definition by negation, every announcement sentence, every verb of certainty that should be an observation.
+Run the §4 review test in *(vault)* `Notes/Writing voice.md` over the email and the script before
+showing them: strike every image, every self-definition by negation, every announcement sentence,
+every verb of certainty that should be an observation.
 
-If Matt rewrites any part, **add his version verbatim to §2 of *(vault)* `Notes/Writing voice.md`** in the same turn. If the vault is not connected, hand him the sentence and say it still needs filing rather than writing it into `_assets/`.
+Then run the ceiling pass: re-read every claim in the email and the script against
+`## Technology and scope ceilings` and `## Framing guardrails`. Anything that breaches one comes
+out before Matt sees it.
+
+If Matt rewrites any part, **add his version verbatim to §2 of *(vault)* `Notes/Writing voice.md`**
+in the same turn. If the vault is not connected, hand him the sentence and say it still needs
+filing rather than writing it into `_assets/`.
 
 ## Output: present to Matt
 
-Deliver the email, verbal script and playbook to the outputs panel with `SendUserFile` so he can open and copy them, plus a 5-line summary in chat of the strategy. Keep the copies in the application folder. Never produce a PDF.
+Deliver the email, verbal script and playbook with `SendUserFile` so he can open and copy them,
+plus a summary in chat of the strategy, at most 5 lines, naming the vault sections each leverage
+line came from. Keep the copies in the application folder. Never produce a PDF.
 
 ## Hard rules
 
-- **Never lie.** Don't suggest claiming a competing offer that doesn't exist or inflating prior comp. Reputational risk in his sector (small fintech world) outweighs any negotiation gain.
+- **Never lie.** Do not suggest claiming a competing offer that does not exist, or inflating
+  prior comp. Reputational risk in the sectors listed in `## Background` outweighs any
+  negotiation gain.
+- **Never use a ceiling item as leverage**, and never soften a ceiling because the ask is
+  attractive. See `## Technology and scope ceilings`.
+- **Re-read `Notes/Matt Cornet.md` every run.** Do not build leverage from memory of a previous
+  run.
+- **Report vault silence as silence.** If the note says nothing about a sector, a level, a
+  language or an availability the negotiation would use, say so and offer to add it, rather than
+  inferring it from the resume or from the conversation.
 - **No figures of speech**, in the email or the script. See `Notes/Writing voice.md` §3.
-- **Never read voice rules from `_assets/voice_matt.md` or from `candidate_profile.md`.** Both are stubs as of 2026-09-10.
-- **Never anchor below market.** If Matt's target floor is below market median, push back on the floor before drafting.
-- **Don't write inflammatory language.** Even firm asks should preserve the relationship — he might work with these people for a decade.
-- **Surface deadline pressure.** If they're rushing, name it in the strategy and recommend a counter that buys time.
-- **Consider the level question first.** Sometimes the right negotiation is on title/scope, not comp — a bigger role at the same money compounds for years.
-- **Never give personalized financial advice.** Lay out the numbers and the trade-offs; the decision is his.
+- **Never read voice rules or identity from `_assets/voice_matt.md` or from
+  `candidate_profile.md`.** Both are stubs as of 2026-09-10.
+- **Never anchor below market.** If Matt's floor is below market median, push back on the floor
+  before drafting.
+- **Do not write inflammatory language.** Even firm asks should preserve the relationship. He
+  may work with these people for a decade.
+- **Surface deadline pressure.** If they are rushing, name it in the strategy and recommend a
+  counter that buys time.
+- **Consider the level question first.** Sometimes the right negotiation is on title and scope,
+  not comp. A bigger role at the same money compounds for years.
+- **Never give personalized financial advice.** Lay out the numbers and the trade-offs; the
+  decision is his.
 
 ## Edge cases
 
-- **The vault is not connected:** ask Matt to connect it before drafting. Do not fall back to the stubs.
-- **Verbal offer only:** First step is to get it in writing before negotiating. Draft the "thank you, please send written terms" email instead.
-- **Lowball offer:** Don't counter — ask for context first ("help me understand how you arrived at this number"). Lowballs sometimes signal level disagreement, not budget.
-- **He's in the middle of multiple processes:** treat this like a competitive sales close — sequence, deadlines, who's in the lead.
+- **The vault is not connected:** stop and ask Matt to connect it. Do not draft, and do not fall
+  back to the stubs.
+- **Verbal offer only:** get it in writing before negotiating. Draft the "thank you, please send
+  written terms" email instead.
+- **Lowball offer:** do not counter. Ask for context first ("help me understand how you arrived
+  at this number"). A lowball sometimes signals level disagreement rather than budget.
+- **He is in the middle of several processes:** treat it like a competitive sales close.
+  Sequence, deadlines, who is in the lead.
+- **The note is silent on a leverage point Matt asserts in chat:** use it for this run, flag it,
+  and hand it to `asset-updater` so the note gains it with his confirmation.
