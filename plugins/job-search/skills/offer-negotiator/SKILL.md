@@ -173,8 +173,38 @@ Deliver the email, verbal script and playbook with `SendUserFile` so he can open
 plus a summary in chat of the strategy, at most 5 lines, naming the vault sections each leverage
 line came from. Keep the copies in the application folder. Never produce a PDF.
 
+## Hand-off to `application-tracker`
+
+An offer is a status change, and the tracker is the record of record. **After
+delivering the email and the script, run `application-tracker` in the same turn**
+rather than leaving Matt to log it himself.
+
+What to pass:
+
+- **Status** `offer` once the written terms are in hand and no counter has gone out
+  yet; `negotiating` once it has. A verbal-only offer does not become `offer`: leave
+  the status where it is and record the verbal offer in the Notes, consistent with
+  the edge case below that says to get it in writing first.
+- **Last touch** the date the offer arrived, as Matt states it. Never compute a date
+  he has not given.
+- **Next action** and **Next action due** the tracker's own default for `offer` is
+  +3 days for a decision or counter. If the company set a deadline, that deadline
+  wins and becomes the due date; say in the Notes that it came from them, so a later
+  reader can tell an imposed deadline from a computed one.
+- **Comp band** only if the posting or the offer disclosed it. Do not put Matt's own
+  figures into the tracker uninvited: the numbers in this run belong to the
+  conversation, not to a file that outlives it.
+- **Notes** one date-stamped line, append-only: what was offered at a headline level,
+  what was asked for, and the deadline.
+
+If the application has no row yet, add it retroactively rather than skipping the log,
+and ask Matt for the dates instead of guessing them.
+
 ## Hard rules
 
+- **Always log the outcome.** Hand off to `application-tracker` after delivering, per
+  the section above. An offer that never reaches the tracker is invisible to the
+  weekly review.
 - **Never lie.** Do not suggest claiming a competing offer that does not exist, or inflating
   prior comp. Reputational risk in the sectors listed in `## Background` outweighs any
   negotiation gain.

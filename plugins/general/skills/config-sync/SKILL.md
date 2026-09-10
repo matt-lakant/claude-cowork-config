@@ -68,6 +68,10 @@ Placement rule: anything in the job application pipeline goes in `job-search`;
 domain-agnostic skills go in `general`. If a new skill fits neither, ask Matt
 rather than inventing a third plugin.
 
+**Nothing else belongs at the repo root.** The complete list is `plugins/`,
+`.claude-plugin/`, `README.md` and `.gitignore`. Any other folder or file appearing
+there is a mistake, not a new convention. See the hard rule on session outputs.
+
 **Never mirror** Anthropic-provided or example skills (`docx`, `xlsx`, `pptx`,
 `pdf`, `skill-creator`, `morning`, `import-memory`). Check `source` in the
 synced `manifest.json`: only `custom` and `plugin` entries are Matt's.
@@ -184,6 +188,16 @@ do not rewrite history to make it uniform unless Matt asks.
 - **Mirror only what Matt saved.** Do not mirror a skill you merely proposed. If
   you are unsure whether he saved it, check the synced cache for the change, and
   ask if it is not there.
+- **Never write session outputs into this repo.** No `Claude outputs/` folder, no
+  report, no draft, no scratch copy of a file that already lives under `plugins/`.
+  Session deliverables go to
+  `C:\Users\mattc\OneDrive\Documents\Claude\Projects\<Project Name>\`, kept
+  flat, and they go there **even when this repo is the only folder connected**. A
+  mounted repo is not a reason to write into it: if the project folder is not
+  connected, request it or hand Matt the file as a chat card, and say why. This
+  happened on 2026-09-10, when a session left a `Claude outputs/` folder holding a
+  duplicate of a `SKILL.md` that was already mirrored correctly, and the duplicate
+  got committed.
 - **Never version personal data here.** No `Personal Data/`, no profile, no
   voice reference, no resume, no application material, whoever asks and however
   convenient a mirror would look. Those live in the vault and in OneDrive, and a
