@@ -111,6 +111,16 @@ When Matt asks what's open or what to do this week:
 3. If found, answer with the ID, Status, Date applied and Next action, plus a `computer://` link to the application folder.
 4. If not found, say so plainly and offer to add it. Never infer an application from the existence of a folder under `applications/` — the row is the record, the folder is not.
 
+### Quarterly pruning
+
+Once a quarter, propose moving rows whose Status is `rejected`, `withdrawn` or
+`accepted-and-other-rejected` and whose Last touch is more than 6 months old into
+`applications_tracker_archive.md`, same two-part structure as the live file.
+
+**Propose, never do it unasked, and never delete.** An archived row keeps its ID and its
+full Notes history; the live file loses the row entirely rather than keeping a stub. If Matt
+declines, leave everything in place and do not ask again that quarter.
+
 ## Delivery
 
 - The tracker file is the deliverable. After every write, confirm in one line in chat with a `computer://` link to it.
@@ -124,6 +134,11 @@ When Matt asks what's open or what to do this week:
 - **Never invent a date.** If Matt says "I applied last week", ask him for the date rather than computing one.
 - **Never change an ID**, and never reuse the ID of a withdrawn or rejected application.
 - **Do not edit `applications_tracker.xlsx`.** It is a frozen archive.
+- **Do not add a value to the Status enum without asking.** The twelve statuses above are what
+  the weekly review filters on; a thirteenth invented mid-turn makes a row invisible to it.
+- **Preserve the markdown table alignment.** Keep the column widths consistent when you write a
+  row, so the table stays scannable in a plain text editor and in git diffs, not only in a
+  renderer.
 - **Confirm before acting on a fuzzy match that hits more than one row.** Two applications at the same company are common.
 
 ## Edge cases
@@ -131,4 +146,8 @@ When Matt asks what's open or what to do this week:
 - **The tracker file does not exist yet:** create it with both sections and an empty "What's open this week" sub-block, then add the first application. Do not silently start a different file name.
 - **Matt reports an outcome for an application that has no row:** add the row retroactively, ask for the dates rather than guessing them, and stamp the Notes with the date he told you.
 - **A status moves backwards** (e.g. `interview-2` → `screen`): allow it, but append a Notes line saying so. It usually means a process restarted or a second role at the same company.
+- **Matt re-applies to a role that already has a row** (the posting reopened, or he was rejected
+  and the company came back): add a **new ID** rather than reopening the old one, and put a Notes
+  line on both rows pointing at the other. The old row keeps its outcome; the history of the two
+  attempts is the point.
 - **`ghosted` vs `rejected`:** use `rejected` only for an explicit rejection. No answer after two follow-ups is `ghosted`.
