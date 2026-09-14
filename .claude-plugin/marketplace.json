@@ -6,13 +6,19 @@
   },
   "metadata": {
     "description": "Matt Cornet's personal Claude / Cowork configuration: versioned skills grouped as installable plugins.",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "plugins": [
     {
       "name": "job-search",
       "source": "./plugins/job-search",
       "description": "End-to-end job application pipeline: fit triage, company research, resume tailoring, adversarial red-team, interview prep, follow-ups, offer negotiation, and tracking.",
+      "category": "productivity"
+    },
+    {
+      "name": "venture-lab",
+      "source": "./plugins/venture-lab",
+      "description": "Generating and evaluating business ideas: reading source material, scoring concepts against a fail-fast rubric, and adversarially pressure-testing them before they get any time.",
       "category": "productivity"
     },
     {

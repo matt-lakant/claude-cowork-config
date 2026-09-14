@@ -1,0 +1,14 @@
+{
+  "name": "venture-lab",
+  "description": "Generating and evaluating business ideas: reading source material, scoring concepts against a fail-fast rubric, and adversarially pressure-testing them before they get any of Matt's time.",
+  "author": {
+    "name": "Matt Cornet",
+    "email": "matt.cornet@lakant.com"
+  },
+  "keywords": [
+    "business",
+    "ventures",
+    "evaluation",
+    "research"
+  ]
+}
