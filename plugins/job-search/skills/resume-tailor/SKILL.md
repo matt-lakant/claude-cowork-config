@@ -5,6 +5,17 @@ description: "Tailors Matt Cornet's master resume to a specific job posting, opt
 
 # Resume Tailor
 
+## Before anything else — open the opportunity
+
+**Run the `opportunity-intake` skill first.** It confirms the opportunity name, resolves
+the kebab-case slug, creates `applications/<slug>/` if it does not already exist, and
+starts the opportunity's `notes.md`. Every file this skill produces goes inside that
+folder.
+
+Do not write anything before the folder exists. If the slug is unknown, ask. If the
+Job Applications project folder is not connected, stop and say so — never fall back to
+the project root, to another connected folder, or to chat-only delivery.
+
 ## What this skill does
 
 Produces a tailored version of Matt's master resume for a specific job posting. The output preserves all factual content from the master but reorders, rewrites, and reweights bullets so the most relevant experience leads, ATS keywords from the posting are surfaced naturally, and the profile paragraph speaks to the role.
@@ -179,6 +190,11 @@ Give him links to the red-teamed `.docx` (with the recruiter's tracked changes),
 
 ## Hard rules
 
+- **No opportunity-scoped file is ever written to the project root.** Everything for an
+  opportunity lives in `applications/<slug>/`. Only `applications_tracker.md`, `README.md`,
+  `_assets/` and `_research/` belong at the root. The standing "project folders are kept
+  flat, no subfolders" preference does **not** apply to Job Applications — see the
+  `opportunity-intake` skill, which wins on any conflict.
 - **Never invent experience, metrics, employers, dates, or certifications.** If the JD asks for something Matt doesn't have, surface it as a gap in the diagnostic — do not paper over it.
 - **Respect the vault ceilings.** The "Technology and scope ceilings" section of `Notes/Matt Cornet.md` is a hard limit on every claim, however well the JD would be served by exceeding it.
 - **Never use "I" in resume bullets.** Profile is third person; bullets are implicit-first-person action verbs.

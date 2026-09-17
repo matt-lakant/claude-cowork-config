@@ -5,6 +5,17 @@ description: "Adversarial recruiter review of a resume produced by `resume-tailo
 
 # Resume Red-Team (Adversarial Recruiter)
 
+## Before anything else — open the opportunity
+
+**Run the `opportunity-intake` skill first.** It confirms the opportunity name, resolves
+the kebab-case slug, creates `applications/<slug>/` if it does not already exist, and
+starts the opportunity's `notes.md`. Every file this skill produces goes inside that
+folder.
+
+Do not write anything before the folder exists. If the slug is unknown, ask. If the
+Job Applications project folder is not connected, stop and say so — never fall back to
+the project root, to another connected folder, or to chat-only delivery.
+
 > Paths marked *(project)* are relative to the **Job Applications project root** — the folder that contains this `skills/` directory. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications"). Paths marked *(vault)* are relative to the connected `obsidian-vault` folder.
 
 > **Voice reference moved, 2026-09-10.** Replacement text is governed by *(vault)* `Notes/Writing voice.md`: §2 corpus, §3 banned constructions, §4 review test, §5.2 resume surface. Run `ls $HOME/mnt/` and check for `obsidian-vault`; if it is not connected, ask Matt to connect `C:\Users\mattc\Obsidian\obsidian-vault` before writing any replacement string. `_assets/voice_matt.md` and the "Voice & style guidelines" section of `candidate_profile.md` are stubs — never read them as rules, never write to them.
@@ -82,6 +93,12 @@ Ask the subagent's questions with `AskUserQuestion` (batch into rounds of up to 
 Save a short critique memo: `applications/<slug>/redteam_notes.md` — the prioritized problem list with severities, what was redlined, what was cut, open gaps, and the verdict + biggest blocker. Present the **redlined `.docx`** and the memo, with a 3-line summary of the most important attacks. Do not paste the full resume into chat.
 
 ## Hard rules
+
+- **No opportunity-scoped file is ever written to the project root.** Everything for an
+  opportunity lives in `applications/<slug>/`. Only `applications_tracker.md`, `README.md`,
+  `_assets/` and `_research/` belong at the root. The standing "project folders are kept
+  flat, no subfolders" preference does **not** apply to Job Applications — see the
+  `opportunity-intake` skill, which wins on any conflict.
 - **Find problems — never rubber-stamp.** ≥5 substantive issues per run, or an explicit, specific justification for why a category is genuinely clean.
 - **Independence is mandatory.** The critique runs in a fresh-context subagent; do not let prior drafting rationale leak into its packet.
 - **Truth ceiling holds.** Tracked-change edits may cut, sharpen, and reorder freely, but must not invent experience, metrics, employers, dates, or certifications, and must not breach the ceilings in `Notes/Matt Cornet.md`. Under-selling becomes a question, not a fabrication. Respect the accuracy guardrails in `candidate_profile.md`.

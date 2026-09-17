@@ -5,6 +5,17 @@ description: Maintains the live tracker file of Matt Cornet's job applications i
 
 # Application Tracker
 
+## Before anything else — open the opportunity
+
+**Run the `opportunity-intake` skill first.** It confirms the opportunity name, resolves
+the kebab-case slug, creates `applications/<slug>/` if it does not already exist, and
+starts the opportunity's `notes.md`. Every file this skill produces goes inside that
+folder.
+
+Do not write anything before the folder exists. If the slug is unknown, ask. If the
+Job Applications project folder is not connected, stop and say so — never fall back to
+the project root, to another connected folder, or to chat-only delivery.
+
 ## What this skill does
 
 > All paths in this skill are relative to the **Job Applications project root** — the folder that contains this `skills/` directory. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications").
@@ -129,6 +140,11 @@ declines, leave everything in place and do not ask again that quarter.
 
 ## Hard rules
 
+- **No opportunity-scoped file is ever written to the project root.** Everything for an
+  opportunity lives in `applications/<slug>/`. Only `applications_tracker.md`, `README.md`,
+  `_assets/` and `_research/` belong at the root. The standing "project folders are kept
+  flat, no subfolders" preference does **not** apply to Job Applications — see the
+  `opportunity-intake` skill, which wins on any conflict.
 - **Notes are append-only.** Add a date-stamped line; never rewrite or delete an existing one. A later line may supersede an earlier one, and that history is what makes the record trustworthy.
 - **Both places or neither.** Status, Last touch, Next action and Next action due exist in the summary table *and* in the detail section. Updating one without the other corrupts the tracker silently.
 - **Never invent a date.** If Matt says "I applied last week", ask him for the date rather than computing one.

@@ -5,6 +5,17 @@ description: Researches the company behind a job posting and produces a one-page
 
 # Company Overview
 
+## Before anything else — open the opportunity
+
+**Run the `opportunity-intake` skill first.** It confirms the opportunity name, resolves
+the kebab-case slug, creates `applications/<slug>/` if it does not already exist, and
+starts the opportunity's `notes.md`. Every file this skill produces goes inside that
+folder.
+
+Do not write anything before the folder exists. If the slug is unknown, ask. If the
+Job Applications project folder is not connected, stop and say so — never fall back to
+the project root, to another connected folder, or to chat-only delivery.
+
 ## What this skill does
 
 Produces a concise, factual one-page brief on the company behind a specific opportunity, saved as `company_overview.md` in that application's folder. It is the single source of company context that every other job-application skill reads. Generate it once per opportunity; the other skills reuse it rather than re-researching.
@@ -64,6 +75,11 @@ Save the file, present it to Matt with a link, and return a 2-line summary. Othe
 
 ## Hard rules
 
+- **No opportunity-scoped file is ever written to the project root.** Everything for an
+  opportunity lives in `applications/<slug>/`. Only `applications_tracker.md`, `README.md`,
+  `_assets/` and `_research/` belong at the root. The standing "project folders are kept
+  flat, no subfolders" preference does **not** apply to Job Applications — see the
+  `opportunity-intake` skill, which wins on any conflict.
 - **Search before writing — never fabricate.** Every factual claim must come from a source; cite URLs. If something can't be verified, mark it "unconfirmed" rather than guessing.
 - **Flag intermediaries / anonymity.** Be explicit when the posting is via a recruiter/agency or the end client is undisclosed.
 - **Keep it to ~1 page.** This is a working brief, not a dossier.

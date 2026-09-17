@@ -5,6 +5,17 @@ description: "Prepares Matt Cornet for a specific interview — generates likely
 
 # Interview Prep
 
+## Before anything else — open the opportunity
+
+**Run the `opportunity-intake` skill first.** It confirms the opportunity name, resolves
+the kebab-case slug, creates `applications/<slug>/` if it does not already exist, and
+starts the opportunity's `notes.md`. Every file this skill produces goes inside that
+folder.
+
+Do not write anything before the folder exists. If the slug is unknown, ask. If the
+Job Applications project folder is not connected, stop and say so — never fall back to
+the project root, to another connected folder, or to chat-only delivery.
+
 ## What this skill does
 
 Generates a personalized interview prep pack: predicted questions tied to the role, model answers grounded in Matt's real experience (not generic templates), and a one-page "cheat sheet" of metrics and stories he should have at his fingertips.
@@ -95,6 +106,11 @@ If Matt rewrites a model answer, or reports back after the interview how he actu
 
 ## Hard rules
 
+- **No opportunity-scoped file is ever written to the project root.** Everything for an
+  opportunity lives in `applications/<slug>/`. Only `applications_tracker.md`, `README.md`,
+  `_assets/` and `_research/` belong at the root. The standing "project folders are kept
+  flat, no subfolders" preference does **not** apply to Job Applications — see the
+  `opportunity-intake` skill, which wins on any conflict.
 - **Never invent stories.** Every STAR answer must be traceable to a real engagement in `candidate_profile.md`. If a question requires experience he doesn't have (e.g., "tell me about scaling a 200-person team"), draft a thoughtful answer that reframes around what he *has* done — and flag this as a gap.
 - **Respect the vault ceilings.** An answer that claims past a ceiling sets him up to be caught live. See `Notes/Matt Cornet.md`.
 - **Match register to interviewer level.** Exec-round answers are more strategic and concise; hiring-manager answers are more operational. Adapt accordingly.

@@ -5,6 +5,17 @@ description: "Closes the learning loop after each application cycle by diffing M
 
 # Asset Updater
 
+## Before anything else — open the opportunity
+
+**Run the `opportunity-intake` skill first.** It confirms the opportunity name, resolves
+the kebab-case slug, creates `applications/<slug>/` if it does not already exist, and
+starts the opportunity's `notes.md`. Every file this skill produces goes inside that
+folder.
+
+Do not write anything before the folder exists. If the slug is unknown, ask. If the
+Job Applications project folder is not connected, stop and say so — never fall back to
+the project root, to another connected folder, or to chat-only delivery.
+
 ## What this skill does
 
 Keeps Matt's master assets honest and current as the application cadence picks up. Without this loop, three things rot:
@@ -155,6 +166,11 @@ Output is a single markdown report (`asset_sweep_<YYYY-MM-DD>.md` at the project
 
 ## Hard rules
 
+- **No opportunity-scoped file is ever written to the project root.** Everything for an
+  opportunity lives in `applications/<slug>/`. Only `applications_tracker.md`, `README.md`,
+  `_assets/` and `_research/` belong at the root. The standing "project folders are kept
+  flat, no subfolders" preference does **not** apply to Job Applications — see the
+  `opportunity-intake` skill, which wins on any conflict.
 - **Never silently edit `master_resume.docx`.** Matt sign-off required, every time. Save a timestamped backup before overwriting.
 - **Every Matt rewrite feeds the corpus.** §2 of the vault note grows on every run where he changed a sentence. Skipping it is the failure mode this skill exists to prevent.
 - **Never write voice content into `_assets/voice_matt.md` or into `candidate_profile.md`.** Both are pointers as of 2026-09-10. Writing there splits the source of truth again, and the split will not be noticed for weeks.

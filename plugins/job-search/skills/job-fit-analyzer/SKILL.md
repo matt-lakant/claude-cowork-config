@@ -5,6 +5,17 @@ description: Analyzes how well Matt Cornet fits a specific job posting before he
 
 # Job Fit Analyzer
 
+## Before anything else — open the opportunity
+
+**Run the `opportunity-intake` skill first.** It confirms the opportunity name, resolves
+the kebab-case slug, creates `applications/<slug>/` if it does not already exist, and
+starts the opportunity's `notes.md`. Every file this skill produces goes inside that
+folder.
+
+Do not write anything before the folder exists. If the slug is unknown, ask. If the
+Job Applications project folder is not connected, stop and say so — never fall back to
+the project root, to another connected folder, or to chat-only delivery.
+
 ## What this skill does
 
 Triage a job posting against Matt's profile in 2 to 3 minutes of reading time. The output
@@ -219,6 +230,11 @@ with no ceiling gaps beats a 43 with two.
 
 ## Hard rules
 
+- **No opportunity-scoped file is ever written to the project root.** Everything for an
+  opportunity lives in `applications/<slug>/`. Only `applications_tracker.md`, `README.md`,
+  `_assets/` and `_research/` belong at the root. The standing "project folders are kept
+  flat, no subfolders" preference does **not** apply to Job Applications — see the
+  `opportunity-intake` skill, which wins on any conflict.
 - **Be honest about gaps.** A score of 25/50 is reported as 25/50. Matt's time is better spent
   on better fits.
 - **Don't pad domain fit.** An adjacent sector is not one of the sectors in `## Background` or

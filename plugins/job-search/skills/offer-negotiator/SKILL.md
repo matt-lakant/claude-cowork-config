@@ -5,6 +5,17 @@ description: "Helps Matt Cornet negotiate a job offer — drafts counter-offer e
 
 # Offer Negotiator
 
+## Before anything else — open the opportunity
+
+**Run the `opportunity-intake` skill first.** It confirms the opportunity name, resolves
+the kebab-case slug, creates `applications/<slug>/` if it does not already exist, and
+starts the opportunity's `notes.md`. Every file this skill produces goes inside that
+folder.
+
+Do not write anything before the folder exists. If the slug is unknown, ask. If the
+Job Applications project folder is not connected, stop and say so — never fall back to
+the project root, to another connected folder, or to chat-only delivery.
+
 ## What this skill does
 
 Drafts negotiation collateral grounded in three things: the offer as stated, Matt's BATNA as he
@@ -202,6 +213,11 @@ and ask Matt for the dates instead of guessing them.
 
 ## Hard rules
 
+- **No opportunity-scoped file is ever written to the project root.** Everything for an
+  opportunity lives in `applications/<slug>/`. Only `applications_tracker.md`, `README.md`,
+  `_assets/` and `_research/` belong at the root. The standing "project folders are kept
+  flat, no subfolders" preference does **not** apply to Job Applications — see the
+  `opportunity-intake` skill, which wins on any conflict.
 - **Always log the outcome.** Hand off to `application-tracker` after delivering, per
   the section above. An offer that never reaches the tracker is invisible to the
   weekly review.

@@ -5,6 +5,17 @@ description: "Drafts follow-up messages from Matt Cornet to recruiters and hirin
 
 # Recruiter Follow-up
 
+## Before anything else — open the opportunity
+
+**Run the `opportunity-intake` skill first.** It confirms the opportunity name, resolves
+the kebab-case slug, creates `applications/<slug>/` if it does not already exist, and
+starts the opportunity's `notes.md`. Every file this skill produces goes inside that
+folder.
+
+Do not write anything before the folder exists. If the slug is unknown, ask. If the
+Job Applications project folder is not connected, stop and say so — never fall back to
+the project root, to another connected folder, or to chat-only delivery.
+
 ## What this skill does
 
 Drafts short, in-voice follow-up messages for the four most common recruiter touchpoints: post-application, post-interview, ghosted-process nudge, and warm reactivation of a stale lead. Output is paste-ready email/LinkedIn copy.
@@ -89,6 +100,11 @@ If Matt rewrites any part of the message, **add his version verbatim to §2 of *
 
 ## Hard rules
 
+- **No opportunity-scoped file is ever written to the project root.** Everything for an
+  opportunity lives in `applications/<slug>/`. Only `applications_tracker.md`, `README.md`,
+  `_assets/` and `_research/` belong at the root. The standing "project folders are kept
+  flat, no subfolders" preference does **not** apply to Job Applications — see the
+  `opportunity-intake` skill, which wins on any conflict.
 - **No figures of speech.** If a word does not mean literally what it says, cut it. This is the single most frequent correction Matt makes.
 - **Never read voice rules from `_assets/voice_matt.md` or from `candidate_profile.md`.** Both are stubs as of 2026-09-10.
 - **Never claim "I have a competing offer" if he doesn't.** Reputational damage is permanent.
