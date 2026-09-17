@@ -17,6 +17,9 @@ plugins/
   general/                         domain-agnostic working skills
     .claude-plugin/plugin.json
     skills/<skill-name>/SKILL.md
+  venture-lab/                     generating and killing business ideas
+    .claude-plugin/plugin.json
+    skills/<skill-name>/SKILL.md
 ```
 
 > Personal data is **not** versioned here. Removed 2026-09-10. Matt's identity and
@@ -31,12 +34,13 @@ rather than nested folders.
 
 ## Plugins
 
-### `job-search` (9 skills)
+### `job-search` (10 skills)
 
 The pipeline, roughly in the order it runs:
 
 | Skill | Role in the pipeline |
 |---|---|
+| `opportunity-intake` | Front door: confirms the opportunity, creates `applications/<slug>/` and its `notes.md`, routes to the right skill |
 | `job-fit-analyzer` | Triage a posting before investing: fit score, gap analysis, go/no-go |
 | `company-overview` | Research the company into `company_overview.md` (prerequisite for several skills) |
 | `resume-tailor` | Tailor the master resume to the posting; ATS keywords, requirement mining |
@@ -53,6 +57,15 @@ The pipeline, roughly in the order it runs:
 |---|---|
 | `config-sync` | Mirrors a saved skill into this repo and commits it, so Matt only runs `git push` |
 | `tackle-task` | Kickoff for work no dedicated skill covers: frames task + success criteria, gathers context before starting |
+
+### `venture-lab` (2 skills)
+
+Both write into the Obsidian vault and both default to "no business here".
+
+| Skill | Purpose |
+|---|---|
+| `paper-digest` | Reads a paper or article Matt shares, explains the mechanism, judges it against a 7-gate rubric, files a `type: source` note with the PDF |
+| `idea-pressure-test` | Pressure-tests an idea Matt already has: 11 gates, three adversaries (investor, incumbent PM, target buyer), six verdicts, a pre-registered kill test, filed as a `type: idea` note with dated re-tests |
 
 ## Not in this repo
 
