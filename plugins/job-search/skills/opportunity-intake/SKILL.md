@@ -123,70 +123,22 @@ exists, it counts as provided: use route B, never re-capture over it.
 `<Company>` is the company name without spaces or accents, `<Role>` the role title in
 PascalCase without spaces, punctuation or accents.
 
-**Tooling on Matt's machine** (all work runs there through `device_bash`, straight into the
-application folder; nothing goes through the cloud workspace):
+### No local installs (Matt's rule, 2026-09-22)
 
-```bash
-python3 -c "import weasyprint, pymupdf4llm" 2>/dev/null || pip install --user weasyprint pymupdf4llm
-```
+**Nothing is ever installed on Matt's machine for this step, and no `pip install` runs
+there.** Rendering and conversion happen in the **cloud workspace**, with the tools it ships
+with: Playwright + Chromium (`/opt/pw-browsers`) and `pdfplumber`. The files then go into the
+application folder with `device_commit_files`. If either tool is missing from the cloud
+workspace, stop and tell Matt; do not install anything, anywhere, to work around it.
 
-Then write the helper to `$HOME/scratch/` (outside `mnt/`, so it never lands in Matt's folders):
+The helper is `scripts/jd_capture.py` in this skill's directory (the base directory shown
+when the skill loads; if unknown, `find ~/.claude -path '*opportunity-intake/scripts/jd_capture.py'`).
+Below, `$JD` is that path and `$W` a working folder in the scratchpad, e.g. `$W=<scratchpad>/jd/<slug>`.
 
-```bash
-mkdir -p "$HOME/scratch" && cat > "$HOME/scratch/jd_capture.py" <<'PY_EOF'
-"""jd_capture.py: LinkedIn "About the job" card -> posting PDF -> job_description.md
-
-  python3 jd_capture.py pdf  <card.html> <header.json> <out.pdf>   # render the card as captured
-  python3 jd_capture.py md   <posting.pdf> <out.md> [<source-url>]  # extract the PDF to markdown
-  python3 jd_capture.py sum  <card.html>                            # codepoints + checksum, to match the browser
-"""
-import html, json, sys
-
-def checksum(path):
-    s = open(path, encoding="utf-8").read().rstrip("\n")
-    return len(s), sum(ord(c) for c in s)
-
-def render_pdf(card, header, out):
-    import weasyprint
-    h = json.load(open(header, encoding="utf-8"))
-    e = lambda k: html.escape(h.get(k, ""))
-    meta = "".join(f"<li><b>{html.escape(k)}:</b> {html.escape(v)}</li>"
-                   for k, v in h.get("meta", {}).items() if v)
-    doc = f"""<!doctype html><html><head><meta charset="utf-8"><title>{e('title')} — {e('company')}</title>
-<style>
- @page {{ size: A4; margin: 2cm; @bottom-right {{ content: counter(page) " / " counter(pages); font-size: 8pt; color: #666; }} }}
- body {{ font-family: "DejaVu Sans", sans-serif; font-size: 10pt; line-height: 1.45; color: #111; }}
- h1 {{ font-size: 16pt; margin: 0 0 .3em; }}
- h2 {{ font-size: 13pt; margin: 1.2em 0 .4em; }}
- .meta {{ list-style: none; padding: 0; margin: 0 0 1em; color: #333; font-size: 9pt; }}
- ul {{ margin: .2em 0 .6em 1.2em; padding: 0; }} li {{ margin: .15em 0; }}
- a {{ color: #0a66c2; text-decoration: none; }}
-</style></head><body>
-<h1>{e('title')} — {e('company')}</h1><ul class="meta">{meta}</ul>
-{open(card, encoding='utf-8').read()}
-</body></html>"""
-    weasyprint.HTML(string=doc).write_pdf(out)
-
-def to_md(pdf, out, url=None):
-    import pymupdf4llm
-    import re
-    md = pymupdf4llm.to_markdown(pdf)
-    md = re.sub(r"(?m)^\s*\d+ / \d+[ \t]*$", "", md)                 # page footers
-    md = re.sub(r"(?m)^(#+) \*\*(.+?)\*\*[ \t]*$", r"\1 \2", md)       # "## **X**" -> "## X"
-    md = re.sub(r"(?m)^(\*\*[^*\n]+:\*\*.*?)[ \t]*$",                   # header meta run -> one bullet per field
-                lambda m: "\n".join("- " + f.strip() for f in re.split(r"(?=\*\*[^*]+:\*\*)", m.group(1)) if f.strip()), md)
-    md = re.sub(r"[ \t]+$", "", md, flags=re.M)
-    md = re.sub(r"\n{3,}", "\n\n", md)
-    if url and url not in md:
-        md = f"- **Source:** {url}\n\n" + md
-    open(out, "w", encoding="utf-8").write(md.strip() + "\n")
-
-if __name__ == "__main__":
-    cmd = sys.argv[1]
-    if cmd == "sum":   print(*checksum(sys.argv[2]))
-    elif cmd == "pdf": render_pdf(*sys.argv[2:5]); print("wrote", sys.argv[4])
-    elif cmd == "md":  to_md(*sys.argv[2:5]); print("wrote", sys.argv[3])
-PY_EOF
+```text
+python3 $JD sum <card.html>                           # code points + checksum, to match the browser
+python3 $JD pdf <card.html> <header.json> <out.pdf>   # Chromium renders the card to A4
+python3 $JD md  <posting.pdf> <out.md> [<url>]        # pdfplumber rebuilds headings, bullets, paragraphs
 ```
 
 ### Route A — LinkedIn link: PDF from the web page
@@ -235,9 +187,8 @@ characters, which is why the HTML goes through the page rather than the return v
 the card is kept: "About the company", the hiring team, salary insights and similar jobs are
 not the posting.
 
-**d. Write the card and header to Matt's machine, and prove the copy is exact.** In one
-`device_bash` call, write the HTML verbatim to `$HOME/scratch/jd/card.html` (quoted heredoc,
-`<<'CARD_EOF'`) and the header to `$HOME/scratch/jd/header.json`:
+**d. Write the card and header in the cloud workspace, and prove the copy is exact.** With
+`Write`, save the HTML verbatim to `$W/card.html` and the header to `$W/header.json`:
 
 ```json
 {"title": "<Role title>", "company": "<Company>",
@@ -246,59 +197,60 @@ not the posting.
           "Retrieved": "<YYYY-MM-DD> (<posting age; application notes if shown>)"}}
 ```
 
-Run `python3 "$HOME/scratch/jd_capture.py" sum "$HOME/scratch/jd/card.html"`. Both numbers
-must equal the `codepoints` and `checksum` from step c. **A mismatch means the HTML was
-altered in transit: rewrite `card.html` and check again. Never render an unverified card.**
-Close the tab once it matches.
+Run `python3 $JD sum $W/card.html`. Both numbers must equal the `codepoints` and `checksum`
+from step c. **A mismatch means the HTML was altered in transit: rewrite `card.html` and
+check again. Never render an unverified card.** Close the tab once it matches.
 
-**e. Render the PDF** into the application folder:
+**e. Render, then extract:**
 
 ```bash
-cd "$HOME/mnt/Job Applications/applications/<slug>" && \
-  python3 "$HOME/scratch/jd_capture.py" pdf "$HOME/scratch/jd/card.html" "$HOME/scratch/jd/header.json" \
-    "<Company>_JobPost_<Role>.pdf"
+python3 $JD pdf "$W/card.html" "$W/header.json" "$W/<Company>_JobPost_<Role>.pdf"
+python3 $JD md  "$W/<Company>_JobPost_<Role>.pdf" "$W/job_description.md" "<LinkedIn URL>"
 ```
 
 A4, 2 cm margins, the title as H1, the header block, then LinkedIn's own formatting of the
-card, with page numbers. Checked 2026-09-22 against the Kyndryl posting: 3 pages, checksum
-matched on the first try.
-
-Then continue with route B on that PDF.
+card, with page numbers. Checked 2026-09-22 against the Kyndryl posting: checksum matched
+on the first try, 3 pages, clean markdown. Then deliver (below).
 
 ### Route B — PDF → `job_description.md`
 
-```bash
-cd "$HOME/mnt/Job Applications/applications/<slug>" && \
-  python3 "$HOME/scratch/jd_capture.py" md "<posting>.pdf" job_description.md "<source URL, if known>"
-```
+- **Attached in chat:** it is already in the cloud workspace uploads. Copy it to
+  `$W/<Company>_JobPost_<Role>.pdf`.
+- **Already in the application folder with no `.md`:** stage it with `device_stage_files`
+  (the conversion tool exists only in the cloud workspace, which is a valid reason to stage).
 
-`pymupdf4llm` rebuilds headings and bullets from the PDF; the helper removes page footers
-and puts the header fields one per line. For a PDF Matt attached in chat, first save it
-into the application folder under the `_JobPost_` name (copy it from the chat upload to
-`/mnt/user-data/outputs/` in the cloud workspace, then write it into the folder with
-`device_commit_files`), then run this. Printed browser PDFs carry a print
-timestamp and the page title as their first lines; leave them, they date the capture.
+Then `python3 $JD md "<the PDF>" "$W/job_description.md" "<source URL, if known>"`. Printed
+browser PDFs carry a print timestamp and the page title as their first line; leave it, it
+dates the capture. A scanned PDF with no text layer fails with a message: ask Matt to paste
+the posting instead.
 
 ### Route C — text or another website
 
-Write `job_description.md` directly in the same shape: `# <Role> — <Company>`, the header
-bullets (`Company`, `Location`, `Source`, `Retrieved`), then `## About the job` with the text
-verbatim. No PDF.
+Write `job_description.md` directly into the folder with `device_bash` (no tool needed): `#
+<Role> — <Company>`, the header bullets (`Company`, `Location`, `Source`, `Retrieved`), then
+`## About the job` with the text verbatim. No PDF.
 
-### Check, deliver, log
+### Deliver, verify, log
 
-- `job_description.md` must end on the posting's last line. If it stops at the header, the
-  card had not loaded in route A: scroll and extract again. Do not ship it.
-- **Verbatim, original language:** no summary, no reordering, no translation.
-- Surface the PDF (routes A and B) as a clickable card with `SendUserFile` (stage it
-  first), per the standing rule that the folder copy alone is not delivery.
-- Add a Timeline line to `notes.md`: `<YYYY-MM-DD> — posting captured (<PDF filename>)`.
-- **Re-capture of a changed posting:** never overwrite. Save
-  `<Company>_JobPost_<Role>_<YYYY-MM-DD>.pdf` and `job_description_<YYYY-MM-DD>.md`, and note
-  the change in `notes.md`. Downstream skills then read the most recent dated `.md`. A
-  changed posting is information.
-- **Older folders:** a `job_description.md` with no PDF is complete; a posting PDF with no
-  `.md` gets route B the first time a skill needs it.
+1. Copy the new files (the PDF for routes A and B-attached, and `job_description.md`) to
+   `/mnt/user-data/outputs/<slug>/` and send each with `SendUserFile`: that is the
+   clickable card Matt's standing rule requires, and it returns the `file_uuid`.
+2. Write each into `applications/<slug>/` with `device_commit_files` using that `fileUuid`.
+3. **Verify on Matt's machine:** `md5sum` each file in the folder with `device_bash` and
+   compare with the cloud copy. `device_commit_files` has reported success for writes that
+   never landed (2026-09-10); a mismatch means commit again.
+4. `job_description.md` must end on the posting's last line. If it stops at the header, the
+   card had not loaded in route A: scroll and extract again. Do not ship it.
+5. **Verbatim, original language:** no summary, no reordering, no translation.
+6. Add a Timeline line to `notes.md`: `<YYYY-MM-DD> — posting captured (<PDF filename>)`.
+
+**Re-capture of a changed posting:** never overwrite. Save
+`<Company>_JobPost_<Role>_<YYYY-MM-DD>.pdf` and `job_description_<YYYY-MM-DD>.md`, and note the
+change in `notes.md`. Downstream skills then read the most recent dated `.md`. A changed
+posting is information.
+
+**Older folders:** a `job_description.md` with no PDF is complete; a posting PDF with no
+`.md` gets route B the first time a skill needs it.
 
 ## Step 4 — Route
 
@@ -353,5 +305,7 @@ not belong in the project root either.
 - **Every posting lands in `job_description.md` before any analysis** (Step 3b). A LinkedIn
   link becomes `<Company>_JobPost_<Role>.pdf` first, generated from the web page, and the
   `.md` is extracted from that PDF. Never analyze or tailor from a browser read that was not saved.
+- **Never install anything on Matt's machine** for the posting capture. Rendering and
+  conversion run in the cloud workspace with its preinstalled tools only.
 - **Do not stall on the routing table.** This skill is the front door, not a gate. Open
   the opportunity in one line and continue to the real work in the same turn.
