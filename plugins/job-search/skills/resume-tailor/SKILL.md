@@ -22,7 +22,7 @@ Produces a tailored version of Matt's master resume for a specific job posting. 
 
 ## Inputs Matt will give you
 
-- **Required:** the job posting (URL, pasted text, or PDF). If Matt only gives a URL and you can't fetch it, ask him to paste the text.
+- **Required:** the job posting (URL, pasted text, or PDF). Whatever the form, it is turned into `job_description.md` first (Step 0b). For a non-LinkedIn URL you can't fetch, ask him to paste the text.
 - **Optional:** company notes, hiring manager name, application deadline.
 
 ## Source materials (read these every run)
@@ -42,6 +42,12 @@ Produces a tailored version of Matt's master resume for a specific job posting. 
 
 This skill relies on the application's `company_overview.md`. **If `applications/<company>-<role-slug>/company_overview.md` does not exist, run the `company-overview` skill first** to research the company and create it. If it already exists (e.g. from a prior `job-fit-analyzer` run), read and reuse it. Carry its insights into the profile paragraph, the narrative angle, the ATS keyword choices, and the cover-letter framing.
 
+### Step 0b — Get the posting into `job_description.md`
+
+If `applications/<slug>/job_description.md` does not exist, run Step 3b of `opportunity-intake` now. For a LinkedIn link with no posting PDF, that generates `<Company>_JobPost_<Role>.pdf` from the web page with Claude in Chrome and extracts the `.md` from it; for a PDF Matt supplied, it extracts the `.md` from that PDF; pasted text goes straight to the `.md`. **Every step below reads `job_description.md`**, not the PDF and not a browser read.
+
+The posting PDF is the employer's text, not Matt's document: the "never produce a PDF" rule in Step 4 is about the resume and the letter and does not block it.
+
 ### Step 1 — Parse the posting
 Extract:
 - Role title, level, function
@@ -52,13 +58,9 @@ Extract:
 - Tone of the JD (corporate, startup, consulting) — match it in the cover sections
 - **Every question the application asks, verbatim.** Form fields ("why do you want to join us?") are deliverables in their own right, governed by Step 4b.
 
-If the posting is a URL, fetch it. If fetching fails, ask Matt to paste it rather than guessing.
+Parse from `job_description.md` (Step 0b).
 
-**LinkedIn postings (`linkedin.com/jobs/view/<id>/`) — use this exact method, don't retry server fetches:**
-1. Do NOT use server-side web fetch. The job URL and the guest endpoint (`linkedin.com/jobs-guest/jobs/api/jobPosting/<id>`) both return empty — LinkedIn gates it and the page is client-rendered.
-2. Use the Claude in Chrome browser tools: open/get a tab, navigate to the job URL, then read the page text. The first read returns only the header (title, company, location); the description body is lazy-loaded and not yet in the DOM.
-3. **Scroll down the page about twice, then read the page text again.** The "About the job" card (FR: "Description du poste" / "Qualifications") only renders after scrolling. That second read has the full description.
-4. If the Chrome extension isn't connected, ask Matt to paste the posting text.
+**LinkedIn postings (`linkedin.com/jobs/view/<id>/`):** never server-fetch them. Step 0b captures them from the web page.
 
 **Re-posted roles.** Before tailoring, check `applications_tracker.md` and the `applications/` folders for a prior application to the same company under a similar title. Companies re-post unfilled roles under a new name, often with a harder required profile. If you find one, diff the two postings and lead the diagnostic with what changed in the *required profile*, not in the missions — that delta is the whole tailoring brief. Treat the earlier application as a fact to handle (it is sitting in their ATS), not as something to quietly repeat.
 
@@ -204,7 +206,7 @@ Give him links to the red-teamed `.docx` (with the recruiter's tracked changes),
 - **A form field answers its question.** Never substitute a generic pitch for an answer to what was actually asked.
 - **Two pages max** for senior roles unless Matt asks otherwise. If the master overflows, cut the oldest/least-relevant role bullets first.
 - **Preserve formatting** by editing `master_resume.docx` in place rather than rebuilding.
-- **Deliver the `.docx` and nothing else — never a PDF.** See Step 4.
+- **Deliver the `.docx` and nothing else — never a PDF** of the resume or letter. See Step 4. The one exception is `<Company>_JobPost_<Role>.pdf`, the captured LinkedIn posting (Step 0b).
 
 ## Edge cases
 

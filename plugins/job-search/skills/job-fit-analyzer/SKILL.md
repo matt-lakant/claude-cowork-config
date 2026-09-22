@@ -71,7 +71,21 @@ read and reuse it, refreshing it via `company-overview` if it is clearly stale.
 Carry its insights into every later step, especially domain fit, the narrative angle, and the
 ATS keyword read.
 
+### Step 0b — Get the posting into `job_description.md`
+
+If `applications/<slug>/job_description.md` does not exist, run Step 3b of
+`opportunity-intake` now. For a LinkedIn link with no posting PDF, that generates
+`<Company>_JobPost_<Role>.pdf` from the web page with Claude in Chrome and extracts the
+`.md` from it; for a PDF Matt supplied, it extracts the `.md` from that PDF. Never use
+server-side web fetch on LinkedIn.
+
+**Every step below reads `job_description.md`**, not the PDF and not a browser read. Name
+it as the source in the fit summary.
+
 ### Step 1 — Extract from the posting
+
+Read from `job_description.md` (Step 0b).
+
 
 - Role title, level, function, comp band (if disclosed)
 - Hard requirements: years experience, must-have skills, certifications, geo, work authorization
@@ -229,6 +243,9 @@ requirements, verdict. Rank by score, but lead the commentary with the risk rati
 with no ceiling gaps beats a 43 with two.
 
 ## Hard rules
+
+- **The posting is read from `job_description.md`.** No fit analysis runs on a posting that
+  has not been saved there first (Step 0b).
 
 - **No opportunity-scoped file is ever written to the project root.** Everything for an
   opportunity lives in `applications/<slug>/`. Only `applications_tracker.md`, `README.md`,

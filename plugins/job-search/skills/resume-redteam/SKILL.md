@@ -32,7 +32,7 @@ If the same context that wrote (or just read the rationale for) the resume also 
 
 ## Source materials (the subagent reads these, not Claude's prior work)
 
-1. The job description (`applications/<slug>/job_description.*`, or the posting Matt provided).
+1. The job description: `applications/<slug>/job_description.md` (the most recent `job_description_<YYYY-MM-DD>.md` if dated copies exist). Only if no `.md` exists, fall back to the posting PDF (`*_JobPost_*.pdf`, or `job_description.pdf` in older folders), and tell Matt the `.md` is missing so `opportunity-intake` Step 3b can create it.
 2. `applications/<slug>/company_overview.md` — what the company actually wants and screens for.
 3. *(project)* `_assets/candidate_profile.md` — the **ground truth** of what Matt has really done, including the append-only Q&A log. Used to tell "unsupported claim" apart from "under-sold real experience."
 4. *(vault)* `Notes/Matt Cornet.md` — the **"Technology and scope ceilings" section is the truth ceiling**. Any resume line that exceeds a ceiling is a High-severity credibility risk, not a matter of taste. Include this section in the subagent's packet.
