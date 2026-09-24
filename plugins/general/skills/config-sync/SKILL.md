@@ -289,6 +289,7 @@ Matt avoids pull requests here and commits straight to `main`.
 - **Never claim a commit happened.** You edited files; that is what you say.
 - **Always verify the bytes** before handing over a commit message. See Step 3.
 - **Always bump the version** of every plugin whose files changed. See Step 2b.
+- **Standing rules live in `plugins/general/context/standing-rules.md`**, loaded into every session by the plugin's `SessionStart` hook. When Matt asks for a rule that should apply everywhere, add it there, never to a Settings field.
 - **Request folder access, do not ask for it.** If the clone is not mounted, call
   `device_request_folder_access` straight away; never stop to ask Matt to connect
   the folder in chat.
