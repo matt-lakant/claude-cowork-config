@@ -60,8 +60,6 @@ The pipeline, roughly in the order it runs:
 | `config-sync` | Mirrors a saved skill into this repo and commits it, so Matt only runs `git push` |
 | `tackle-task` | Kickoff for work no dedicated skill covers: frames task + success criteria, gathers context before starting |
 
-Plus a `SessionStart` hook (`hooks/hooks.json`) that loads `context/standing-rules.md` into every session: Matt's standing rules, versioned here instead of in the Settings UI.
-
 ### `venture-lab` (2 skills)
 
 Both write into the Obsidian vault and both default to "no business here".
