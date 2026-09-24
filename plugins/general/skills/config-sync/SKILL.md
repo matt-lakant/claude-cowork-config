@@ -133,10 +133,14 @@ changed.
 | Plugin restructured in a way that breaks how skills call each other | major | `1.4.2` -> `2.0.0` |
 
 Several edits to the same plugin before Matt commits = one bump, not one per
-edit. Check the uncommitted value first: if `plugin.json` already differs from
-the last committed version (read it from the synced copy under
-`~/.claude/plugins/synced/*/<plugin>/.claude-plugin/plugin.json`, which is what
-the last sync served), it has been bumped already.
+edit. **But once a version has been pushed, the next change gets a new bump,
+even if it belongs to the same piece of work.** Before deciding whether a bump is
+already done, compare the working-tree `plugin.json` with the committed one: read
+`.git/refs/remotes/origin/main` and `.git/logs/HEAD` (as files, never `git`) to see
+whether Matt has committed or pushed since the last bump. If the version in the
+working tree is already in a pushed commit, bump again. Observed 2026-09-24: a hook
+was folded into an "uncommitted" `1.1.0` that Matt had in fact already pushed, so
+two different builds both showed as `1.1.0` and could not be told apart.
 
 Why it exists, and why it must never be skipped:
 
