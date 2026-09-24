@@ -23,9 +23,12 @@ How the edit reaches a session:
 
 1. Claude edits the file in the clone at `C:\Users\mattc\repos\claude-cowork-config`.
 2. Matt commits and pushes in GitHub Desktop.
-3. The personal marketplace syncs to the new commit on `main` (`Sync automatically`
-   is ON since 2026-09-10).
-4. The client resolves a new plugin version and re-downloads.
+3. Matt forces the sync: plugin menu `...` > `Check for updates` (retry once if
+   it reports "sync failed"). `Sync automatically` is ON but does not fire on
+   push: known bug anthropics/claude-code#93825, open since 2026-09-12. Until it
+   is fixed, the manual check is part of every release.
+4. Matt checks the version dropdown on the plugin page shows the new
+   `plugin.json` version.
 5. The **next** session loads it. The current one does not.
 
 | Who | Does what |
@@ -116,13 +119,45 @@ which may have been truncated.
 For a **new** skill, add a row to the table in `README.md` and update that
 plugin's skill count in its heading.
 
-**Do not add a `version` field to `plugin.json`.** It was deliberately removed in
-`3a8ed14`. Version resolution falls through to the commit SHA, which changes on
-every commit and cannot be forgotten; a pinned string takes precedence over the
-SHA and reintroduces the stale-plugin bug that cost the 2026-09-10 afternoon. If a
-human-readable release marker is ever wanted, use a git tag, which does not
-participate in version resolution. `marketplace.json`'s `metadata.version` is
-marketplace-level metadata and does not gate plugin updates; leave it.
+### Step 2b - Bump the plugin version (mandatory, every change)
+
+Every `plugins/<plugin>/.claude-plugin/plugin.json` carries a semver `version`
+(reintroduced 2026-09-24 at `1.1.0`). **In the same turn as any edit under
+`plugins/<plugin>/`, bump that plugin's version.** Only bump plugins whose files
+changed.
+
+| Change | Bump | Example |
+|---|---|---|
+| Edit to an existing skill, script or README row | patch | `1.1.0` -> `1.1.1` |
+| Skill added or removed | minor | `1.1.3` -> `1.2.0` |
+| Plugin restructured in a way that breaks how skills call each other | major | `1.4.2` -> `2.0.0` |
+
+Several edits to the same plugin before Matt commits = one bump, not one per
+edit. Check the uncommitted value first: if `plugin.json` already differs from
+the last committed version (read it from the synced copy under
+`~/.claude/plugins/synced/*/<plugin>/.claude-plugin/plugin.json`, which is what
+the last sync served), it has been bumped already.
+
+Why it exists, and why it must never be skipped:
+
+- **Traceability.** The redesigned plugin UI (2026-09) no longer shows the synced
+  commit SHA. Without a `version` it shows a server revision counter (`v2`, `v5`,
+  the `"version": "000N"` in the synced `manifest.json`) that maps to nothing in
+  the repo. With a `version`, the dropdown shows Matt's string.
+- **Session check.** The synced `plugin.json` is readable inside a session, so
+  Claude can confirm which version it loaded (see "Is the runtime current?").
+- **The trap.** A pinned string takes precedence over the commit SHA. If the
+  content changes and the string does not, Claude Code treats both as the same
+  version and skips the update. This is what broke 2026-09-10 (`1.0.0` never
+  bumped, removed in `3a8ed14`). The version came back because this step makes the
+  bump part of every edit Claude makes; a forgotten bump is a bug in this skill's
+  execution.
+
+Optional: Matt can tag the commit `<plugin>-v<version>` in GitHub Desktop so a
+version maps to a commit. Tags do not affect resolution.
+
+`marketplace.json`'s `metadata.version` is marketplace-level metadata and does not
+gate plugin updates; leave it.
 
 ### Step 3 - Verify the bytes actually landed (mandatory)
 
@@ -156,6 +191,8 @@ than the file operation. Append the co-author trailer.
 
 <why it changed, in a sentence or two; the reason is what future-Matt needs>
 
+<plugin> <old version> -> <new version>
+
 Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
 ```
 
@@ -182,12 +219,21 @@ When Matt asks whether the repo or the runtime is up to date, **read files under
 | `.git/refs/remotes/origin/main` | the last pushed commit; equal to the above means pushed |
 | `.git/logs/HEAD` | the reflog: history with SHAs, authors and epoch timestamps |
 
-Then compare `refs/heads/main` against **Settings > Directory > Plugins > Personal
-> `claude-cowork-config` > `...` > `Synced commit`**. Equal means the runtime is
-serving the current code. Different means the sync has not run; `Check for updates`
-in that same menu forces it. The `Update` button on the plugin card is downstream
-and stays greyed while the marketplace has nothing newer, so it is not the control
-to press.
+Pushed is not served. The redesigned UI no longer shows the synced commit, so
+compare **versions**:
+
+| Where | What it shows |
+|---|---|
+| Repo `plugins/<plugin>/.claude-plugin/plugin.json` | the version Matt pushed (if `.git/refs` shows it committed and pushed) |
+| Settings > Plugins > the plugin > version dropdown (`<plugin> <version> · current`) | the version the marketplace synced |
+| `~/.claude/plugins/synced/*/<plugin>/.claude-plugin/plugin.json` in the session container | the version **this session** loaded |
+
+All three equal means the runtime is current. If the dropdown is behind, the sync
+has not run: `...` > `Check for updates` forces it (retry once on "sync failed",
+anthropics/claude-code#86818). If only the session is behind, start a new session.
+The plugin page's `Update` button stays greyed while nothing newer is synced; it
+is not the control to press. The synced `manifest.json` `"version": "000N"` is a
+server revision counter (the UI's `vN`); ignore it.
 
 A skill that exists in the repo is served. There is no separate account copy to
 reconcile against any more.
@@ -242,6 +288,10 @@ Matt avoids pull requests here and commits straight to `main`.
   `device_request_delete_permission` on the repo folder.
 - **Never claim a commit happened.** You edited files; that is what you say.
 - **Always verify the bytes** before handing over a commit message. See Step 3.
+- **Always bump the version** of every plugin whose files changed. See Step 2b.
+- **Request folder access, do not ask for it.** If the clone is not mounted, call
+  `device_request_folder_access` straight away; never stop to ask Matt to connect
+  the folder in chat.
 - **Never write session outputs into this repo.** No report, no draft, no scratch
   copy of a file that already lives under `plugins/`. Session deliverables go to
   `C:\Users\mattc\OneDrive\Documents\Claude\Projects\<Project Name>\` and they go
