@@ -74,10 +74,10 @@ ATS keyword read.
 ### Step 0b — Get the posting into `job_description.md`
 
 If `applications/<slug>/job_description.md` does not exist, run Step 3b of
-`opportunity-intake` now. For a LinkedIn link with no posting PDF, that generates
+`opportunity-intake` now. For a LinkedIn or Collective.work link with no posting PDF, that generates
 `<Company>_JobPost_<Role>.pdf` from the web page with Claude in Chrome and extracts the
 `.md` from it; for a PDF Matt supplied, it extracts the `.md` from that PDF. Never use
-server-side web fetch on LinkedIn.
+server-side web fetch on LinkedIn or Collective.
 
 **Every step below reads `job_description.md`**, not the PDF and not a browser read. Name
 it as the source in the fit summary.
@@ -92,6 +92,11 @@ Read from `job_description.md` (Step 0b).
 - Soft requirements
 - Domain, at the granularity the posting uses (sub-sector, buy-side or sell-side, and so on)
 - Top 15 to 20 ATS keywords, verbatim
+- **Freelance missions** (Collective, Malt, Comet, or any `Freelance` contract): day rate or
+  "selon profil", start date, duration and renewal, days on site per week, and whether the
+  poster is an intermediary with an unnamed end client. Report them in the fit summary as
+  logistics; they do not enter the five scores, but an on-site load or duration Matt cannot
+  take is a 🚫 on its own.
 
 Extract the posting's own vocabulary here. Do not translate it yet into Matt's terms: that
 mapping is Step 2.5's job and it needs both sides stated separately.

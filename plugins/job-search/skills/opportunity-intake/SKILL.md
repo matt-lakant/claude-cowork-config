@@ -86,7 +86,7 @@ Leave a field blank rather than inventing it.
 |---|---|
 | Company | |
 | Role / mission | |
-| Source | LinkedIn / recruiter / job board / referral / spontaneous |
+| Source | LinkedIn / Collective / recruiter / job board / referral / spontaneous |
 | Contacts | name, title, how reached |
 | Opened | <YYYY-MM-DD> |
 | Status | first contact |
@@ -112,8 +112,9 @@ analyzes from it. Run this step whenever a skill needs the posting and
 | Input | Route |
 |---|---|
 | LinkedIn link, no posting PDF | **A.** Web page → `<Company>_JobPost_<Role>.pdf` → `job_description.md` |
+| Collective.work link, no posting PDF | **A2.** Page data → `<Company>_JobPost_<Role>.pdf` → `job_description.md` |
 | A posting PDF (attached in chat, or already in the folder with no `.md`) | **B.** PDF → `job_description.md` |
-| Pasted text, or a non-LinkedIn URL | **C.** Write `job_description.md` directly, no PDF |
+| Pasted text, or any other URL | **C.** Write `job_description.md` directly, no PDF |
 
 A posting PDF is `*_JobPost_*.pdf`, `job_description.pdf` in older folders, or any other
 `.pdf` in the folder that is the posting rather than one of Matt's `CORNET_*` files. If one
@@ -212,6 +213,81 @@ A4, 2 cm margins, the title as H1, the header block, then LinkedIn's own formatt
 card, with page numbers. Checked 2026-09-22 against the Kyndryl posting: checksum matched
 on the first try, 3 pages, clean markdown. Then deliver (below).
 
+### Route A2 — Collective.work link: PDF from the page data
+
+Collective (`collective.work/jobs/<lang>/<slug>`) is handled like LinkedIn: capture, prove the
+copy, render the PDF, extract the `.md`. The page differs in three ways, all checked
+2026-09-24 on `tech-lead-data-ia-banque-xwlf` (Veilos):
+
+- **There is no "About the job" / "About the company" card.** The posting is two blocks,
+  *Le besoin* and *Profil recherché*, whose titles are styled paragraphs, not headings. Do not
+  run the route A script: it finds nothing, and walking up the DOM grabs the similar-jobs
+  list with it.
+- **Server-side web fetch returns a model summary, not the text.** Never use it for the
+  posting; it breaks the verbatim rule.
+- **The application questions are not in the visible page.** They appear only behind
+  *Postuler*, but they sit in the page data with the posting. They are required fields, and
+  `resume-tailor` Step 1 reads them from `job_description.md`, so the capture must carry them.
+
+**a. Load the page.** With Claude in Chrome, open a new tab on the Collective URL. No scroll
+is needed: the whole posting is in the Next.js page data (`#__NEXT_DATA__` →
+`props.pageProps.project`). If Chrome is not connected, ask Matt to print the page to PDF
+(route B, then paste the questions, which the print will not show) or paste it (route C).
+
+**b + c. Extract the card and the header in one call** with `javascript_tool`. It builds the
+card from the posting's own HTML (`description`, then `profileWanted`), adds the form
+questions as a numbered list, strips markup as route A does, replaces the page with the HTML as
+text, and returns the header fields with the code-point count and checksum.
+
+```javascript
+// Collective.work job page: build the posting card from the page data.
+const p = JSON.parse(document.querySelector('#__NEXT_DATA__').textContent).props.pageProps.project;
+if (!p || !p.description) throw new Error('No project data: Collective page layout changed, use route B or C');
+const KEEP = new Set(['H1','H2','H3','H4','P','UL','OL','LI','STRONG','B','EM','I','A','BR']);
+function clean(src) {
+  const k = document.createElement('div'); k.innerHTML = src || '';
+  k.querySelectorAll('li > p').forEach(e => e.replaceWith(...e.childNodes));   // <li><p>x</p></li> -> <li>x</li>
+  (function c(n) { [...n.children].forEach(ch => { c(ch);
+    if (!KEEP.has(ch.tagName)) ch.replaceWith(...ch.childNodes);
+    else [...ch.attributes].forEach(a => { if (!(ch.tagName === 'A' && a.name === 'href')) ch.removeAttribute(a.name); });
+  }); })(k);
+  return k.innerHTML.replace(/<p>\s*<\/p>/g, '');
+}
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+let html = '<h2>Le besoin</h2>' + clean(p.description);
+if (p.profileWanted) html += '<h2>Profil recherché</h2>' + clean(p.profileWanted);
+if ((p.questions || []).length) html += '<h2>Questions du formulaire de candidature</h2><ol>' +
+  p.questions.map(q => '<li>' + esc(q.name.trim()) + '</li>').join('') + '</ol>';
+html = html.replace(/\s*\n\s*/g, '\n').replace(/(<br>|<\/p>|<\/li>|<\/h\d>|<\/ul>|<\/ol>)/g, '$1\n').trim();
+const header = { title: p.name.trim(), company: p.company && p.company.name,
+  contract: p.contractTypes, mode: p.workPreferences, location: p.location && p.location.fullNameFrench,
+  published: p.publishedAt, rate: p.isSalaryAccordingToProfile ? 'selon profil'
+    : [p.minSalary, p.maxSalary].filter(x => x != null).join('-') + ' ' + (p.salaryCurrency || '') + ' ' + (p.salaryFrequency || ''),
+  requireResume: p.requireResume, questions: (p.questions || []).length, external: p.isExternal };
+const cps = [...html];
+document.body.innerHTML = ''; const pre = document.createElement('pre'); pre.textContent = html; document.body.appendChild(pre);
+JSON.stringify({ header, codepoints: cps.length, checksum: cps.reduce((s, ch) => s + ch.codePointAt(0), 0) })
+```
+
+Then `get_page_text` returns the full card HTML. Only the posting is kept: the
+*Information importante* box goes into the header, and the similar jobs and footer are dropped.
+If `external` is true, the posting redirects to another site: say so in `notes.md`, and the
+questions may live there instead.
+
+**d. Write, prove, render, extract** exactly as route A steps d and e, with this header:
+
+```json
+{"title": "<Role title>", "company": "<Company>",
+ "meta": {"Company": "<Company>; if it is an intermediary and the end client is unnamed, add the posting's own description of the client",
+          "Location": "<location> (<Hybride / Remote / Sur site>, <Freelance / CDI>)",
+          "Source": "<Collective URL>",
+          "Retrieved": "<YYYY-MM-DD> (publié le <date>; taux journalier : <rate>)",
+          "Application": "<CV requis if requireResume>; <n> questions au formulaire (voir fin de document)"}}
+```
+
+Checked 2026-09-24 on the Veilos posting: checksum matched on the first try, 3 pages, the four
+questions extracted as a numbered list. Then deliver (below).
+
 ### Route B — PDF → `job_description.md`
 
 - **Attached in chat:** it is already in the cloud workspace uploads. Copy it to
@@ -232,7 +308,7 @@ Write `job_description.md` directly into the folder with `device_bash` (no tool 
 
 ### Deliver, verify, log
 
-1. Copy the new files (the PDF for routes A and B-attached, and `job_description.md`) to
+1. Copy the new files (the PDF for routes A, A2 and B-attached, and `job_description.md`) to
    `/mnt/user-data/outputs/<slug>/` and send each with `SendUserFile`: that is the
    clickable card Matt's standing rule requires, and it returns the `file_uuid`.
 2. Write each into `applications/<slug>/` with `device_commit_files` using that `fileUuid`.
@@ -240,7 +316,8 @@ Write `job_description.md` directly into the folder with `device_bash` (no tool 
    compare with the cloud copy. `device_commit_files` has reported success for writes that
    never landed (2026-09-10); a mismatch means commit again.
 4. `job_description.md` must end on the posting's last line. If it stops at the header, the
-   card had not loaded in route A: scroll and extract again. Do not ship it.
+   card had not loaded in route A: scroll and extract again (in route A2, check the questions
+   section is there when the posting has questions). Do not ship it.
 5. **Verbatim, original language:** no summary, no reordering, no translation.
 6. Add a Timeline line to `notes.md`: `<YYYY-MM-DD> — posting captured (<PDF filename>)`.
 
@@ -305,7 +382,7 @@ not belong in the project root either.
 - **Do not rename or move existing application folders** without asking. The tracker's
   `Folder` column points at them.
 - **Every posting lands in `job_description.md` before any analysis** (Step 3b). A LinkedIn
-  link becomes `<Company>_JobPost_<Role>.pdf` first, generated from the web page, and the
+  or Collective link becomes `<Company>_JobPost_<Role>.pdf` first, generated from the web page, and the
   `.md` is extracted from that PDF. Never analyze or tailor from a browser read that was not saved.
 - **Never install anything on Matt's machine** for the posting capture. Rendering and
   conversion run in the cloud workspace with its preinstalled tools only.

@@ -69,7 +69,7 @@ reply (Valiantys 38/50, UpSlide 37/50) scored no higher than four that were ghos
 | Field | Values | Rule |
 |---|---|---|
 | Fit | `NN/50` or `—` | The `job-fit-analyzer` total. `—` means never scored; never estimate one after the fact. |
-| Channel | `cold` / `agency` / `platform` / `inbound` / `outreach` / `referral` | `cold` = company ATS, careers page or LinkedIn apply. `agency` = Matt applied to a cabinet's posting. `platform` = freelance marketplace (Collective, WTTJ freelance). `inbound` = a recruiter or agency approached Matt first. `outreach` = Matt contacted an insider with no posting. `referral` = an insider introduced him. The ATS name stays in `Source`. |
+| Channel | `cold` / `agency` / `platform` / `inbound` / `outreach` / `referral` | `cold` = company ATS, careers page or LinkedIn apply. `agency` = Matt applied to a cabinet's posting. `platform` = freelance marketplace (Collective, WTTJ freelance) where the poster is the end client. When a cabinet or ESN posts on the marketplace (e.g. Veilos on Collective), use `agency` and put the marketplace name in `Source`. `inbound` = a recruiter or agency approached Matt first. `outreach` = Matt contacted an insider with no posting. `referral` = an insider introduced him. The ATS name stays in `Source`. |
 | Referral | `yes` / `no` | `yes` only if a named insider vouched for him, even when the channel is `cold`. |
 | AI title | `yes` / `no` | `yes` if the posted title contains AI, IA or agentic. Literal: an AI company's role with no AI word in the title is `no`. |
 | Seniority | `match` / `below` / `above` / `?` | Role level against Matt's (Global Director / Head-of). Take it from the fit analysis (a "seniority inversion" is `below`); `?` if nothing says. |

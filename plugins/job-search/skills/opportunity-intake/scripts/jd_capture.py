@@ -1,4 +1,4 @@
-"""jd_capture.py: LinkedIn "About the job" card -> posting PDF -> job_description.md
+"""jd_capture.py: posting card (LinkedIn "About the job", Collective.work mission) -> posting PDF -> job_description.md
 
 Runs in the CLOUD WORKSPACE with its preinstalled tools only (Playwright + Chromium,
 pdfplumber). Nothing is installed, nothing runs on Matt's machine.
@@ -24,6 +24,9 @@ ul.meta li::before { content: none; }
 ul { list-style: none; margin: .2em 0 .6em 0; padding-left: 1.1em; }
 li { margin: .15em 0; text-indent: -1.1em; }
 li::before { content: "\\2022\\00a0\\00a0"; }   /* bullet as real text, so it survives extraction */
+ol { list-style: none; margin: .2em 0 .6em 0; padding-left: 1.6em; counter-reset: n; }
+ol > li { counter-increment: n; text-indent: -1.6em; }
+ol > li::before { content: counter(n) ".\\00a0\\00a0"; }   /* number as real text, no bullet */
 a { color: #0a66c2; text-decoration: none; }
 """
 
@@ -51,7 +54,8 @@ def render_pdf(card, header, out):
         b.close()
 
 
-META = re.compile(r"^(Company|Location|Source|Retrieved):\s*(.*)$")   # header block written by render_pdf
+NUM = re.compile(r"^(\d+)\.\s+")                                    # "1.  text" from an <ol>
+META = re.compile(r"^(Company|Location|Source|Retrieved|Application):\s*(.*)$")   # header block written by render_pdf
 
 
 def to_md(pdf, out, url=None):
@@ -83,12 +87,14 @@ def to_md(pdf, out, url=None):
             kind = "###"
         elif t.startswith("•"):
             kind, t = "-", t.lstrip("•  ").strip()
+        elif NUM.match(t):
+            kind, t = "n", NUM.sub(r"\1. ", t, count=1)        # numbered item from an <ol>
         elif META.match(t):
             kind = "meta"
         else:
             kind = "p"
         gap = (l["top"] - prev["bottom"]) if prev and prev["page"] == l["page"] else 99
-        cont = (prev and kind == "p" and blocks and blocks[-1][0] in ("p", "-")
+        cont = (prev and kind == "p" and blocks and blocks[-1][0] in ("p", "-", "n")
                 and gap < l["size"] * 0.6)                       # wrapped line of the same block
         if cont:
             blocks[-1][1] += " " + t
@@ -106,12 +112,14 @@ def to_md(pdf, out, url=None):
             md.append(f"{kind} {t}")
         elif kind == "-":
             md.append(f"- {t}")
+        elif kind == "n":
+            md.append(t)
         else:
             md.append(t)
     text = "\n\n".join(md)
-    text = re.sub(r"\n\n(?=- )", "\n", text)                    # tight lists
-    text = re.sub(r"(?m)^(- .*)\n(?!- )", r"\1\n\n", text)
-    text = re.sub(r"(?m)^(#.*)\n(?=- )", r"\1\n\n", text)     # blank line between a heading and its list
+    text = re.sub(r"\n\n(?=- |\d+\. )", "\n", text)                    # tight lists
+    text = re.sub(r"(?m)^((?:- |\d+\. ).*)\n(?!- |\d+\. )", r"\1\n\n", text)
+    text = re.sub(r"(?m)^(#.*)\n(?=- |\d+\. )", r"\1\n\n", text)     # blank line between a heading and its list
     if url and url not in text:
         text = f"- **Source:** {url}\n\n" + text
     open(out, "w", encoding="utf-8").write(re.sub(r"\n{3,}", "\n\n", text).strip() + "\n")
