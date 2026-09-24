@@ -110,3 +110,7 @@ Save a short critique memo: `applications/<slug>/redteam_notes.md` — the prior
 
 ## Pipeline position
 Runs as the **final gate of `resume-tailor`** (after the product/balanced passes, before the file is presented to Matt) and is also invokable standalone on any existing tailored resume.
+
+What follows it (2026-09-24): Matt downloads the redlined `.docx`, accepts or rejects the Recruiter changes and edits in Word, then attaches the final file back to the chat. That triggers `asset-updater` in returned-file mode (his rewrites go to `Writing voice.md` §2, and the Recruiter edits he rejected are logged under "Rejected by Matt" in `redteam_notes.md` so this skill can see where it over-reaches), then `cover-letter`, which drafts from that final CV.
+
+**Before spawning the adversary, read the "Rejected by Matt" section of the last three `redteam_notes.md` files in `applications/`**, if any. Edits he keeps rejecting are a calibration signal: do not propose the same kind of edit again without a new reason.

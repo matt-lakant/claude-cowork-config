@@ -261,7 +261,9 @@ Matt what he wants next when the request already says.
 |---|---|
 | A name or a contact, no posting yet | `company-overview`, then come back |
 | "Should I apply?", a posting to triage | Step 3b (posting → `job_description.md`), then `job-fit-analyzer` |
-| A resume or cover letter for this role | Step 3b (posting → `job_description.md`), then `resume-tailor` then `resume-redteam` (mandatory gate) |
+| A resume for this role | Step 3b (posting → `job_description.md`), then `resume-tailor` then `resume-redteam` (mandatory gate) |
+| A cover letter for this role | `cover-letter` then `cover-letter-redteam` (mandatory gate). It needs the final CV attached; if no tailored CV exists yet, run the resume row first |
+| A final CV or cover letter attached back after his edits | `asset-updater` (returned-file mode), then `cover-letter` if the file is a CV and a letter is wanted |
 | A call, screen or interview to prepare | `interview-prep` |
 | A message to a recruiter or hiring manager | `recruiter-followup` |
 | An offer on the table | `offer-negotiator` |

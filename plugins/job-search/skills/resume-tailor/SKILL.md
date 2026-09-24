@@ -31,7 +31,7 @@ Produces a tailored version of Matt's master resume for a specific job posting. 
 
 > **Voice reference moved, 2026-09-10.** How Matt writes now lives in *(vault)* `Notes/Writing voice.md`, not in this project. §2 is the corpus of his own sentences, §3 the banned-construction table, §4 the review test, §5 the per-surface rules (5.1 candidature prose, 5.2 resume, 5.3 LinkedIn post). Run `ls $HOME/mnt/` and check for `obsidian-vault`; if it is not connected, ask Matt to connect `C:\Users\mattc\Obsidian\obsidian-vault` before drafting any prose, or call `device_request_folder_access` on it. `_assets/voice_matt.md` and the "Voice & style guidelines" section of `candidate_profile.md` are stubs pointing there — never read them as rules, never write to them.
 
-1. *(vault)* `Notes/Writing voice.md` — the voice reference. Governs **every line of prose** (profile paragraph, cover letter, form answers) via §5.1, and **every resume bullet** via §5.2.
+1. *(vault)* `Notes/Writing voice.md` — the voice reference. Governs **every line of prose** (profile paragraph, form answers) via §5.1, and **every resume bullet** via §5.2.
 2. *(vault)* `Notes/Matt Cornet.md` — durable identity and the "Technology and scope ceilings" list. Read the ceilings before writing any claim about a tool, a certification, a sector or a scope.
 3. *(project)* `_assets/candidate_profile.md` — canonical experience, target roles, accuracy guardrails, and the append-only tailoring Q&A log. **Read this first.**
 4. *(project)* `_assets/master_resume.docx` — the formatted master. Use this as the template for the .docx output (preserve fonts, table layout, section structure).
@@ -40,7 +40,7 @@ Produces a tailored version of Matt's master resume for a specific job posting. 
 
 ### Step 0 — Company overview (prerequisite)
 
-This skill relies on the application's `company_overview.md`. **If `applications/<company>-<role-slug>/company_overview.md` does not exist, run the `company-overview` skill first** to research the company and create it. If it already exists (e.g. from a prior `job-fit-analyzer` run), read and reuse it. Carry its insights into the profile paragraph, the narrative angle, the ATS keyword choices, and the cover-letter framing.
+This skill relies on the application's `company_overview.md`. **If `applications/<company>-<role-slug>/company_overview.md` does not exist, run the `company-overview` skill first** to research the company and create it. If it already exists (e.g. from a prior `job-fit-analyzer` run), read and reuse it. Carry its insights into the profile paragraph, the narrative angle, the ATS keyword choices, and the cover-letter angle recorded in the memo (Step 5).
 
 ### Step 0b — Get the posting into `job_description.md`
 
@@ -92,7 +92,7 @@ Matt has 20+ years of broad experience; the master resume captures only the head
    - **Regulations, risk controls, and operating models** the JD names — which has he dealt with hands-on?
    - **Adjacent / non-obvious work** the headline resume omits.
 4. **Asking a lot is expected.** A senior role with 10+ requirements may warrant 2–3 rounds of questions. One extra question costs far less than shipping a resume or cover letter that under-sells real experience. The only requirements you skip are those already rated **Strong** or **Blocked**.
-5. **Record every confirmed answer in `candidate_profile.md`** (standing rule, 2026-06-25): append each answer (dated) to the `## Confirmed details from tailoring Q&A (append-only log)` section, and promote durable items into the relevant Experience bullets / master via `asset-updater`. A confirmed answer that raises or lowers a ceiling belongs in *(vault)* `Notes/Matt Cornet.md` too — hand that to `asset-updater`. Then **fold them into the rewrite as real, specific bullets — and reuse the same confirmed specifics in the cover letter.** Never invent — surface only what Matt confirms. If he confirms nothing for a requirement, keep it as a stated gap in the memo.
+5. **Record every confirmed answer in `candidate_profile.md`** (standing rule, 2026-06-25): append each answer (dated) to the `## Confirmed details from tailoring Q&A (append-only log)` section, and promote durable items into the relevant Experience bullets / master via `asset-updater`. A confirmed answer that raises or lowers a ceiling belongs in *(vault)* `Notes/Matt Cornet.md` too — hand that to `asset-updater`. Then **fold them into the rewrite as real, specific bullets.** Because they are logged, `cover-letter` reuses the same confirmed specifics later. Never invent — surface only what Matt confirms. If he confirms nothing for a requirement, keep it as a stated gap in the memo.
 
 This step is **mandatory on every run** (not just for out-of-track or tool-heavy roles). It can be abbreviated only for a near-identical re-tailor of a role he has already been fully mined on — and even then, re-ask any requirement the prior run left Partial / Absent. (Implements the `feedback_tailoring_alignment_questions` practice.)
 
@@ -139,21 +139,21 @@ Where:
 
 ### Step 4b — The prose pieces: facts travel, sentences do not
 
+**The cover letter is no longer drafted here (changed 2026-09-24).** It is written by the `cover-letter` skill once the CV is final: Matt downloads the red-teamed `.docx`, finalizes it in Word, and attaches it back to the chat, which starts `cover-letter`. Drafting the letter in the same pass as the CV produced CV-style prose, and nothing independent reviewed it. This step now covers the form fields only.
+
 Write every prose piece in Matt's voice per *(vault)* `Notes/Writing voice.md`, §5.1 for the surface rules. Then give each piece its own job and let it draw from the shared stock of evidence whatever serves that job. **The same fact may appear in two pieces**, provided each does something different with it. What must never repeat is a sentence or a framing.
 
 | Piece | Its job | What it takes |
 |---|---|---|
 | **CV** | Inventory the facts, scannable | Everything, no prose |
-| **Cover letter** | Select 2–3 of the CV's strongest facts and make them mean something for this employer | Whatever carries the argument |
-| **Form field** | **Answer the question it asks**, and nothing else | Whatever answers that question, from the CV or the letter |
+| **Form field** | **Answer the question it asks**, and nothing else | Whatever answers that question, from the CV |
+| *Cover letter* | *Written later by `cover-letter`, from the final CV* | *n/a here* |
 
-**The letter must pick up the CV's key elements.** The CV is scanned; the letter is read. A letter that reuses nothing leaves its strongest evidence uninterpreted, and uninterpreted evidence does not weigh. Give the cause, the consequence, and why it answers this employer's problem: the CV states "margin taken from roughly 27 to 32 points in three years", the letter says what produced it and what it proves about how he runs a P&L. Select two or three facts, never the list. What to avoid is the letter that paraphrases the CV in sentences — a prose inventory with no cause, no consequence, no judgement.
+**The form field is not held to novelty.** It answers a specific question, and to do so it reuses the key elements of the CV that answer it. Its constraint is the question, not freshness. Read the question literally and answer that; never drop a generic pitch beside it.
 
-**The form field is not held to novelty.** It answers a specific question, and to do so it reuses the key elements of the CV or the letter that answer it. Its constraint is the question, not freshness. Read the question literally and answer that; never drop a generic pitch beside it.
+**Order of drafting:** CV first (it fixes the stock of facts), then the form fields, which pick whatever best answers their question.
 
-**Order of drafting:** CV first (it fixes the stock of facts), then the letter, then the form field, which picks last whatever best answers its question.
-
-**Before delivering, read the pieces back to back looking for twin sentences, not for shared facts.** Rewrite any repeated phrasing or framing outright. Then run the §4 review test over all of them. And never announce the division of labour to the reader: a letter opening with "the form says why, this letter says what" explains its plan instead of executing it, which also breaks the §3 rule against sentences that announce the next one.
+**Before delivering, read the pieces back to back looking for twin sentences, not for shared facts.** Rewrite any repeated phrasing or framing outright. Then run the §4 review test over all of them, including point 8 (the AI-tell list in §4.1) and, for any "why us" field, point 9 (the swap test).
 
 Note in the file which anchoring sentence to restore if a piece is later sent on its own. Deliver short texts to the outputs panel with `SendUserFile` so Matt can open and copy them, and keep a copy in the application folder.
 
@@ -165,10 +165,9 @@ Contents:
 - JD summary (3 sentences)
 - Top 10 ATS keywords used + where they appear in the resume
 - Trade-offs made (what was de-emphasized, what got cut)
-- Which CV facts the letter picked up, and what each one was made to mean
 - The exact question each form field asked, and which facts were used to answer it
 - Open questions / things to verify before submitting
-- Recommended cover letter angle (2 sentences)
+- Recommended cover letter angle (2 sentences): the 2–3 CV facts that best answer this JD and the "why this company" fact from `company_overview.md`. `cover-letter` reads this as a starting point, not a script.
 
 This memo is for Matt to skim before submitting and is invaluable when he prepares for the interview weeks later.
 
@@ -182,13 +181,15 @@ Update `applications_tracker.md` at the project root (the tracker is now markdow
 
 **When the red-team finds a factual error rather than a weakness** — a certification he does not hold, a stale claim, a guardrail decided but never applied — fix it at the source in the same run: *(project)* `_assets/candidate_profile.md`, *(project)* `_assets/master_resume.docx`, and *(vault)* `Notes/Matt Cornet.md` if it is a ceiling, not just the CV in hand. A guardrail written only into the Q&A log does not propagate itself, and the error comes back on the next tailoring run.
 
-### Step 8 — Feed the voice corpus
+### Step 8 — Learn from the file Matt sends back
 
-If Matt rewrites any sentence of the prose, **add his version verbatim to §2 of *(vault)* `Notes/Writing voice.md`** in the same turn, and hand the rest to `asset-updater`. A sample needs no threshold to be worth keeping; a banned-construction rule waits for the pattern to repeat twice. If the vault is not connected, say so and hand Matt the sentence rather than writing it into `_assets/`.
+Matt finalizes the red-teamed `.docx` in Word and attaches it back to the chat. **When he does, run `asset-updater` in returned-file mode** before anything else. It saves his file in the application folder, diffs it against both Claude versions (the tailored draft and the redline with every Recruiter change accepted), sends every sentence he wrote or rewrote verbatim to §2 of *(vault)* `Notes/Writing voice.md` in the same turn, logs the Recruiter edits he rejected in `redteam_notes.md`, and routes factual changes to `candidate_profile.md` and `Notes/Matt Cornet.md`. A sample needs no threshold to be worth keeping; a banned-construction rule waits for the pattern to repeat twice. If the vault is not connected, say so and hand Matt the sentence rather than writing it into `_assets/`.
+
+If he attached the CV to get a cover letter, continue with `cover-letter` in the same turn.
 
 ## Output: present to Matt
 
-Give him links to the red-teamed `.docx` (with the recruiter's tracked changes), the tailoring memo, the `redteam_notes.md` critique, and the `company_overview.md` company brief (from Step 0), plus a 3-line summary of the angle taken and the biggest weakness the red-team flagged. Don't paste the resume text into chat — the .docx is the deliverable. Short prose pieces go to the outputs panel, not into the conversation.
+Give him links to the red-teamed `.docx` (with the recruiter's tracked changes), the tailoring memo, the `redteam_notes.md` critique, and the `company_overview.md` company brief (from Step 0), plus a 3-line summary of the angle taken and the biggest weakness the red-team flagged. Don't paste the resume text into chat — the .docx is the deliverable. Short prose pieces go to the outputs panel, not into the conversation. End with the next step in one line: finalize the redline in Word and attach it back here; that starts `cover-letter` and feeds his edits into the voice note.
 
 ## Hard rules
 

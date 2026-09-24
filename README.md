@@ -34,7 +34,7 @@ rather than nested folders.
 
 ## Plugins
 
-### `job-search` (10 skills)
+### `job-search` (12 skills)
 
 The pipeline, roughly in the order it runs:
 
@@ -45,11 +45,13 @@ The pipeline, roughly in the order it runs:
 | `company-overview` | Research the company into `company_overview.md` (prerequisite for several skills) |
 | `resume-tailor` | Tailor the master resume to the posting; ATS keywords, requirement mining |
 | `resume-redteam` | Mandatory adversarial gate: a hostile recruiter tries to reject the resume |
+| `cover-letter` | Writes the cover letter after Matt returns the final CV: his hook answers, §5.4 structure, AI-tell self-check |
+| `cover-letter-redteam` | Mandatory gate: a recruiter who has read too many generated letters attacks AI tells, genericness, CV alignment, over-claims |
 | `interview-prep` | Predicted questions + STAR answers grounded in real experience |
 | `recruiter-followup` | Follow-ups, thank-yous, ghosted-process nudges |
 | `offer-negotiator` | Counter-offer emails, verbal scripts, scenario plans |
 | `application-tracker` | Maintains `applications_tracker.md` and follow-up due dates |
-| `asset-updater` | Closes the loop: propagates Matt's edits back into the master assets |
+| `asset-updater` | Closes the loop: propagates Matt's edits back into the master assets; returned-file mode learns from the CV or letter he sends back |
 
 ### `general` (2 skills)
 

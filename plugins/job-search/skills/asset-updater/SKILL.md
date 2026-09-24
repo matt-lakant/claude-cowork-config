@@ -1,6 +1,6 @@
 ---
 name: asset-updater
-description: "Closes the learning loop after each application cycle by diffing Matt Cornet's edits against Claude-drafted deliverables (resumes, cover letters, form answers) and propagating systemic corrections back into the master assets: the vault notes Writing voice.md and Matt Cornet.md, candidate_profile.md, master_resume.docx, and feedback memories. Use whenever Matt edits a tailored deliverable, says \"save this for next time\", asks to \"update the master\", flags an inflated framing, or mentions running a quarterly sweep across recent applications. Also use proactively after resume-tailor when Matt has made non-trivial edits to the output."
+description: "Closes the learning loop after each application cycle by diffing Matt Cornet's edits against Claude-drafted deliverables (resumes, cover letters, form answers) and propagating systemic corrections back into the master assets: the vault notes Writing voice.md and Matt Cornet.md, candidate_profile.md, master_resume.docx, and feedback memories. Use whenever Matt edits a tailored deliverable, says \"save this for next time\", asks to \"update the master\", flags an inflated framing, or mentions running a quarterly sweep across recent applications. Also use proactively after resume-tailor when Matt has made non-trivial edits to the output, and always in returned-file mode when Matt attaches back a CV or cover letter he finalized in Word (resume-tailor and cover-letter call it for this)."
 ---
 
 # Asset Updater
@@ -34,8 +34,8 @@ This skill triages Matt's edits, classifies them, and either promotes them to th
 |---|---|
 | §2 Corpus | Matt's own sentences, verbatim. The imitation material. |
 | §3 Constructions à ne jamais écrire | The banned-construction table. |
-| §4 Test de relecture | The mechanical review pass. |
-| §5 Surfaces | Per-surface structure: 5.1 candidature prose, 5.2 resume, 5.3 LinkedIn analytical post. |
+| §4 Test de relecture | The mechanical review pass, including point 8 (AI-tell check against the §4.1 list) and point 9 (swap test). |
+| §5 Surfaces | Per-surface structure: 5.1 candidature prose, 5.2 resume, 5.3 LinkedIn analytical post, 5.4 cover letter (question order, length, frame, one reference letter per language). |
 
 The old locations are now pointers and **must never be written to**:
 
@@ -150,6 +150,46 @@ Default action for `applied` apps: flag for interview prep, do NOT auto-resubmit
 ### Step 6 — Update memory index and confirm
 
 Update `MEMORY.md` index entries if any memory titles changed. Show Matt a 3-line summary of what was changed and where. Provide computer:// links to every modified file, vault notes included.
+
+## Returned-file mode (added 2026-09-24)
+
+**Trigger:** Matt attaches to the chat a CV or cover letter he finalized in Word, usually the `_redline.docx` from `resume-redteam` or `cover-letter-redteam` after accepting, rejecting and editing. `resume-tailor` (Step 8) and `cover-letter` (Steps 1 and 9) call this mode; it also runs on its own whenever such a file arrives. It is how both skills learn from what he actually sends.
+
+### R1 — Identify and file the returned document
+
+1. Work out the application slug and the document type (CV or letter) from the filename and content. If unclear, ask.
+2. Save the file in `applications/<slug>/` under its own filename if that name is free, otherwise with `_final` appended (`_final2` next). Never overwrite. This copy is the version that was sent, and later skills (interview prep, follow-ups) read it.
+3. Find the two Claude baselines in the same folder:
+   - **A, Claude's draft:** the tailored `.docx` (CV) or the letter draft (`CORNET_<Company>_Cover_Letter_<date>.docx` / `_Lettre_`), before red-team.
+   - **B, Claude's final proposal:** the `_redline.docx` with **every Recruiter change accepted** (drop `w:del` elements, unwrap `w:ins` elements, then extract text at the `w:t` level, since runs inside `w:ins` are invisible to `paragraph.runs`).
+   If only one baseline exists, use it for both. If none exists (a letter Matt wrote alone), there is nothing to diff: offer to add the whole letter to the corpus and stop.
+
+### R2 — Diff at sentence level and sort each change
+
+Split the returned text (M) and both baselines into sentences, align them, and ignore layout-only changes (fonts, header block moved, paragraphs merged, whitespace).
+
+| M compared with A and B | Meaning | Where it goes |
+|---|---|---|
+| M = B | He accepted Claude's final proposal | Nothing |
+| M = A, M ≠ B | He **rejected a Recruiter edit** | `redteam_notes.md` (CV) or `cl_redteam_notes.md` (letter), section "Rejected by Matt", with OLD / proposed NEW. Red-team calibration, **not** a voice sample: the sentence is Claude's |
+| M ≠ A and M ≠ B | **Matt wrote or rewrote it** | Classify with Step 2 below. Every voice-class change goes to §2 of *(vault)* `Notes/Writing voice.md` **verbatim, in the same turn**, with Claude's version (B) under it and one line on what he changed. Facts follow the Step 2 table |
+| Sentence present in B, deleted in M | He cut it | Record the cut next to the sample. A cut that repeats a §3 or §4.1 pattern is evidence for that row; a new pattern repeated twice becomes a row (Step 2b threshold) |
+
+### R3 — Propagate within the application
+
+A correction he made in one deliverable applies to every deliverable of the same application (`Writing voice.md` §2, lesson of 2026-09-09). If he corrected a fact, a scope or a phrasing in the CV that also appears in the form answers or an unsent letter draft, fix it there too, or flag it if the piece is already sent.
+
+### R4 — Template and reference letter
+
+- If he changed the letter's **frame** (header block, salutation, closing, signature), propose updating `_assets/cover_letter_template_<EN|FR>.docx` and the frame bullets in `Writing voice.md` §5.4. Ask first.
+- If the returned letter is final and complete, ask whether it should replace the §5.4 reference letter for its language. Never replace it without his yes.
+
+### R5 — Report
+
+Three lines, then continue with whatever he asked for (typically `cover-letter` when he returned a CV):
+`Filed CORNET_..._final.docx. 3 rewrites added to Writing voice.md §2, 2 rejected Recruiter edits logged in redteam_notes.md, 1 fact logged in candidate_profile.md.`
+
+If the vault is not connected, do not skip the voice samples silently: hand him the sentences verbatim and say they still need filing.
 
 ## Quarterly sweep mode
 
