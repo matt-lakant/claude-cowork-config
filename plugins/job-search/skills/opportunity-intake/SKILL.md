@@ -177,7 +177,7 @@ const KEEP = new Set(['H1','H2','H3','H4','P','UL','OL','LI','STRONG','B','EM','
   else [...ch.attributes].forEach(a => { if (!(ch.tagName === 'A' && a.name === 'href')) ch.removeAttribute(a.name); });
 }); })(k);
 const html = k.innerHTML.replace(/<p>\s*<\/p>/g, '').replace(/\s*\n\s*/g, '\n')
-  .replace(/(<br>|<\/p>|<\/li>|<\/h\d>|<\/ul>|<\/ol>)/g, '$1\n').trim();
+  .replace(/<br>|<\/p>|<\/li>|<\/h\d>|<\/ul>|<\/ol>/g, m => m + '\n').trim();
 const cps = [...html];
 document.body.innerHTML = ''; const pre = document.createElement('pre'); pre.textContent = html; document.body.appendChild(pre);
 ({ codepoints: cps.length, checksum: cps.reduce((s, ch) => s + ch.codePointAt(0), 0) })
@@ -258,11 +258,15 @@ let html = '<h2>Le besoin</h2>' + clean(p.description);
 if (p.profileWanted) html += '<h2>Profil recherché</h2>' + clean(p.profileWanted);
 if ((p.questions || []).length) html += '<h2>Questions du formulaire de candidature</h2><ol>' +
   p.questions.map(q => '<li>' + esc(q.name.trim()) + '</li>').join('') + '</ol>';
-html = html.replace(/\s*\n\s*/g, '\n').replace(/(<br>|<\/p>|<\/li>|<\/h\d>|<\/ul>|<\/ol>)/g, '$1\n').trim();
+html = html.replace(/\s*\n\s*/g, '\n').replace(/<br>|<\/p>|<\/li>|<\/h\d>|<\/ul>|<\/ol>/g, m => m + '\n').trim();
 const header = { title: p.name.trim(), company: p.company && p.company.name,
   contract: p.contractTypes, mode: p.workPreferences, location: p.location && p.location.fullNameFrench,
-  published: p.publishedAt, rate: p.isSalaryAccordingToProfile ? 'selon profil'
-    : [p.minSalary, p.maxSalary].filter(x => x != null).join('-') + ' ' + (p.salaryCurrency || '') + ' ' + (p.salaryFrequency || ''),
+  published: p.publishedAt,
+  rate: (p.budgetBrief && String(p.budgetBrief).trim())                     // free-text rate, e.g. "550"
+    || (p.isSalaryAccordingToProfile ? 'selon profil' : '')
+    || [p.minSalary, p.maxSalary].filter(x => x != null).join('-').concat(p.salaryCurrency ? ' ' + p.salaryCurrency : '', p.salaryFrequency ? ' ' + p.salaryFrequency : '').trim()
+    || 'EMPTY: read the visible box',
+  rateShown: ([...document.querySelectorAll('*')].find(e => !e.children.length && /Taux journalier|Salaire|Rémunération/.test(e.textContent)) || {}).parentElement?.innerText?.replace(/\s+/g, ' ') || null,
   requireResume: p.requireResume, questions: (p.questions || []).length, external: p.isExternal };
 const cps = [...html];
 document.body.innerHTML = ''; const pre = document.createElement('pre'); pre.textContent = html; document.body.appendChild(pre);
@@ -271,6 +275,21 @@ JSON.stringify({ header, codepoints: cps.length, checksum: cps.reduce((s, ch) =>
 
 Then `get_page_text` returns the full card HTML. Only the posting is kept: the
 *Information importante* box goes into the header, and the similar jobs and footer are dropped.
+
+**The rate: cross-check, never assume.** Collective stores the day rate in more than one field:
+`budgetBrief` (free text, e.g. `"550"`) on some postings, `minSalary` / `maxSalary` on others.
+The script reads both and also returns `rateShown`, the visible *Information importante* line.
+`rate` and `rateShown` must agree. If `rate` comes back `EMPTY` or disagrees with `rateShown`,
+the visible line wins. Write "non indiqué" only when the page itself shows no rate. On
+2026-09-24 (Qolibris) the rate was `budgetBrief = "550"`; the old script read only
+`minSalary` / `maxSalary`, returned blanks, and "non indiqué" went into the capture and the
+fit analysis unchecked.
+
+**No dollar sign followed by a digit anywhere in this file.** The skill loader substitutes those
+placeholders with the words of the invocation arguments before the text reaches Claude. A regex
+back-reference used as the replacement string arrived as `'—\n'` on 2026-09-24 (the second
+argument word was a dash), which stripped every closing tag from the Qolibris card. Replacements use a function (`m => m + '\n'`) instead.
+
 If `external` is true, the posting redirects to another site: say so in `notes.md`, and the
 questions may live there instead.
 
