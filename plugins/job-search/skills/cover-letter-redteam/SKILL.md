@@ -39,7 +39,9 @@ own final edit remains the last test, and `asset-updater` feeds it back.
 3. **The final CV**: the file Matt sent back and `asset-updater` filed (`..._final.docx` or the most recent Matt-returned CV), as text.
 4. *(project)* `_assets/candidate_profile.md`: ground truth. Tell the subagent the Q&A log is append-only and a later entry can supersede an earlier one.
 5. *(vault)* `Notes/Matt Cornet.md`, "Technology and scope ceilings" section only.
-6. *(vault)* `Notes/Writing voice.md`: §2 corpus, §3 table, §4 (all points and list 4.1), §5.1 and §5.4 **including the reference letters, labelled "voice samples, not templates"**.
+6. *(vault)* `Notes/Writing voice.md`, **loaded through `general:writing-voice` in vault-required
+   mode** before spawning (no fallback: if the note cannot be read, stop), then pasted into the
+   brief as text; the subagent does not load the skill itself. §2 corpus, §3 table, §4 (all points and list 4.1), §5.1 and §5.4 **including the reference letters, labelled "voice samples, not templates"**.
 7. **Matt's own answers to the hook questions** (cover-letter Step 2), verbatim, labelled as the candidate's stated motivations. Without them the adversary flags his real reasons as unsupported.
 8. Any form answers already drafted for this application.
 9. The letter text.
@@ -82,7 +84,7 @@ him as observations, do not redline his own words. Drop flags on exact domain te
 
 Apply the verified `OLD -> NEW` / `CUT` edits as Word tracked changes authored **"Recruiter"**
 (see the `docx` skill). **Every NEW string follows `Writing voice.md`**: run §4 points 1 to 9
-on it before it goes in. An adversary optimizing for punch writes flourishes; rewrite them
+on it before it goes in (`general:writing-voice` Step 4, surface §5.4). An adversary optimizing for punch writes flourishes; rewrite them
 plain.
 
 Settled decisions are not proposals: if Matt has already decided a point, apply it directly
@@ -128,7 +130,7 @@ kinds of edit he has rejected before, and do not propose them again without a ne
 - **Independence is mandatory.** No drafting rationale in the packet.
 - **Truth ceiling holds.** Edits may cut, sharpen and reorder; they never invent facts, motivations or company claims.
 - **Never redline Matt's own words for sounding generated.** Report it; he decides.
-- **Replacement text follows `Notes/Writing voice.md`.** A sharper line he would never write is not an improvement.
+- **Replacement text follows `Notes/Writing voice.md`, loaded through `general:writing-voice`.** A sharper line he would never write is not an improvement. The short voice block in Matt's preferences is not a substitute for the note.
 - **Redline, don't overwrite. No PDF.**
 - **Match the letter's language.**
 

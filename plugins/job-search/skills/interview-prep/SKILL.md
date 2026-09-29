@@ -26,7 +26,7 @@ The grounding is what makes this useful — generic STAR prompts produce generic
 
 > Paths marked *(project)* are relative to the **Job Applications project root** — the folder that contains this `skills/` directory. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications"). Paths marked *(vault)* are relative to the connected `obsidian-vault` folder.
 
-> **Voice reference moved, 2026-09-10.** How Matt speaks and writes lives in *(vault)* `Notes/Writing voice.md`: §2 corpus, §3 banned constructions, §4 review test, §5.1 the candidature-prose surface that spoken answers follow. Run `ls $HOME/mnt/` and check for `obsidian-vault`; if it is not connected, ask Matt to connect `C:\Users\mattc\Obsidian\obsidian-vault` before drafting answers. `_assets/voice_matt.md` and the "Voice & style guidelines" section of `candidate_profile.md` are stubs — never read them as rules, never write to them.
+> **Voice reference moved, 2026-09-10.** How Matt speaks and writes lives in *(vault)* `Notes/Writing voice.md`: §2 corpus, §3 banned constructions, §4 review test, §5.1 the candidature-prose surface that spoken answers follow. Load it through `general:writing-voice` in vault-required mode: it requests `C:\Users\mattc\Obsidian\obsidian-vault` itself if the folder is not connected, reads the note in full, and flags drift with the voice block in Matt's preferences. No fallback: if the note cannot be read, do not draft answers. `_assets/voice_matt.md` and the "Voice & style guidelines" section of `candidate_profile.md` are stubs — never read them as rules, never write to them.
 
 1. *(vault)* `Notes/Writing voice.md` — **model answers are spoken aloud by Matt.** A sentence he would not say is worse here than in any written deliverable: he has to deliver it out loud, under pressure, to someone watching his face. Corpus, banned constructions, review test.
 2. *(vault)* `Notes/Matt Cornet.md` — durable identity and the "Technology and scope ceilings" list. In an interview a breached ceiling is not a bad line, it is a claim he will be asked to defend and cannot. Read it before drafting any answer about a tool, a certification, a sector or a scope.
@@ -71,7 +71,7 @@ For each behavioral/situational question, draft a 4–6 sentence model answer us
 - Keep it conversational — bullet-form STAR answers sound robotic when spoken
 - Close with the lesson or the link to "and that's why I'd approach this role's challenge by..."
 
-**Write every answer in Matt's voice, per *(vault)* `Notes/Writing voice.md`.** Plain declaratives, ordinary verbs, no metaphor, no calque of an English idiom, no defining himself against an implied lesser candidate, no announcing what he is about to say. Run the §4 review test over each answer. Then read it aloud in your head: if it needs a run-up before it says anything, cut the run-up.
+**Write every answer in Matt's voice, per *(vault)* `Notes/Writing voice.md`.** Plain declaratives, ordinary verbs, no metaphor, no calque of an English idiom, no defining himself against an implied lesser candidate, no announcing what he is about to say. Run the §4 review test over each answer (`general:writing-voice` Step 4, surface §5.1). Then read it aloud in your head: if it needs a run-up before it says anything, cut the run-up.
 
 For "why this company / why this role" questions, leave a short framework but ask Matt to fill in the specific motivation — that part can't be ghosted.
 
@@ -115,7 +115,7 @@ If Matt rewrites a model answer, or reports back after the interview how he actu
 - **Respect the vault ceilings.** An answer that claims past a ceiling sets him up to be caught live. See `Notes/Matt Cornet.md`.
 - **Match register to interviewer level.** Exec-round answers are more strategic and concise; hiring-manager answers are more operational. Adapt accordingly.
 - **Answers must sound like Matt, out loud.** See `Notes/Writing voice.md`. A line he would not say is unusable regardless of how well it reads.
-- **Never read voice rules from `_assets/voice_matt.md` or from `candidate_profile.md`.** Both are stubs as of 2026-09-10.
+- **Never read voice rules from `_assets/voice_matt.md` or from `candidate_profile.md`.** Both are stubs as of 2026-09-10. Nor from the short voice block in Matt's preferences: load the note through `general:writing-voice`.
 - **Don't write a script.** Model answers are starting points; Matt should sound like himself. Note this at the top of the output.
 - **For technical/case rounds**, include 2–3 frameworks he can lean on (e.g., for "how would you approach a data-quality issue in research", offer a 4-step framework grounded in his FactSet work).
 - **Never produce a PDF.** See Step 4.

@@ -26,7 +26,7 @@ Drafts short, in-voice follow-up messages for the four most common recruiter tou
 
 > Paths marked *(project)* are relative to the **Job Applications project root** — the folder that contains this `skills/` directory. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications"). Paths marked *(vault)* are relative to the connected `obsidian-vault` folder.
 
-> **Voice reference moved, 2026-09-10.** How Matt writes lives in *(vault)* `Notes/Writing voice.md`: §2 corpus, §3 banned constructions, §4 review test, §5.1 the candidature-prose surface, §5.3 for a LinkedIn post rather than a message. Run `ls $HOME/mnt/` and check for `obsidian-vault`; if it is not connected, ask Matt to connect `C:\Users\mattc\Obsidian\obsidian-vault` before writing. `_assets/voice_matt.md` and the "Voice & style guidelines" section of `candidate_profile.md` are stubs — never read them as rules, never write to them.
+> **Voice reference moved, 2026-09-10.** How Matt writes lives in *(vault)* `Notes/Writing voice.md`: §2 corpus, §3 banned constructions, §4 review test, §5.1 the candidature-prose surface, §5.3 for a LinkedIn post rather than a message. Load it through `general:writing-voice` in vault-required mode: it requests `C:\Users\mattc\Obsidian\obsidian-vault` itself if the folder is not connected, reads the note in full, and flags drift with the voice block in Matt's preferences. No fallback: if the note cannot be read, do not write. `_assets/voice_matt.md` and the "Voice & style guidelines" section of `candidate_profile.md` are stubs — never read them as rules, never write to them.
 
 1. ***(vault)* `Notes/Writing voice.md` — read this before writing a single sentence.** It holds the corpus of Matt's own sentences, the literal list of constructions never to write, and the review test. Abstract guidance ("sober, no hype") has repeatedly failed to prevent the specific turns of phrase he cuts; the corpus and the banned-construction table are what actually work. The §2 corpus already contains a LinkedIn connection note he wrote himself — start from it for that channel.
 2. *(vault)* `Notes/Matt Cornet.md` — durable identity and the "Technology and scope ceilings" list. A hook that breaches a ceiling turns a follow-up into a claim he has to walk back.
@@ -90,7 +90,7 @@ Under 300 characters. State the concrete reason for reaching out, ask one answer
 
 ### Step 4 — Review against the voice test, then deliver
 
-Before output, run the §4 review test in *(vault)* `Notes/Writing voice.md`: strike every image, every "I am not the kind of person who…", every sentence that announces the next one, every verb of certainty that should be an observation. Count characters if there is a cap.
+Before output, run the §4 review test in *(vault)* `Notes/Writing voice.md` (`general:writing-voice` Step 4, surface §5.1): strike every image, every "I am not the kind of person who…", every sentence that announces the next one, every verb of certainty that should be an observation. Count characters if there is a cap.
 
 Deliver the message to the outputs panel with `SendUserFile` so Matt can open and copy it (see the `feedback_show_short_texts_in_chat` guidance), and keep a copy under `applications/<company>-<role>/correspondence/<YYYY-MM-DD>_<recipient>.md`. Never produce a PDF.
 
@@ -106,7 +106,7 @@ If Matt rewrites any part of the message, **add his version verbatim to §2 of *
   flat, no subfolders" preference does **not** apply to Job Applications — see the
   `opportunity-intake` skill, which wins on any conflict.
 - **No figures of speech.** If a word does not mean literally what it says, cut it. This is the single most frequent correction Matt makes.
-- **Never read voice rules from `_assets/voice_matt.md` or from `candidate_profile.md`.** Both are stubs as of 2026-09-10.
+- **Never read voice rules from `_assets/voice_matt.md` or from `candidate_profile.md`.** Both are stubs as of 2026-09-10. Nor from the short voice block in Matt's preferences: load the note through `general:writing-voice`.
 - **Never claim "I have a competing offer" if he doesn't.** Reputational damage is permanent.
 - **Don't apologize for following up.** "Sorry to bother you" weakens the message.
 - **Don't oversell.** A senior candidate over-pitching reads as desperate. State value once, clearly.

@@ -29,7 +29,7 @@ Produces a tailored version of Matt's master resume for a specific job posting. 
 
 > Paths marked *(project)* are relative to the **Job Applications project root** — the folder that contains this `skills/` directory. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications"). Paths marked *(vault)* are relative to the connected `obsidian-vault` folder.
 
-> **Voice reference moved, 2026-09-10.** How Matt writes now lives in *(vault)* `Notes/Writing voice.md`, not in this project. §2 is the corpus of his own sentences, §3 the banned-construction table, §4 the review test, §5 the per-surface rules (5.1 candidature prose, 5.2 resume, 5.3 LinkedIn post). Run `ls $HOME/mnt/` and check for `obsidian-vault`; if it is not connected, ask Matt to connect `C:\Users\mattc\Obsidian\obsidian-vault` before drafting any prose, or call `device_request_folder_access` on it. `_assets/voice_matt.md` and the "Voice & style guidelines" section of `candidate_profile.md` are stubs pointing there — never read them as rules, never write to them.
+> **Voice reference moved, 2026-09-10.** How Matt writes now lives in *(vault)* `Notes/Writing voice.md`, not in this project. §2 is the corpus of his own sentences, §3 the banned-construction table, §4 the review test, §5 the per-surface rules (5.1 candidature prose, 5.2 resume, 5.3 LinkedIn post). Load it through `general:writing-voice` in vault-required mode: it requests `C:\Users\mattc\Obsidian\obsidian-vault` itself if the folder is not connected, reads the note in full, and flags drift with the voice block in Matt's preferences. No fallback: if the note cannot be read, do not draft any prose. `_assets/voice_matt.md` and the "Voice & style guidelines" section of `candidate_profile.md` are stubs pointing there — never read them as rules, never write to them.
 
 1. *(vault)* `Notes/Writing voice.md` — the voice reference. Governs **every line of prose** (profile paragraph, form answers) via §5.1, and **every resume bullet** via §5.2.
 2. *(vault)* `Notes/Matt Cornet.md` — durable identity and the "Technology and scope ceilings" list. Read the ceilings before writing any claim about a tool, a certification, a sector or a scope.
@@ -141,7 +141,7 @@ Where:
 
 **The cover letter is no longer drafted here (changed 2026-09-24).** It is written by the `cover-letter` skill once the CV is final: Matt downloads the red-teamed `.docx`, finalizes it in Word, and attaches it back to the chat, which starts `cover-letter`. Drafting the letter in the same pass as the CV produced CV-style prose, and nothing independent reviewed it. This step now covers the form fields only.
 
-Write every prose piece in Matt's voice per *(vault)* `Notes/Writing voice.md`, §5.1 for the surface rules. Then give each piece its own job and let it draw from the shared stock of evidence whatever serves that job. **The same fact may appear in two pieces**, provided each does something different with it. What must never repeat is a sentence or a framing.
+Write every prose piece in Matt's voice per *(vault)* `Notes/Writing voice.md` as loaded by `general:writing-voice`, §5.1 for the surface rules, and run its Step 4 review test before delivery. Then give each piece its own job and let it draw from the shared stock of evidence whatever serves that job. **The same fact may appear in two pieces**, provided each does something different with it. What must never repeat is a sentence or a framing.
 
 | Piece | Its job | What it takes |
 |---|---|---|
@@ -202,7 +202,7 @@ Give him links to the red-teamed `.docx` (with the recruiter's tracked changes),
 - **Respect the vault ceilings.** The "Technology and scope ceilings" section of `Notes/Matt Cornet.md` is a hard limit on every claim, however well the JD would be served by exceeding it.
 - **Never use "I" in resume bullets.** Profile is third person; bullets are implicit-first-person action verbs.
 - **No figures of speech in the prose.** No metaphor, no calque of an English idiom, no defining Matt against an implied lesser peer, no sentence announcing what the next one will do. See `Notes/Writing voice.md` §3.
-- **Never read voice rules from `_assets/voice_matt.md` or from `candidate_profile.md`.** Both are stubs as of 2026-09-10. The vault note is the only source.
+- **Never read voice rules from `_assets/voice_matt.md` or from `candidate_profile.md`.** Both are stubs as of 2026-09-10. The vault note is the only source, loaded through `general:writing-voice`; the short voice block in Matt's preferences is not a substitute.
 - **Facts travel between pieces; sentences and framings never repeat.** Each piece does its own job. See Step 4b.
 - **A form field answers its question.** Never substitute a generic pitch for an answer to what was actually asked.
 - **Two pages max** for senior roles unless Matt asks otherwise. If the master overflows, cut the oldest/least-relevant role bullets first.
@@ -211,7 +211,7 @@ Give him links to the red-teamed `.docx` (with the recruiter's tracked changes),
 
 ## Edge cases
 
-- **The vault is not connected:** ask Matt to connect it before drafting prose. Do not fall back to the stubs, and do not draft from memory of the voice rules.
+- **The vault is not connected:** `general:writing-voice` requests access itself; if it is declined or the computer is unreachable, stop before drafting prose. Do not fall back to the stubs, and do not draft from memory of the voice rules.
 - **JD is for a role well outside fintech (e.g., pure tech, generic consulting):** Lead the diagnostic with this fit gap. Ask Matt to confirm before tailoring.
 - **JD requires a tool Matt hasn't used (e.g., Snowflake specifically vs. his MS Fabric / Spark experience):** Surface honestly; suggest "transferable from MS Fabric / Spark" framing rather than implying direct experience.
 - **JD is in French:** Generate the resume in French. Matt is bilingual — ask him to confirm if the formal/informal register isn't obvious from the JD.

@@ -53,12 +53,13 @@ The pipeline, roughly in the order it runs:
 | `application-tracker` | Maintains `applications_tracker.md` and follow-up due dates |
 | `asset-updater` | Closes the loop: propagates Matt's edits back into the master assets; returned-file mode learns from the CV or letter he sends back |
 
-### `general` (2 skills)
+### `general` (3 skills)
 
 | Skill | Purpose |
 |---|---|
-| `config-sync` | Mirrors a saved skill into this repo and commits it, so Matt only runs `git push` |
+| `config-sync` | Governs edits to this repo: where a skill file goes, the mandatory version bump, byte-level verification, and the commit message Matt pastes in GitHub Desktop (Claude never commits) |
 | `tackle-task` | Kickoff for work no dedicated skill covers: frames task + success criteria, gathers context before starting |
+| `writing-voice` | Any text written in Matt's name: reads `Notes/Writing voice.md` in the vault (single source, no copy here), falls back to the preference block on claude.ai and says so, flags drift between the two; called by `cover-letter` and `cover-letter-redteam` |
 
 ### `venture-lab` (2 skills)
 

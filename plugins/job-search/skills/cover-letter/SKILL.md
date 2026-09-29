@@ -48,7 +48,9 @@ CV that is about to change is drafted twice.
 > is missing, request access to `C:\Users\mattc\Obsidian\obsidian-vault` yourself. Do not
 > draft a single sentence from memory of the voice rules.
 
-1. *(vault)* `Notes/Writing voice.md`: §2 corpus, §3 banned constructions, §4 review test
+1. *(vault)* `Notes/Writing voice.md`, **loaded through `general:writing-voice` in
+   vault-required mode**: it reaches the vault, reads the note in full and flags drift with the
+   voice block in Matt's preferences. No fallback here: if the note cannot be read, stop. §2 corpus, §3 banned constructions, §4 review test
    (points 8 and 9, list 4.1), §5.1 candidature prose, **§5.4 cover letter** (question order,
    length, frame, one reference letter per language).
 2. *(vault)* `Notes/Matt Cornet.md`: the "Technology and scope ceilings" section is a hard
@@ -108,7 +110,7 @@ This plan is also the checklist the red team tests against. Keep it in `cover_le
 
 - **Language:** the posting's language. Register per §5.4 frame (EN: "Dear <First name>,"; FR: "Bonjour <Prénom>," or "Bonjour,").
 - **Length:** one page; EN about 300 to 380 words, FR about 180 to 250 unless the posting asks for more.
-- **Voice:** §2 corpus to imitate, §3 to avoid, §5.1 and §5.4 for structure. One interpretive sentence per selected fact at most, the rest factual.
+- **Voice:** as loaded by `general:writing-voice`: §2 corpus to imitate, §3 to avoid, §5.1 and §5.4 for structure. One interpretive sentence per selected fact at most, the rest factual.
 - **Reference letters are not templates.** Read them for length, order and rhythm. Never reuse a sentence from them or from a letter to another employer, apart from the logistics line (languages, location, availability).
 - **No sentence copied from the CV.** Same facts, different job: the CV lists, the letter says what the fact means for this employer.
 - **Names:** recipient and company spelled exactly as in the JD or on the company's site.
@@ -124,7 +126,7 @@ Save as `applications/<slug>/CORNET_<Company>_Cover_Letter_<YYYY-MM-DD>.docx` (E
 
 ### Step 5: Self-check before the gate
 
-Run the full §4 review test, points 1 to 9, then:
+Run the full §4 review test, points 1 to 9 (`general:writing-voice` Step 4, surface §5.4), then:
 
 - Read the letter next to the final CV and any form answers: no twin sentences.
 - Count words.
@@ -160,7 +162,7 @@ asked whether this letter should replace the §5.4 reference letter for its lang
 - **The letter answers the §5.4 questions in order**: why this role, why this company, applicable experience, the gap if any, his situation, a one-line close.
 - **Passes the swap test.** If it still works with a competitor's name, it is not finished.
 - **No sentence from the CV, the reference letters, or another employer's letter.**
-- **Voice rules come only from `Notes/Writing voice.md`.** Never from `_assets/voice_matt.md` or `candidate_profile.md`, both stubs since 2026-09-10.
+- **Voice rules come only from `Notes/Writing voice.md`, loaded through `general:writing-voice` in vault-required mode.** Never from `_assets/voice_matt.md` or `candidate_profile.md`, both stubs since 2026-09-10, and never from the short voice block in Matt's preferences.
 - **No PDF, no em dash, no bold or bullets in the body.**
 - **The red team is mandatory.** A letter that skipped it is a draft, and is presented as one.
 

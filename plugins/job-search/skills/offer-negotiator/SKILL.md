@@ -39,7 +39,8 @@ like him is worse than a plain one: the person reading it has already met him.
    here: `## Background`, `## Strengths`, `## Education`, `## Current focus`, `## Target roles`,
    `## Framing guardrails`, `## Technology and scope ceilings`. A leverage claim that breaches a
    ceiling is a claim he cannot defend on the call that follows.
-2. *(vault)* `Notes/Writing voice.md` **read before drafting the email or the script**. §2 the
+2. *(vault)* `Notes/Writing voice.md` **read before drafting the email or the script**, loaded
+   through `general:writing-voice` in vault-required mode. §2 the
    corpus of his own sentences, §3 the banned-construction table, §4 the review test, §5.1 the
    candidature-prose surface this skill writes in.
 3. *(project)* `_assets/candidate_profile.md` evidence at the engagement level: what he actually
@@ -50,8 +51,9 @@ like him is worse than a plain one: the person reading it has already met him.
 
 ### The vault is a hard requirement
 
-Run `ls $HOME/mnt/` and check for `obsidian-vault`. If it is not connected, ask Matt to connect
-`C:\Users\mattc\Obsidian\obsidian-vault`, or call `device_request_folder_access` on it.
+Run `ls $HOME/mnt/` and check for `obsidian-vault`. If it is not connected, call `device_request_folder_access`
+on `C:\Users\mattc\Obsidian\obsidian-vault` yourself, then load the voice note through
+`general:writing-voice` in vault-required mode.
 **Do not draft the email, the script or the playbook without it.** There is no fallback: this
 skill carries no sectors, no seniority band, no capability list and no scarcity claim of its own,
 so without the note it has nothing to build leverage from and no ceiling to stay inside.
@@ -167,7 +169,7 @@ Lay out the numbers and the trade-offs. The decision is his.
 ### Step 5 — Review against the voice test, then deliver
 
 Run the §4 review test in *(vault)* `Notes/Writing voice.md` over the email and the script before
-showing them: strike every image, every self-definition by negation, every announcement sentence,
+showing them (`general:writing-voice` Step 4, surface §5.1): strike every image, every self-definition by negation, every announcement sentence,
 every verb of certainty that should be an observation.
 
 Then run the ceiling pass: re-read every claim in the email and the script against
@@ -233,7 +235,7 @@ and ask Matt for the dates instead of guessing them.
   inferring it from the resume or from the conversation.
 - **No figures of speech**, in the email or the script. See `Notes/Writing voice.md` §3.
 - **Never read voice rules or identity from `_assets/voice_matt.md` or from
-  `candidate_profile.md`.** Both are stubs as of 2026-09-10.
+  `candidate_profile.md`.** Both are stubs as of 2026-09-10. Nor from the short voice block in Matt's preferences: load the note through `general:writing-voice`.
 - **Never anchor below market.** If Matt's floor is below market median, push back on the floor
   before drafting.
 - **Do not write inflammatory language.** Even firm asks should preserve the relationship. He
