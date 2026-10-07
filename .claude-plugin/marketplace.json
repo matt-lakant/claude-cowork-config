@@ -26,6 +26,12 @@
       "source": "./plugins/general",
       "description": "General-purpose working skills that are not tied to a single domain.",
       "category": "productivity"
+    },
+    {
+      "name": "tax-team",
+      "source": "./plugins/tax-team",
+      "description": "Seven-specialist US tax review run in order: income map, entity, retirement, deductions, investments, real estate and exit, compliance brief. Finds and sizes; a licensed professional decides.",
+      "category": "productivity"
     }
   ]
 }

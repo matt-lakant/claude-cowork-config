@@ -1,0 +1,16 @@
+{
+  "name": "tax-team",
+  "version": "1.0.0",
+  "description": "Seven-specialist US tax review run in order: income map, entity, retirement, deductions, investments, real estate and exit, compliance brief. Finds and sizes; a licensed professional decides.",
+  "author": {
+    "name": "Matt Cornet",
+    "email": "matt.cornet@lakant.com"
+  },
+  "keywords": [
+    "tax",
+    "personal-finance",
+    "retirement",
+    "real-estate",
+    "compliance"
+  ]
+}

@@ -20,6 +20,9 @@ plugins/
   venture-lab/                     generating and killing business ideas
     .claude-plugin/plugin.json
     skills/<skill-name>/SKILL.md
+  tax-team/                        seven-specialist US tax review
+    .claude-plugin/plugin.json
+    skills/<skill-name>/SKILL.md
 ```
 
 > Personal data is **not** versioned here. Removed 2026-09-10. Matt's identity and
@@ -70,6 +73,25 @@ Both write into the Obsidian vault and both default to "no business here".
 |---|---|
 | `paper-digest` | Reads a paper or article Matt shares, explains the mechanism, judges it against a 7-gate rubric, files a `type: source` note with the PDF |
 | `idea-pressure-test` | Pressure-tests an idea Matt already has: 11 gates, three adversaries (investor, incumbent PM, target buyer), six verdicts, a pre-registered kill test, filed as a `type: idea` note with dated re-tests |
+
+### `tax-team` (8 skills)
+
+Seven specialists run in order, each reading the reports of the ones before it, plus an
+orchestrator. US federal + state, resident filer. Every finding gets a dollar range and one
+verdict: FINE AS IS / WORTH FIXING / BRING IT TO A STRATEGIST. Reports and tax documents live in
+`OneDrive\Documents\Claude\Projects\Tax Team\`, never here. Adapted from Wally Darling's public
+Notion page "The Claude Tax Team: 7 Specialists" (Darling Financial Group), rewritten as skills.
+
+| Skill | Purpose |
+|---|---|
+| `tax-team` | Orchestrator: setup, document checklist, run order and skip rules, shared rules, cadence (compliance quarterly, full team each October) |
+| `tax-income-analyst` | 1. Income by bracket, marginal vs effective rate, SE tax / NIIT / under-withholding flags, carryforwards; writes the Income Map |
+| `tax-entity-specialist` | 2. Sole prop vs S-corp vs C-corp at real profit, S-corp salary floor and ceiling, salary sensitivity for QBI and retirement |
+| `tax-retirement-specialist` | 3. Contributed vs limits, room above the 401(k) (profit sharing, cash balance / DB), deadlines with days left |
+| `tax-deduction-specialist` | 4. Claimed deductions with substantiation check, commonly missed ones (accountable plan, Augusta rule, vehicle, depreciation elections) |
+| `tax-investment-specialist` | 5. Loss harvesting with wash-sale checks, Roth conversion room and backdoor Roth, RSU / ISO / ESPP, gains timing |
+| `tax-real-estate-exit` | 6. Cost seg (usable vs suspended), REPS test, QSBS tier clocks, sale scenarios (1031, DST, installment, opportunity zones) |
+| `tax-compliance-specialist` | 7. Safe harbor by quarter, screening flags, paperwork list, dated calendar, one-page brief for the tax meeting |
 
 ## Not in this repo
 
