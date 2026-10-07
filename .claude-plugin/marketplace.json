@@ -32,6 +32,12 @@
       "source": "./plugins/tax-team",
       "description": "Seven-specialist US tax review run in order: income map, entity, retirement, deductions, investments, real estate and exit, compliance brief. Finds and sizes; a licensed professional decides.",
       "category": "productivity"
+    },
+    {
+      "name": "customer-success",
+      "source": "./plugins/customer-success",
+      "description": "Customer success brain: one shared folder of plain-text account, people, signal, rule and handoff files, 22 skills that read and write it, and 7 routines that chain them. Adapted from Kevin Lau's Claude Brain System for Customer Success.",
+      "category": "productivity"
     }
   ]
 }

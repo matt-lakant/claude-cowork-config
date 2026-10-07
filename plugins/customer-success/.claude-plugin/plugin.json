@@ -1,0 +1,16 @@
+{
+  "name": "customer-success",
+  "version": "1.0.0",
+  "description": "Customer success brain: one shared folder of plain-text account, people, signal, rule and handoff files, 22 skills that read and write it, and 7 routines that chain them (intake, librarian, signal watcher, briefing, handoff, rules keeper, reporter). Adapted from Kevin Lau's Claude Brain System for Customer Success.",
+  "author": {
+    "name": "Matt Cornet",
+    "email": "matt.cornet@lakant.com"
+  },
+  "keywords": [
+    "customer-success",
+    "account-management",
+    "renewals",
+    "churn",
+    "handoffs"
+  ]
+}

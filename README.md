@@ -23,6 +23,9 @@ plugins/
   tax-team/                        seven-specialist US tax review
     .claude-plugin/plugin.json
     skills/<skill-name>/SKILL.md
+  customer-success/                CS brain: account memory, signals, renewals
+    .claude-plugin/plugin.json
+    skills/<skill-name>/SKILL.md
 ```
 
 > Personal data is **not** versioned here. Removed 2026-09-10. Matt's identity and
@@ -92,6 +95,42 @@ Notion page "The Claude Tax Team: 7 Specialists" (Darling Financial Group), rewr
 | `tax-investment-specialist` | 5. Loss harvesting with wash-sale checks, Roth conversion room and backdoor Roth, RSU / ISO / ESPP, gains timing |
 | `tax-real-estate-exit` | 6. Cost seg (usable vs suspended), REPS test, QSBS tier clocks, sale scenarios (1031, DST, installment, opportunity zones) |
 | `tax-compliance-specialist` | 7. Safe harbor by quarter, screening flags, paperwork list, dated calendar, one-page brief for the tax meeting |
+
+### `customer-success` (23 skills)
+
+A shared "brain" folder of plain-text files (accounts, people, signals log, rules, daily
+handoffs, reports) that every skill reads and writes. Default location
+`OneDrive\Documents\Claude\Projects\Customer Success\brain\`, never here; it keeps
+subfolders because skills address files by path. Every skill shows a change list before
+writing, marks gaps UNKNOWN, never contacts a customer. Adapted from Kevin Lau's "Claude Brain
+System for Customer Success" (The Customer Continuum); the 22 prompts became skills and the 7
+agents became routines inside `cs-brain`.
+
+| Skill | Purpose |
+|---|---|
+| `cs-brain` | Orchestrator: brain location and setup (templates bundled), file formats, shared rules, the 7 routines (intake, librarian, signal watcher, briefing, handoff, rules keeper, reporter) and custom routines in `brain/agents/` |
+| `cs-memory-keeper` | Saves what mattered in a session to the brain, as a change list |
+| `cs-session-opener` | Loads only the files a task needs; 10-line recap and stale list |
+| `cs-chat-importer` | One exported chat into dated lines against the right account; drafts stay DRAFT |
+| `cs-chat-history-miner` | Ranks a batch of old chats by what the brain would gain |
+| `cs-account-file-builder` | The one-page account file; UNKNOWN rather than a guess |
+| `cs-people-map` | Who signed, uses, decides; warmth; single-threaded flag |
+| `cs-promise-tracker` | Every commitment made and its status, ranked by renewal proximity |
+| `cs-call-note-filer` | Transcript or notes into summary, verbatim quotes and dated lines |
+| `cs-quiet-account-spotter` | Active / slowing / quiet against days to renewal |
+| `cs-signal-log` | Dated one-line signals; flags patterns (3 in 30 days) |
+| `cs-account-search` | Answers about a customer with file and date per claim |
+| `cs-team-answer-finder` | Similar past situations, what was tried, who to ask |
+| `cs-lost-renewal-review` | Timeline and earliest catchable moment of a loss |
+| `cs-rule-writer` | Lesson into a checkable "when X, we do Y within Z days" rule |
+| `cs-agent-builder` | New routine for a repeated job, saved to `brain/agents/` |
+| `cs-morning-brief` | The CS day in one screen (not the general `morning` skill) |
+| `cs-end-of-day-handoff` | Under-25-line handoff anyone can act on |
+| `cs-memory-cleaner` | Duplicates, stale files, orphans; archive, never delete |
+| `cs-conflict-checker` | Two values for one fact, shown side by side, never resolved alone |
+| `cs-renewal-report` | Weekly renewal report, evidence behind every status |
+| `cs-exec-readout` | One-page readout for a leader as a private Docs artifact |
+| `cs-team-share-pack` | Brief for sales, support or product without raw notes or confidences |
 
 ## Not in this repo
 
