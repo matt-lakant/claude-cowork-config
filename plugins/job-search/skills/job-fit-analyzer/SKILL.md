@@ -268,5 +268,6 @@ with no ceiling gaps beats a 43 with two.
 - **Report vault silence as silence.** If the note says nothing about a sector, a level or a
   language the posting asks for, say so and offer to add it, rather than inferring it from the
   resume.
-- **Do not quantify the AI side of the profile.** `## Technology and scope ceilings` records that
-  decision and the reason for it.
+- **Quantify the AI side only with figures the vault records.** `## Technology and scope ceilings`
+  says which AI results carry a number and which stay unquantified. Use the recorded figures as
+  written; never estimate, round up or extend an AI figure to work the note does not attach it to.
