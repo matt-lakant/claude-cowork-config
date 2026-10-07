@@ -26,6 +26,9 @@ plugins/
   customer-success/                CS brain: account memory, signals, renewals
     .claude-plugin/plugin.json
     skills/<skill-name>/SKILL.md
+  big-consulting/                  150 consulting skills in 15 practices
+    .claude-plugin/plugin.json
+    skills/<skill-name>/SKILL.md
 ```
 
 > Personal data is **not** versioned here. Removed 2026-09-10. Matt's identity and
@@ -131,6 +134,38 @@ agents became routines inside `cs-brain`.
 | `cs-renewal-report` | Weekly renewal report, evidence behind every status |
 | `cs-exec-readout` | One-page readout for a leader as a private Docs artifact |
 | `cs-team-share-pack` | Brief for sales, support or product without raw notes or confidences |
+
+### `big-consulting` (151 skills)
+
+150 single-deliverable consulting skills in 15 practices of ten, each listing its inputs, method,
+output format and quality checks, plus `big-consulting`, an index and router (one skill, one
+practice end to end, or the full engagement) with shared rules: real inputs first, outputs to the
+project folder, name the decision that stays with Matt. The full skill index is in
+`skills/big-consulting/SKILL.md`.
+
+Source: Grant Baldwin (geniant), "Big Consulting, Rebuilt as 150 Claude Skills", The Craft of AI,
+<https://www.thecraftofai.com/read/150-consulting-skills-opus-5-5>, retrieved 2026-10-07. The 150 `SKILL.md` bodies are as published, with two changes:
+each ends with a "Notes from the source article" section (what it replaces, an example request,
+what the user still owns), and dollar amounts written as `$<digit>` were rewritten as `USD`
+because the skill loader substitutes `$1`-style tokens as arguments.
+
+| Practice | Lane | Skills |
+|---|---|---|
+| Problem Framing & Issue Trees | McKinsey | `001` to `010` |
+| Market & Competitive Intelligence | McKinsey | `011` to `020` |
+| Growth & Customer Strategy | McKinsey | `021` to `030` |
+| Pricing & Commercial Excellence | McKinsey | `031` to `040` |
+| Board & Executive Communication | McKinsey | `041` to `050` |
+| Finance & FP&A Transformation | Deloitte | `051` to `060` |
+| Cost & Margin Diagnostics | Deloitte | `061` to `070` |
+| Risk, Controls & Compliance | Deloitte | `071` to `080` |
+| M&A Diligence & Integration | Deloitte | `081` to `090` |
+| Workforce & Org Design | Deloitte | `091` to `100` |
+| Operations & Process Redesign | Accenture | `101` to `110` |
+| Supply Chain & Procurement | Accenture | `111` to `120` |
+| Technology & AI Transformation | Accenture | `121` to `130` |
+| Customer Operations & Service | Accenture | `131` to `140` |
+| Program Delivery & Value Realization | Accenture | `141` to `150` |
 
 ## Not in this repo
 

@@ -38,6 +38,12 @@
       "source": "./plugins/customer-success",
       "description": "Customer success brain: one shared folder of plain-text account, people, signal, rule and handoff files, 22 skills that read and write it, and 7 routines that chain them. Adapted from Kevin Lau's Claude Brain System for Customer Success.",
       "category": "productivity"
+    },
+    {
+      "name": "big-consulting",
+      "source": "./plugins/big-consulting",
+      "description": "150 consulting skills in 15 practices across strategy, finance, risk, deals, people, operations, supply chain, technology, service and delivery, plus an index and router. Adapted from Grant Baldwin's \"Big Consulting, Rebuilt as 150 Claude Skills\".",
+      "category": "productivity"
     }
   ]
 }

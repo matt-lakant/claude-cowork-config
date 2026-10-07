@@ -1,0 +1,17 @@
+{
+  "name": "big-consulting",
+  "version": "1.0.0",
+  "description": "150 consulting skills in 15 practices across strategy, finance, risk, deals, people, operations, supply chain, technology, service and delivery, plus an index and router. Adapted from Grant Baldwin's \"Big Consulting, Rebuilt as 150 Claude Skills\".",
+  "author": {
+    "name": "Matt Cornet",
+    "email": "matt.cornet@lakant.com"
+  },
+  "keywords": [
+    "consulting",
+    "strategy",
+    "finance",
+    "operations",
+    "pricing",
+    "m-and-a"
+  ]
+}
