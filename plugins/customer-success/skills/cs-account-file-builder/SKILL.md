@@ -1,6 +1,6 @@
 ---
 name: cs-account-file-builder
-description: "Builds or rebuilds the one-page account file in the CS brain (snapshot, why they bought, success in the customer's words, people, promises, dated history, risks, open questions) from CRM notes, contract summary, kickoff notes, emails and call notes, marking gaps UNKNOWN. Use when Matt says \"build the account file for <account>\", hands over a new account from sales, or an account has no file yet."
+description: "Builds or rebuilds the one-page account file in the CS brain (snapshot, why they bought, success in the customer's words, people, promises, dated history, risks, open questions) from CRM notes, contract summary, kickoff notes, emails and call notes, marking gaps UNKNOWN. Use when Matt says \"build the account file for [account]\", hands over a new account from sales, or an account has no file yet."
 ---
 
 # CS 05: Account File Builder

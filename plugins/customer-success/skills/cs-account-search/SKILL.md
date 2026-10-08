@@ -1,6 +1,6 @@
 ---
 name: cs-account-search
-description: "Answers a question about a customer from everything filed in the CS brain (account files, people, signal log, handoffs), newest first, with the file and date behind each claim and what the brain does not know. Use when Matt asks \"what did <account> say about X\", \"when did we last discuss Y with <account>\", or any factual question about a customer."
+description: "Answers a question about a customer from everything filed in the CS brain (account files, people, signal log, handoffs), newest first, with the file and date behind each claim and what the brain does not know. Use when Matt asks \"what did [account] say about X\", \"when did we last discuss Y with [account]\", or any factual question about a customer."
 ---
 
 # CS 11: Account Search

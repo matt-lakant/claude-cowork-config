@@ -1,6 +1,6 @@
 ---
 name: cs-lost-renewal-review
-description: "Reviews a churned or downgraded customer account from the CS brain: dated timeline from kickoff to loss, the earliest signal that was on file at the time, whether anyone acted, and what was controllable. Use when Matt says \"we lost <account>\", \"why did <account> churn\", \"post-mortem on the renewal\", or after any lost or shrunk renewal."
+description: "Reviews a churned or downgraded customer account from the CS brain: dated timeline from kickoff to loss, the earliest signal that was on file at the time, whether anyone acted, and what was controllable. Use when Matt says \"we lost [account]\", \"why did [account] churn\", \"post-mortem on the renewal\", or after any lost or shrunk renewal."
 ---
 
 # CS 13: Lost Renewal Review

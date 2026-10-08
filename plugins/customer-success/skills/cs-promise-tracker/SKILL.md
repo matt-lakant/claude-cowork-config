@@ -1,6 +1,6 @@
 ---
 name: cs-promise-tracker
-description: "Finds every commitment made to a customer (feature dates, follow-ups, training, discounts, intros) across call notes, emails and the account file, and tracks whether each was kept, ranked by renewal proximity. Use when Matt asks \"what did we promise <account>\", \"open promises\", \"what do we owe them\", or before a QBR or renewal."
+description: "Finds every commitment made to a customer (feature dates, follow-ups, training, discounts, intros) across call notes, emails and the account file, and tracks whether each was kept, ranked by renewal proximity. Use when Matt asks \"what did we promise [account]\", \"open promises\", \"what do we owe them\", or before a QBR or renewal."
 ---
 
 # CS 07: Promise Tracker

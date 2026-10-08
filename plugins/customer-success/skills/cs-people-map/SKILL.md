@@ -1,6 +1,6 @@
 ---
 name: cs-people-map
-description: "Maps the people in a customer account from the CS brain: role, what they care about, last contact, warmth, who signed, who uses it daily, who decides the renewal, and whether the account is single-threaded. Use when Matt asks \"who do we know at <account>\", \"map the stakeholders\", \"are we single-threaded\", or before a renewal conversation."
+description: "Maps the people in a customer account from the CS brain: role, what they care about, last contact, warmth, who signed, who uses it daily, who decides the renewal, and whether the account is single-threaded. Use when Matt asks \"who do we know at [account]\", \"map the stakeholders\", \"are we single-threaded\", or before a renewal conversation."
 ---
 
 # CS 06: People Map

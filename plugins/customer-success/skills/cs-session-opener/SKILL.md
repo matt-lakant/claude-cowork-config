@@ -1,6 +1,6 @@
 ---
 name: cs-session-opener
-description: "Loads the right customer success context at the start of a session from the CS brain: reads INDEX.md, pulls only the files the task needs, gives a 10-line account recap and a list of what is missing or stale. Use when Matt starts work on a customer account, says \"open <account>\", \"get me up to speed on <account>\", \"prep me for the <account> call\", or before any cs- skill that works on one account."
+description: "Loads the right customer success context at the start of a session from the CS brain: reads INDEX.md, pulls only the files the task needs, gives a 10-line account recap and a list of what is missing or stale. Use when Matt starts work on a customer account, says \"open [account]\", \"get me up to speed on [account]\", \"prep me for the [account] call\", or before any cs- skill that works on one account."
 ---
 
 # CS 02: Session Opener

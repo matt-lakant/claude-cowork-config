@@ -1,6 +1,6 @@
 ---
 name: cs-conflict-checker
-description: "Finds places where the CS brain gives two values for a fact that should have one (renewal date, seat count, plan, owner, main contact, stated goal), shows both with file and date, and suggests which is likely right without changing anything. Use when Matt asks \"is the brain consistent\", \"check for conflicts\", \"which renewal date is right for <account>\"."
+description: "Finds places where the CS brain gives two values for a fact that should have one (renewal date, seat count, plan, owner, main contact, stated goal), shows both with file and date, and suggests which is likely right without changing anything. Use when Matt asks \"is the brain consistent\", \"check for conflicts\", \"which renewal date is right for [account]\"."
 ---
 
 # CS 19: Conflict Checker

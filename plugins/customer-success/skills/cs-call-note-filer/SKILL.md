@@ -1,6 +1,6 @@
 ---
 name: cs-call-note-filer
-description: "Turns a raw call transcript or scrappy customer call notes into a five-line summary, verbatim customer quotes, and dated lines for the History, Promises, People and Risks sections of the account file in the CS brain. Use after any customer call, when Matt pastes a transcript or recording notes, says \"file this call\" or \"log the call with <account>\"."
+description: "Turns a raw call transcript or scrappy customer call notes into a five-line summary, verbatim customer quotes, and dated lines for the History, Promises, People and Risks sections of the account file in the CS brain. Use after any customer call, when Matt pastes a transcript or recording notes, says \"file this call\" or \"log the call with [account]\"."
 ---
 
 # CS 08: Call Note Filer

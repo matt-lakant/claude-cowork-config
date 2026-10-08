@@ -281,6 +281,9 @@ Matt avoids pull requests here and commits straight to `main`.
 
 ## Hard rules
 
+- **No angle brackets in a `description`.** claude.ai rejects XML-like tags there and the sync
+  reports "Synced with warnings" (`<account>` in ten customer-success descriptions, 2026-10-08).
+  Write placeholders as `[account]` in the frontmatter; `<...>` is fine in the body.
 - **Never run `git` in this repo. This includes `git status` and `git diff`.**
   They refresh the index, which creates a 0-byte `.git/index.lock` that the mount
   cannot delete, and GitHub Desktop then refuses to commit with "A lock file

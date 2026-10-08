@@ -1,6 +1,6 @@
 ---
 name: cs-team-share-pack
-description: "Packages what sales, support or product need from the CS brain about an account or theme, as a one-page brief without raw notes or customer confidences, plus a short note on how to ask the brain themselves. Use when Matt says \"sales is asking about <account>\", \"brief support on <account>\", \"what should product know\", \"share pack\"."
+description: "Packages what sales, support or product need from the CS brain about an account or theme, as a one-page brief without raw notes or customer confidences, plus a short note on how to ask the brain themselves. Use when Matt says \"sales is asking about [account]\", \"brief support on [account]\", \"what should product know\", \"share pack\"."
 ---
 
 # CS 22: Team Share Pack

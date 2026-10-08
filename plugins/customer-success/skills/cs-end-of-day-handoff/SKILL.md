@@ -1,6 +1,6 @@
 ---
 name: cs-end-of-day-handoff
-description: "Writes the customer success end-of-day handoff to the CS brain (handoffs/<date>.md, under 25 lines): per account touched, what happened, promised, waiting on them, waiting on us; what was planned and not done; first three things for tomorrow. Use when Matt says \"write the handoff\", \"end of day\", \"I'm off tomorrow, write it up\", or runs the wrap-up routine."
+description: "Writes the customer success end-of-day handoff to the CS brain (handoffs/[date].md, under 25 lines): per account touched, what happened, promised, waiting on them, waiting on us; what was planned and not done; first three things for tomorrow. Use when Matt says \"write the handoff\", \"end of day\", \"I'm off tomorrow, write it up\", or runs the wrap-up routine."
 ---
 
 # CS 17: End of Day Handoff
