@@ -118,6 +118,16 @@ This step is **mandatory on every run** (not just for out-of-track or tool-heavy
 - Drop bullets that are irrelevant to this role to keep length tight (target 2 pages max)
 - Put the bullet answering the JD's entry criterion in the top three of its role. A line sitting seventh on page two does not exist during a six-second screen.
 
+**Employer outside financial services: speak its domain (rule from Matt, 2026-10-08):**
+When the employer is not a financial-services firm, rewrite the finance-specific wording of the whole CV, not just new lines, **by default and without being asked**. Do it in the first draft, not after Matt flags it.
+- Describe what the work was in terms the employer's own products use. Read `company_overview.md` and the posting for their vocabulary first. FactSet's research production suite was software to **author, review (compliance), publish and distribute documents**; say that in the employer's words: "collaborative authoring, review and publishing" and "templates, workflows, views" for a workspace tool like Notion, "expert content" and "professional workflow software" for an information-services publisher like Wolters Kluwer, "financial data and reporting" for corporate-finance software like OneStream, "production et publication de contenus" for a generalist group.
+- Typical swaps: "research production suite/software" to the domain phrase above; "AI-powered research authoring" to "AI-assisted report drafting" or "authoring of expert content"; "institutional accounts" to "enterprise accounts"; "index data platform for financial institutions" to "data platform"; "research databases for the investment teams" to "custom databases / internal knowledge bases for the client's teams"; "external managers" (APG) to "third parties"; Goldman "research teams/tools" to "teams" and "internal tools and databases".
+- Keep: job titles, the department name (Research Management Solutions), client names, and **one** sector mention in the FactSet context line ("enterprise clients worldwide, mostly in financial services"), so the CV never reads as hiding the background.
+- When the employer sells to finance functions (CPM, accounting software), finance words that echo its product ("CFO", "financial data and reporting") stay; sell-side jargon ("research", "brokers", "sovereign funds") goes.
+
+**Professional Services, delivery and customer-engineering roles: client engagements (rule from Matt, 2026-10-07):**
+List **3 client engagements under FactSet 2019-2024** and **2 under FactSet 2007-2018**, each showing what the role does (integration, migration, custom work, go-live time, users), with figures from `candidate_profile.md`. If the profile lacks the figures, ask for them in Step 2b.
+
 **Skills matrix:**
 - Reorder so the top row hits JD must-haves; cells unchanged in content
 - If the JD names a tool/method that Matt has used (per `candidate_profile.md` and the vault ceilings) but isn't in the matrix, add it; if he hasn't used it, or a ceiling blocks it, do not add it
