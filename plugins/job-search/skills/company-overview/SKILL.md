@@ -53,6 +53,16 @@ Use `WebSearch` / `web_fetch` (company site first, then secondary sources). Cove
 - Clients, customers, and sectors served
 - Size and stage — headcount, revenue, funding, ownership (bootstrapped / VC / PE / public)
 - Recent signals — funding rounds, growth, M&A, product launches, leadership changes, notable news
+- **Funding and growth trajectory (mandatory, never skipped):** every round with date, amount
+  and investors, or an explicit "no round found" with the sources checked; headcount and
+  revenue trend over 2 to 3 years; any published targets or forecasts, or "none published".
+  For a French company always check the registry (Pappers / BODACC via SIREN): creation
+  date, share capital and its changes, accounts filed or filed confidential, auditor
+  appointments, officer changes. Also check press, Crunchbase or Dealroom, and the company's
+  own site and legal notice. Beware of name collisions (several companies share short names);
+  confirm the match by SIREN, website or address.
+- LinkedIn "associated members" and growth charts count anyone listing the company,
+  including trainees or freelancers: say so when the figure is not staff.
 - Competitive landscape — main competitors / category
 
 ### Step 3 — Write `company_overview.md`
@@ -64,6 +74,7 @@ Save to `applications/<slug>/company_overview.md` (create the folder if it doesn
 - **Business model:** how they make money
 - **Clients & sectors:** who they serve
 - **Size & stage:** headcount, revenue, funding, ownership
+- **Funding & growth trajectory:** rounds (or "none found" + where checked), headcount and revenue trend, published forecasts (or "none published"), registry signals
 - **Recent signals:** 2–4 dated bullets
 - **Why this role exists:** the problem they're hiring to solve (infer from the posting + the business)
 - **Positioning implications for Matt:** 3–5 bullets — how he should frame himself given this company

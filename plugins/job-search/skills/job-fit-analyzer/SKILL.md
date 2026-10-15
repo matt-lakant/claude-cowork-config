@@ -63,6 +63,13 @@ skill. When the note changes, the scoring changes with it and this file stays un
 
 ### Step 0 — Company overview (prerequisite)
 
+**No exceptions, including an early Pass.** A posting that looks like a scam, a training
+funnel, an agency fishing post or an obvious mismatch still gets `company_overview.md`
+before any verdict. The overview is usually the evidence for the Pass (who the employer
+is, whether it raised money, whether it is growing), and Matt asks for it either way.
+Missed on 2026-10-15 (Kare): the posting read as a bootcamp funnel, the analysis stopped
+early, and the overview was skipped.
+
 This skill relies on the application's `company_overview.md`. **If
 `applications/<company>-<role-slug>/company_overview.md` does not exist, run the
 `company-overview` skill first** to research the company and create it. If it already exists,
@@ -248,6 +255,11 @@ requirements, verdict. Rank by score, but lead the commentary with the risk rati
 with no ceiling gaps beats a 43 with two.
 
 ## Hard rules
+
+- **No verdict without `company_overview.md`.** Before writing the fit summary, check that
+  `applications/<slug>/job_description.md` and `applications/<slug>/company_overview.md`
+  both exist. If either is missing, produce it first. This applies to every verdict,
+  Pass included, and to a short-circuited analysis.
 
 - **The posting is read from `job_description.md`.** No fit analysis runs on a posting that
   has not been saved there first (Step 0b).
