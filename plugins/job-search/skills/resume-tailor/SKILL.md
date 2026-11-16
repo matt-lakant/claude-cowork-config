@@ -82,6 +82,26 @@ Before generating, give Matt a **1-paragraph diagnostic** in chat:
 
 This lets Matt sanity-check before you spend tokens generating the .docx. Pause for confirmation only if the angle is non-obvious or the gap is significant; otherwise proceed.
 
+### Step 2a — Evidence sheet and lessons (before any question, before any drafting)
+
+**Why this step exists.** Across 20 applications up to 2026-11-16 the red-team made a median of 36 tracked changes per CV and rewrote about 20% of its words. The largest single cause was not style: it was facts already in Matt's log that the draft had not used, found afterwards by a reviewer who searched the log requirement by requirement. This step is that search, done first. A red-team that still has to add facts from the record means this step was skipped or done thinly.
+
+1. **Search the record for every requirement.** Take the requirement list (from `fit_report.md` if it exists, else from Step 1). For each hard requirement and each nice-to-have, run:
+
+   ```text
+   python3 <skill dir>/scripts/profile_search.py <project>/_assets/candidate_profile.md "<term>;<term>;..."
+   ```
+
+   Give 3 to 6 terms per requirement: the posting's word, **its French equivalent (most of the log is in French)** and the words Matt would use (for "SOW": `SOW;statement of work;chiffrage;estimation d'effort`). One search per requirement, not one for the whole posting. Read the entries it returns, newest first, and check the Current values table for any figure.
+2. **Write the evidence sheet** in `tailoring_notes.md`, one row per requirement:
+
+   | Requirement | Strongest facts on record (entry date, line) | Where it goes in the CV | Open question |
+   |---|---|---|---|
+
+   Up to three facts per row, the most specific first: a number, a named client, something he did himself. Mark `first-hand` any fact that is work he did personally; a `hands_on` role needs two of them above the skills matrix (R19).
+3. **Use it.** Every hard requirement with a fact on record gets that fact in the CV, in the top three bullets of its role or above the matrix. A row with no fact becomes a question for Step 2b, or a stated gap if a ceiling blocks it. Fill the third column when the draft is written; Step 4a checks that no hard requirement has a fact on record and an empty third column.
+4. **Read the lessons.** Read *(project)* `_assets/redteam_lessons.md`: one line per past red-team finding, with its cause and the role family. Apply the lines that match this role family, and list in the memo which ones you applied. The red-team reads what Matt rejected so as not to repeat it; this is the same loop in the other direction.
+
 ### Step 2b — Mine every requirement (ask Matt before generating)
 
 Matt has 20+ years of broad experience; the master resume captures only the headline version. The goal of this step is that **no requirement is left weakly evidenced when he actually has the experience to back it** — for the resume *and* the cover letter. So work requirement-by-requirement, not by a fixed quota of questions.
@@ -91,7 +111,16 @@ Matt has 20+ years of broad experience; the master resume captures only the head
    - **Blocked** — the "Technology and scope ceilings" section of *(vault)* `Notes/Matt Cornet.md` says it cannot be claimed. Do not question, do not soften; it is a stated gap.
    - **Strong** — already clearly evidenced with specifics. No question needed.
    - **Partial / Absent / Unknown** — adjacent, missing, or plausibly-in-his-background-but-undocumented. **Each of these gets a question.**
-3. **Question Matt on every Partial / Absent / Unknown requirement** using the `AskUserQuestion` tool. The tool allows max 4 questions per call, so **batch them into successive rounds of up to 4 and keep going until every such requirement has been put to him** — do not stop at an arbitrary 3–5. Make each option concrete and grounded in something plausibly in his background so he can confirm in one click; use multi-select where natural; always leave room for him to add detail. For each requirement, probe what he actually did and at what scope:
+3. **Ask the reviewer's questions now, not after the draft.** Before questioning Matt, write down the attacks a skeptical reviewer will make on this application, then check each against the evidence sheet and the Current values table. The ones the record does not answer are questions for this round. The recurring ones:
+   - **The number behind each KPI the posting names** (utilization, margin, forecast, time to value, NPS, on-time rate...): the figure, what it was measured on, the period. If the record has only an estimate, ask whether it can be printed and how he would defend it.
+   - **First-hand proof** for the two or three central requirements: what he did himself, as opposed to what his organization delivered.
+   - **A recovery or a failure**, when the posting talks about escalations, projects off track or turnarounds: which one, what he did, how it ended.
+   - **The split that matches the posting**: how much of his scope was in the posting's region, sector, team profile or type of client.
+   - **Third parties**, when the posting names partners, subcontractors or vendors: who, how many, what he controlled.
+   - **Level**, only when the role tag is unclear from the posting.
+
+   On 2026-11-16 a run asked 4 questions before drafting and 4 more after the reviewer's attack; the second 4 (the utilization figure, who wrote the SQL controls, what was done with partners, time to value) were all predictable from the posting, and their answers went in as redline. A question the red-team has to ask that could have been asked here is counted as a late question (cause B) in its memo.
+3b. **Question Matt on every Partial / Absent / Unknown requirement** using the `AskUserQuestion` tool. The tool allows max 4 questions per call, so **batch them into successive rounds of up to 4 and keep going until every such requirement has been put to him** — do not stop at an arbitrary 3–5. Make each option concrete and grounded in something plausibly in his background so he can confirm in one click; use multi-select where natural; always leave room for him to add detail. For each requirement, probe what he actually did and at what scope:
    - **Named tools/platforms** (e.g. Jira / JSM, CI-CD, specific clouds, AI labs/hyperscalers, ITSM/SDLC tooling) — what did he build or run, and at what scope?
    - **Sector / domain** framing, and any non-finance work to surface.
    - **Scope & scale** (team size, budget, P&L, regions, client tier) where the JD implies a bar. When the JD's scale is *smaller* than Matt's headline numbers, ask for the intermediate figure — direct reports, missions run in parallel, typical engagement length — because the headline alone reads as overqualification and invites "why would you come here, and for how long?".
@@ -202,6 +231,7 @@ python3 <skill dir>/scripts/cv_check.py <cv.docx> --rules <project>/_assets/cv_r
 ```
 
 - **`--top-keywords`** takes the top-third keywords from Step 1. A missing keyword is a `FAIL`: put it in the header, the profile or an expertise line as part of a true statement, never as a bare list.
+- **Then check the evidence sheet from Step 2a by hand.** Every hard requirement that has a fact on record shows that fact in the CV: fill the "Where it goes" column with the line. An empty cell next to a fact on record is the most common reason for a heavy redline; fix it now.
 - **Then check the decisions table from Step 2c by hand.** For each row, quote in the memo the CV line that applies it. A row with no line to quote means the decision was not applied: fix the CV before the red-team, not after.
 
 - **Role tag:** always pass `hands_on` or `leadership` (Step 1). With `hands_on` the script fails a scale marker above the skills matrix (R18), warns on one in the first bullet of a role, and requires two first-hand facts above the matrix (R19). Without a role tag none of this is checked, and the script says so.
@@ -241,6 +271,8 @@ Contents:
 - Top 10 ATS keywords used + where they appear in the resume
 - Trade-offs made (what was de-emphasized, what got cut)
 - The exact question each form field asked, and which facts were used to answer it
+- Evidence sheet (Step 2a), with the "Where it goes in the CV" column filled, and the lessons applied from `redteam_lessons.md`
+- Reviewer's questions anticipated (Step 2b), each with its answer or the round in which it was asked
 - Base file used (Step 3a) and what its audit flagged
 - Decisions table (Step 2c), each row with the CV line that applies it
 - Top-third keywords and the tags passed to `cv_check.py`
@@ -284,6 +316,7 @@ Give him links to the red-teamed `.docx` (with the recruiter's tracked changes),
 - **Never read voice rules from `_assets/voice_matt.md` or from `candidate_profile.md`.** Both are stubs as of 2026-09-10. The vault note is the only source, loaded through `general:writing-voice`; the short voice block in Matt's preferences is not a substitute.
 - **Facts travel between pieces; sentences and framings never repeat.** Each piece does its own job. See Step 4b.
 - **A form field answers its question.** Never substitute a generic pitch for an answer to what was actually asked.
+- **The first pass carries the record.** The evidence sheet (Step 2a) is built before drafting and every hard requirement with a fact on record shows it. The target after the red-team is fewer than 10 tracked changes, all of them choices for Matt; a redline that adds facts from the log is a first pass that skipped Step 2a.
 - **Level framing before everything else** (R18 to R20). A CV for a `hands_on` role (most postings, most freelance missions included) with a scale marker above the skills matrix, or without two first-hand facts there, does not go to the red-team. The role tag follows what the role requires, never the title or the contract type. Length is informational (R17).
 - **Preserve formatting** by editing the base file chosen in Step 3a in place rather than rebuilding. The page is A4.
 - **Deliver the `.docx` and nothing else — never a PDF** of the resume or letter. See Step 4. The one exception is `<Company>_JobPost_<Role>.pdf`, the captured posting (LinkedIn, Collective or supplied PDF, Step 0b).

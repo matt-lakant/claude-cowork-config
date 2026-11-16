@@ -74,7 +74,7 @@ Use the session's agent tool (`Agent`; `Task` in older sessions), subagent type 
 
 **The figure audit must be complete.** Count the figures in the resume text yourself before reading the report; if the audit table has fewer rows, send the reviewer back for the missing ones. On 2026-11-16 a reviewer without this item verified twenty claims it chose itself and missed two errors it had not picked: an EBITDA duration superseded six days earlier, and a four-country footprint attributed to a client present in one country.
 
-Require at least **5 substantive problems**. If the subagent returns a thin or congratulatory critique, push back and re-run — that is a failed adversary, not a clean resume.
+**No quota of problems or edits (changed 2026-11-16).** The earlier rule, at least 5 problems, guaranteed a long redline whatever the draft was worth. What is required instead: for each of the seven categories, either findings or one sentence saying what was checked and why it is clean, naming the lines or requirements looked at. A report with no High finding must list the three strongest attacks the reviewer tried and why each failed. A report that praises, or declares a category clean without saying what it checked, is a failed adversary: push back and re-run. Tell the reviewer not to propose a rewording that fixes nothing (no rule, no fact, no figure, no cut of at least a line): a preference is not a finding.
 
 ### Step 2b — Verify the critique before acting on it
 
@@ -83,13 +83,31 @@ The subagent argues from dated entries in `candidate_profile.md` and from the va
 **Check the figure audit the same way.** For each `superseded`, `differs` or `no record` row, open the cited entry and confirm it before applying the edit. A confirmed `superseded` row is a factual error: fix it directly in both files (it is not a proposal), and hand the figure to `asset-updater` so the Current values row is added or corrected in the same run.
 
 ### Step 3 — Apply the redline as tracked changes
-Write the verified edits to a JSON file and apply them with the script shipped in this skill:
+**Sort every verified edit into a correction or a choice before applying anything (changed 2026-11-16).** Until then every edit was a tracked change, so Matt arbitrated thirty-odd marks per CV, most of which were not his to decide.
+
+- **Correction: written straight into the text, not tracked.** The draft was wrong against something already settled: a figure or wording superseded in the Current values table or the log, a fact that contradicts the record, a rule of `cv_rules.md` (title wording, the 90% reference, level framing R18 when it only moves a scale marker to the Context line, a job-title keyword missing from the top third and added inside a sentence that stays true), a ceiling, a decision of the decisions table that was not applied, a point Matt already settled, a typo. There is one right answer and Matt has already given it.
+- **Choice: tracked change authored "Recruiter".** Anything with a trade-off that is his: cutting a line or a bullet, adding a fact or a bullet (even one on record: it changes emphasis and length), rewording that changes the strength or the emphasis of a claim, reordering, and any new wording built on an answer he just gave.
+- When in doubt, it is a choice.
+
+Give each edit a cause code for the memo (Step 5):
+
+| Code | Cause | Where it should have been caught |
+|---|---|---|
+| A | A fact already on record was not used | `resume-tailor` Step 2a, evidence sheet |
+| B | A fact Matt gave only after the draft (late question) | `resume-tailor` Step 2b, reviewer's questions asked first |
+| C | Figure, wording or rule error against the Current values table, `cv_rules.md` or a ceiling | `cv_check.py`, Step 4a |
+| D | Level: reads too senior or not hands-on (or the reverse for a leadership role) | level framing, Step 3 |
+| E | A decision of the decisions table was not applied | Step 2c and 4a |
+| F | Cut or tightening | drafting |
+| G | Wording preference with no rule behind it | not an error: should be rare |
+
+Write the edits to a JSON file, corrections with `"track": false`, and apply them with the script shipped in this skill:
 
 ```text
 python3 <this skill's dir>/scripts/redline.py <draft.docx> <redline.docx> <edits.json>
 ```
 
-`edits.json` is a list of `{"old": "<verbatim text>", "new": "<replacement>"}` (an empty `new` deletes) and `{"cut": "<first words of the paragraph>"}` for a whole paragraph. The script writes Word tracked changes authored **"Recruiter"**, so Matt can accept or reject each one, handles an `OLD` that spans several runs, and **exits with an error naming every edit it could not apply**. Fix those edits (usually an `OLD` that is not verbatim, or one that overlaps an earlier edit: merge the two into one) and run again until all are applied. Copy `OLD` strings from the `docx_dump.py` output, never from the reviewer's report, which may have normalized quotes or spaces. Read the result with `docx_dump.py <redline.docx> --view marked`.
+`edits.json` is a list of `{"old": "<verbatim text>", "new": "<replacement>"}` (an empty `new` deletes) and `{"cut": "<first words of the paragraph>"}` for a whole paragraph; add `"track": false` to a correction. The output is one file: corrections already in the text, choices as tracked changes. The script writes Word tracked changes authored **"Recruiter"**, so Matt can accept or reject each one, handles an `OLD` that spans several runs, and **exits with an error naming every edit it could not apply**. Fix those edits (usually an `OLD` that is not verbatim, or one that overlaps an earlier edit: merge the two into one) and run again until all are applied. Copy `OLD` strings from the `docx_dump.py` output, never from the reviewer's report, which may have normalized quotes or spaces. Read the result with `docx_dump.py <redline.docx> --view marked`.
 
 Do not write a tracked-changes script of your own: until 2026-11-16 each run did, and it was the most error-prone step of the pipeline (insertions invisible to `paragraph.runs`, header line breaks lost, edits skipped without notice).
 
@@ -105,7 +123,7 @@ Save a redline copy — never overwrite the tailored file: `applications/<slug>/
 - Runs living inside `<w:ins>` are not direct children of the paragraph, so `python-docx`'s `paragraph.runs` will not see them. Any later text pass over the file must walk `w:t` nodes at the XML level, or it will silently skip everything you inserted.
 - A header run often carries a `<w:br/>`. Replacing that run drops the line break and welds two lines into one. Preserve the break when rebuilding the run.
 
-**Decisions Matt has already made are not proposals.** If he has settled a point — in this session or in a logged preference — apply it directly to both files instead of offering it as a tracked change. The redline is for the arbitrations he still owes; every settled item left in it is one more click of noise.
+**Decisions Matt has already made are corrections, not proposals.** If he has settled a point — in this session, in `cv_rules.md` or in a logged preference — it goes in with `"track": false` and is listed in the memo. Every settled item left as a tracked change is one more click of noise.
 
 **Run `cv_check.py` on the redline before presenting it** (`resume-tailor` Step 4a: same script, same tags including the role tag (`hands_on` or `leadership`), same `--top-keywords` and `--hands-on`; the redline keeps the page size of the draft, which must be A4). It reads the file with every tracked change accepted, so it tests the CV Matt gets if he accepts everything. A `NEW` string can break a rule the draft respected: `0 FAIL` is required here too.
 
@@ -126,7 +144,19 @@ For every answer:
 - **If Matt rewrites one of the redline strings**, add his version verbatim to §2 of *(vault)* `Notes/Writing voice.md` in the same turn.
 
 ### Step 5 — Present to Matt
-Save a short critique memo: `applications/<slug>/redteam_notes.md` — the prioritized problem list with severities, what was redlined, what was cut, open gaps, and the verdict + biggest blocker. Present the **redlined `.docx`** and the memo, with a 3-line summary of the most important attacks. Do not paste the full resume into chat.
+Save the critique memo `applications/<slug>/redteam_notes.md`:
+
+- the verdict and the biggest blocker;
+- **"Corrections applied directly"**: a table `was → now | reason | source` for every untracked edit. Matt does not see these in Word, so this table is how he checks them, and it must be complete. He can reverse any of them by saying so;
+- **"Choices for Matt"**: the tracked changes, each with its severity and one line on the trade-off;
+- the problems the reviewer raised that were not applied, and why;
+- **"Questions"**: every reviewer question with its state (Step 4);
+- **"First-pass count"**: the number of corrections and of choices, by cause code (A to G). When there are more than 10 choices, or any cause A, B, C or E, say in one line which step of `resume-tailor` should have caught it;
+- an empty "Rejected by Matt" section.
+
+**Feed the lessons file.** Append to *(project)* `_assets/redteam_lessons.md` one line per finding of cause A, B, D or E (create the file with its heading if missing): `- <YYYY-MM-DD> | <role family> | <cause code> | <what the first pass missed, in one sentence that the next drafting run can act on>`. Do not append causes C, F or G: the check script covers C, and F and G teach nothing. `resume-tailor` Step 2a reads this file; it is how a finding stops recurring.
+
+Present the **redlined `.docx`** and the memo. Open the summary with the count ("6 corrections applied, 4 choices for you"), then the most important attacks in 3 lines. Do not paste the full resume into chat.
 
 ## Hard rules
 
@@ -135,7 +165,9 @@ Save a short critique memo: `applications/<slug>/redteam_notes.md` — the prior
   `_assets/` and `_research/` belong at the root. The standing "project folders are kept
   flat, no subfolders" preference does **not** apply to Job Applications — see the
   `opportunity-intake` skill, which wins on any conflict.
-- **Find problems — never rubber-stamp.** ≥5 substantive issues per run, or an explicit, specific justification for why a category is genuinely clean.
+- **Find problems — never rubber-stamp, and never pad.** Each category has findings or a specific statement of what was checked. No minimum number of problems or edits.
+- **Corrections are written directly, choices are tracked.** Every correction is listed in the memo; the redline holds only what Matt has to decide.
+- **Every edit carries a cause code**, and causes A, B, D and E go to `_assets/redteam_lessons.md`.
 - **Independence is mandatory.** The critique runs in a fresh-context subagent; do not let prior drafting rationale leak into its packet.
 - **The level test is answered every time** (brief item 7). On a role that requires doing the work oneself, "too senior, not hands-on" is the rejection Matt fears most, and the one both reviewers of 2026-11-16 reached.
 - **Every printed figure is audited.** Brief item 6 is not optional and not a sample: one row per figure, checked against the Current values table or the latest dated log entry.

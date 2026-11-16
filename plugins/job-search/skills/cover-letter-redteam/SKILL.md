@@ -73,8 +73,7 @@ Brief (fill the braces):
 > 11. **Level.** The role is **{hands-on: the person does the work themselves | leadership: held through other people}**, judged on what the posting requires, not on the title or the contract type. Hands-on: does the letter read as someone who will do this job, or as an executive stepping down? Quote any scale figure (headcount, P&L, board, C-level) in the first two paragraphs (High), any sentence that manages downward, and say whether one fact in the letter is first-hand work. Does it say, once and plainly, why he wants a role of this size? If not, that is High: the recruiter will ask. Leadership: flag understated seniority instead.
 > Then produce (a) a prioritized redline plan as `OLD -> NEW` or `CUT`, OLD copied verbatim from the letter, every NEW grounded only in the CV, candidate_profile, the stated motivations and the company overview, within the ceilings; (b) questions for the candidate where a fix needs a fact you do not have; (c) a verdict: send / fix first / rewrite, and the single biggest problem.
 
-Require at least **3 substantive problems**, or a specific justification per category for why
-it is clean. A congratulatory or thin critique is a failed adversary: push back and re-run.
+**No quota of problems (changed 2026-11-16).** For each category the reviewer returns findings, or one sentence saying what it checked and why it is clean. A congratulatory or thin critique is a failed adversary: push back and re-run. A rewording that fixes no rule, fact, figure or tic is a preference, not a finding.
 
 ### Step 2: Verify the critique before applying it
 
@@ -93,7 +92,7 @@ with `python3 <resume-redteam skill dir>/scripts/redline.py <draft.docx> <redlin
 on it before it goes in (`general:writing-voice` Step 4, surface §5.4). An adversary optimizing for punch writes flourishes; rewrite them
 plain.
 
-Settled decisions are not proposals: if Matt has already decided a point, apply it directly
+**Corrections are written directly, choices are tracked** (same rule and same cause codes as `resume-redteam` Step 3). A figure superseded in the Current values table, a breached rule of `cv_rules.md`, a ceiling, a misspelled name, a point Matt already settled: `"track": false` in the edits file, listed in the notes. Cuts, added facts, and rewordings that change emphasis or tone are tracked changes. Settled decisions are corrections: if Matt has already decided a point, apply it directly
 instead of leaving it as a tracked change.
 
 Save `applications/<slug>/CORNET_<Company>_Cover_Letter_<YYYY-MM-DD>_redline.docx` (or the
@@ -119,7 +118,10 @@ the same run, via `asset-updater`.
 - the problems by category and severity, with the quoted sentence
 - the three "most likely generated" sentences and what replaced them
 - the swap-test result
-- what was redlined, what was cut, what is left open
+- **"Corrections applied directly"**: `was → now | reason | source` for every untracked edit, complete, since Matt does not see them in Word
+- **"Choices for Matt"**: the tracked changes, with the trade-off in one line each
+- what was cut, what is left open, and every reviewer question with its state
+- the count of corrections and choices by cause code
 - an empty section **"Rejected by Matt"**, which `asset-updater` fills when he sends the letter back
 
 Hand back to `cover-letter` Step 7 for delivery.
@@ -132,7 +134,8 @@ kinds of edit he has rejected before, and do not propose them again without a ne
 
 ## Hard rules
 
-- **Find problems, never rubber-stamp.** At least 3 substantive issues, or a justification per category.
+- **Find problems, never rubber-stamp, never pad.** Findings or a specific justification per category; no minimum.
+- **Corrections are written directly and listed; only choices are tracked.**
 - **Independence is mandatory.** No drafting rationale in the packet.
 - **Truth ceiling holds.** Edits may cut, sharpen and reorder; they never invent facts, motivations or company claims.
 - **Never redline Matt's own words for sounding generated.** Report it; he decides.

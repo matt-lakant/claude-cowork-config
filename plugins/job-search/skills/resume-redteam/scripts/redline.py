@@ -15,6 +15,10 @@ edits.json is a list. Each entry is one of:
         delete the whole paragraph, paragraph mark included. The prefix must identify one
         paragraph only.
 
+Any entry may carry  "track": false . The change is then written straight into the text, with no
+tracked change: use it for corrections (a superseded figure, a breached rule, a typo), which are
+listed in the review memo instead of being offered as choices. Entries without it are tracked.
+
 Edits are applied in list order. Give OLD enough words to be unique; when it occurs several
 times the first occurrence is taken and a warning is printed.
 
@@ -89,7 +93,7 @@ class Redliner:
     def count(self, old):
         return sum("".join(self.run_text(r) for r in g).count(old) for p in self.paragraphs() for g in self.groups(p))
 
-    def replace(self, old, new):
+    def replace(self, old, new, track=True):
         for p in self.paragraphs():
             for g in self.groups(p):
                 text = "".join(self.run_text(r) for r in g)
@@ -115,6 +119,12 @@ class Redliner:
                     if tail:
                         r.addprevious(self.make_run(rpr, tail))
                     p.remove(r)
+                if not track:                      # correction: plain text, no tracked change
+                    if new:
+                        covered[0].addprevious(self.make_run(first_rpr, new))
+                    for dr in covered:
+                        p.remove(dr)
+                    return True
                 dele = self.mark("w:del")
                 covered[0].addprevious(dele)
                 for dr in covered:
@@ -126,11 +136,14 @@ class Redliner:
                 return True
         return False
 
-    def cut(self, prefix):
+    def cut(self, prefix, track=True):
         hits = [p for p in self.paragraphs() if accepted_text(p).startswith(prefix)]
         if len(hits) != 1:
             return "prefix matches %d paragraphs" % len(hits)
         p = hits[0]
+        if not track:
+            p.getparent().remove(p)
+            return None
         runs = [ch for ch in p if ch.tag == qn("w:r")]
         if not runs:
             return "paragraph has no direct run (already edited?)"
@@ -166,10 +179,11 @@ def main():
     edits = json.load(open(edits_path, encoding="utf-8"))
     d = docx.Document(src)
     rl = Redliner(d, author)
-    failed, applied = [], 0
+    failed, applied, untracked = [], 0, 0
     for k, e in enumerate(edits, 1):
         if "cut" in e:
-            err = rl.cut(e["cut"])
+            err = rl.cut(e["cut"], e.get("track", True))
+            untracked += (not err and not e.get("track", True))
             if err:
                 failed.append((k, "CUT " + e["cut"][:60], err))
             else:
@@ -182,8 +196,9 @@ def main():
             continue
         if n > 1:
             print("WARN edit %d: OLD occurs %d times, first occurrence taken | %s" % (k, n, old[:60]))
-        rl.replace(old, new)
+        rl.replace(old, new, e.get("track", True))
         applied += 1
+        untracked += not e.get("track", True)
     d.save(out)
     # verification on the saved file, every change accepted
     full = "\n".join(accepted_text(p) for p in docx.Document(out).element.body.iter(qn("w:p")))
@@ -192,7 +207,8 @@ def main():
             failed.append((k, e["new"][:60], "NEW not found in the saved file"))
     for k, what, why in failed:
         print("NOT APPLIED edit %d: %s | %s" % (k, what, why))
-    print("RESULT: %d of %d edits applied, author %s, saved to %s" % (applied, len(edits), author, out))
+    print("RESULT: %d of %d edits applied (%d tracked as %s, %d corrections written directly), saved to %s"
+          % (applied, len(edits), applied - untracked, author, untracked, out))
     sys.exit(1 if failed else 0)
 
 

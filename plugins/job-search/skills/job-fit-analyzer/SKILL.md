@@ -157,6 +157,7 @@ Rules:
   does with true material, and a guardrail says the material is not there.
 - 🟡 covers the "Claim only within these bounds" case where the JD's ask sits *inside* the
   bound. It becomes 🚫 when the ask sits outside it. State which bound and why.
+- **Search before marking a row ❓ or ❌.** Run `python3 <resume-tailor skill dir>/scripts/profile_search.py <project>/_assets/candidate_profile.md "<term>;<French term>;<synonym>"` for that requirement. The log holds far more than the master resume, and a row marked unknown is often on record under a French word. Cite the entry date when it is.
 - Lean toward ❓ rather than ❌ only on rows no ceiling and no guardrail touches.
 - Total the coverage, for example "6 Strong / 3 Partial / 2 Blocked / 1 Absent / 2 Unknown", and
   use it to sanity-check the five-dimension score.
