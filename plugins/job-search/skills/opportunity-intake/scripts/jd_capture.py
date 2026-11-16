@@ -72,11 +72,13 @@ def to_md(pdf, out, url=None):
                 size = max(c["size"] for c in chars)
                 bold = sum("Bold" in c["fontname"] for c in chars) / len(chars) > 0.9
                 lines.append({"t": ln["text"].strip(), "size": size, "bold": bold,
-                              "top": ln["top"], "bottom": ln["bottom"], "x": ln["x0"], "page": page.page_number})
+                              "top": ln["top"], "bottom": ln["bottom"], "x": ln["x0"], "x1": ln["x1"],
+                              "page": page.page_number})
     if not lines:
         raise SystemExit("no text in PDF (scanned image?): ask Matt to paste the posting")
     body = sorted(l["size"] for l in lines)[len(lines) // 2]   # median = body text size
-    blocks, prev = [], None
+    right = max(l["x1"] for l in lines)                       # right edge of the text column
+    blocks, prev, in_header = [], None, True                 # in_header: the meta block under the title
     for l in lines:
         t = l["t"]
         if l["size"] >= body * 1.5:
@@ -89,17 +91,24 @@ def to_md(pdf, out, url=None):
             kind, t = "-", t.lstrip("•  ").strip()
         elif NUM.match(t):
             kind, t = "n", NUM.sub(r"\1. ", t, count=1)        # numbered item from an <ol>
-        elif META.match(t):
+        elif in_header and META.match(t):                    # a posting line "Location: ..." further down is body text
             kind = "meta"
         else:
             kind = "p"
-        gap = (l["top"] - prev["bottom"]) if prev and prev["page"] == l["page"] else 99
+        if kind in ("##", "###", "p", "-", "n"):
+            in_header = False
+        same_page = bool(prev) and prev["page"] == l["page"]
+        gap = (l["top"] - prev["bottom"]) if same_page else 99
         cont = (prev and kind == "p" and blocks and blocks[-1][0] in ("p", "-", "n")
                 and gap < l["size"] * 0.6)                       # wrapped line of the same block
-        if cont:
+        # A block cut by a page break: the last line of the page ran to the right edge (so it wrapped)
+        # and did not end a sentence. Without this, the rest of a bullet lands as a stray paragraph.
+        over_page = (prev and not same_page and kind == "p" and blocks and blocks[-1][0] in ("p", "-", "n")
+                     and prev["x1"] >= right * 0.9 and not prev["t"].rstrip().endswith((".", ":", "!", "?", ";")))
+        if cont or over_page:
             blocks[-1][1] += " " + t
-        elif kind == "###" and blocks and blocks[-1][0] == "###" and gap < l["size"] * 0.6:
-            blocks[-1][1] += " " + t
+        elif kind in ("#", "##", "###") and blocks and blocks[-1][0] == kind and gap < l["size"] * 0.6:
+            blocks[-1][1] += " " + t                             # a title or heading wrapped over two lines
         else:
             blocks.append([kind, t])
         prev = l

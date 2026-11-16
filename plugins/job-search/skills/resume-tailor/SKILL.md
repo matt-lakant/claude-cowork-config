@@ -133,7 +133,7 @@ Why a table: on 2026-11-16 Matt answered "lead with the direct team", and the dr
 - Embed JD keywords inside real achievements, not as a stuffed keyword list
 - Quantify wherever the master has a number — never invent metrics
 - **Write every figure as the Current values table words it** (duration, reference date and unit included). For a figure with no row in the table, grep the log for it, take the latest dated entry, and report the figure to `asset-updater` so the row gets added. This applies to figures inherited from the base file too: a previous tailored CV is not evidence that a figure is still current.
-- Drop bullets that are irrelevant to this role to keep length tight (target 2 pages max)
+- Drop bullets that are irrelevant to this role to stay within the word budget of `cv_rules.md` R17: 1,100 words for manager and individual-contributor roles, 1,400 for director, head-of and VP roles and for freelance missions (whole document, matrix included). Step 4a measures it
 - Put the bullet answering the JD's entry criterion in the top three of its role. A line sitting seventh on page two does not exist during a six-second screen.
 
 **Employer outside financial services: speak its domain (rule from Matt, 2026-10-08):**
@@ -188,6 +188,7 @@ python3 <skill dir>/scripts/cv_check.py <cv.docx> --rules <project>/_assets/cv_r
 - **`--top-keywords`** takes the top-third keywords from Step 1. A missing keyword is a `FAIL`: put it in the header, the profile or an expertise line as part of a true statement, never as a bare list.
 - **Then check the decisions table from Step 2c by hand.** For each row, quote in the memo the CV line that applies it. A row with no line to quote means the decision was not applied: fix the CV before the red-team, not after.
 
+- **Level tag, for the word budget:** pass `level_manager` when the posting is a manager or individual-contributor role, `level_director` for director, head-of, VP roles and freelance missions. When a posting spans levels, use the level Matt is applying at. Over budget is a `WARN`: cut the least relevant bullets first (oldest role, then anything the expertise lines or the matrix already say); keep it only if every remaining line answers a requirement, and say so in the memo.
 - **Tags** describe the posting, and you decide them: `non_sales` when the role is not a sales role (most postings), `non_finance` when the employer is outside financial services, `ps_role` for Professional Services, implementation or delivery roles. Say in the memo which tags you passed.
 - **Where to run it.** The script ships with the plugin, so it is in the cloud workspace. Stage the `.docx`, `cv_rules.md` and `candidate_profile.md` with `device_stage_files` and run it there; if the plugin folder is also reachable from `device_bash`, running it there is fine too. Nothing is installed anywhere.
 - **`FAIL`** blocks delivery: fix the CV and run again until the result line reads `0 FAIL`.
@@ -266,7 +267,7 @@ Give him links to the red-teamed `.docx` (with the recruiter's tracked changes),
 - **Never read voice rules from `_assets/voice_matt.md` or from `candidate_profile.md`.** Both are stubs as of 2026-09-10. The vault note is the only source, loaded through `general:writing-voice`; the short voice block in Matt's preferences is not a substitute.
 - **Facts travel between pieces; sentences and framings never repeat.** Each piece does its own job. See Step 4b.
 - **A form field answers its question.** Never substitute a generic pitch for an answer to what was actually asked.
-- **Two pages max** for senior roles unless Matt asks otherwise. If the master overflows, cut the oldest/least-relevant role bullets first.
+- **Length is a word budget, not a page count** (R17 in `cv_rules.md`, Matt's choice of 2026-11-16): 1,100 words for manager and individual-contributor roles, 1,400 for director-level roles and freelance missions. The earlier "two pages max" rule contradicted the CVs Matt actually sends (860 to 1,690 words, up to 4 pages), and a page count measured outside Word is not the page count he sees.
 - **Preserve formatting** by editing the base file chosen in Step 3a in place rather than rebuilding. The page is A4.
 - **Deliver the `.docx` and nothing else — never a PDF** of the resume or letter. See Step 4. The one exception is `<Company>_JobPost_<Role>.pdf`, the captured posting (LinkedIn, Collective or supplied PDF, Step 0b).
 

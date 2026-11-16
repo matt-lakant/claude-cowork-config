@@ -20,7 +20,9 @@ Usage:
   --rules    file holding the fenced block  ```json cv-checks ... ```  (the machine-readable rules)
   --profile  candidate_profile.md; the "Never print" column of its "Current values" table is
              turned into forbidden strings (superseded figures and wordings)
-  --tags     conditions that apply to this posting; a check with "when": ["non_sales"] only
+  --tags     also carries the level of the role for the word budget: level_manager (manager and
+             individual-contributor roles) or level_director (director, head-of, VP, freelance mission).
+             Conditions that apply to this posting; a check with "when": ["non_sales"] only
              runs when that tag is passed. Checks with no "when" always run.
   --top-keywords  "EMEA;master data;professional services": words of the job title and core
              nouns of the posting that must appear above the skills matrix (header, profile,
@@ -189,6 +191,15 @@ def main():
             size = page_size(a.docx)
             if size != (c["width"], c["height"]):
                 add(level, c["id"], "%s: page is %s twips, expected (%d, %d). Run to_a4.py" % (c.get("message", "page size"), size, c["width"], c["height"]))
+        elif kind == "words":
+            # budget chosen by the level tag passed for this posting; counted on the whole document
+            hit = [t for t in c["budgets"] if t in tags]
+            budget = c["budgets"][hit[0]] if hit else c.get("default")
+            n = sum(len(l.split()) for l in lines)
+            if not hit:
+                add("WARN", c["id"], "no level tag passed (%s): budget of %s words assumed" % (" or ".join(c["budgets"]), budget))
+            if budget and n > budget:
+                add(level, c["id"], "%d words for a budget of %d (%s): cut %d words, least relevant bullets first" % (n, budget, hit[0] if hit else "default", n - budget))
         elif kind == "filename":
             if not re.match(c["pattern"], os.path.basename(a.docx)):
                 add(level, c["id"], c.get("message", "") + " | " + os.path.basename(a.docx))
