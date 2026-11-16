@@ -217,6 +217,7 @@ Report the fit analysis **in chat**, and **save the same report as `applications
 Open the file with three lines before the structure below:
 
 - `Scored: <YYYY-MM-DD>, <before | after> mining.` "Before" is the normal case: the score reflects what is documented, and the 🟡 and ❓ rows are still questions. Write "after" when Matt's answers for this posting are already in the log (a re-run), and say so, because the two scores are not comparable.
+- `Level: level_manager | level_director`, with the reason in a few words (title, team size, reporting line). `level_manager` covers manager, team-lead and individual-contributor postings; `level_director` covers director, head-of, VP, C-level and freelance missions. `resume-tailor` and `cover-letter` frame the whole application on this tag (rules R18 to R20 of `_assets/cv_rules.md`), so when the posting is ambiguous say so here instead of guessing silently.
 - `Sources read:` the files and the vault sections the score rests on.
 - `Superseded by:` empty. If the fit is scored again later, do not overwrite: save `fit_report_<YYYY-MM-DD>.md` and fill this line in the older file.
 

@@ -110,6 +110,15 @@ This plan is also the checklist the red team tests against. Keep it in `cover_le
 
 ### Step 4: Draft
 
+**Level framing (R18 and R19 of `cv_rules.md`; same treatment as the CV, Matt, 2026-11-16).** Use the level tag the CV was built with (`tailoring_notes.md`). For a manager-level posting:
+
+- **No scale figure in the first two paragraphs**: no headcount of 80+ or 110, no ~USD 40M P&L, no board or C-level. The opening starts from work he did, as §5.4 already requires.
+- **At least one first-hand fact** among the two or three facts the letter selects: something he did himself (wrote, built, recovered), not something his organization delivered.
+- **The level is addressed once, plainly**, where §5.4 asks for his situation: why he wants a role of this size, in one or two factual sentences drawn from his hook answers (Step 2). This is the one place a scale fact may appear, as context for the choice, never as a credential. If the hook answers do not cover it, ask him in Step 2: a recruiter reading a Global Director's letter for a manager job will ask, and a letter that does not answer leaves the question to work against him.
+- No sentence that manages downward ("I would bring a director's perspective"). He applies for the job as posted.
+
+For a director-level posting or a freelance mission, scale leads and is not deflated (R20).
+
 - **Language:** the posting's language. Register per §5.4 frame (EN: "Dear <First name>,"; FR: "Bonjour <Prénom>," or "Bonjour,").
 - **Length:** one page; EN about 300 to 380 words, FR about 180 to 250 unless the posting asks for more.
 - **Voice:** as loaded by `general:writing-voice`: §2 corpus to imitate, §3 to avoid, §5.1 and §5.4 for structure. One interpretive sentence per selected fact at most, the rest factual.
@@ -133,7 +142,7 @@ Run the full §4 review test, points 1 to 9 (`general:writing-voice` Step 4, sur
 - Read the letter next to the final CV and any form answers: no twin sentences.
 - Count words.
 - Check each §5.4 question is answered, in order.
-- Run the mechanical check on the `.docx`: `python3 <resume-tailor skill dir>/scripts/cv_check.py <file> --rules <project>/_assets/cv_rules.md --profile <project>/_assets/candidate_profile.md --kind letter --tags <tags>` (same tags as the CV, see `resume-tailor` Step 4a). `0 FAIL` is required before the gate. A `WARN` on a ceiling word is expected when the letter names a gap; any other kept warning is listed in `cover_letter_notes.md` with its reason.
+- Run the mechanical check on the `.docx`: `python3 <resume-tailor skill dir>/scripts/cv_check.py <file> --rules <project>/_assets/cv_rules.md --profile <project>/_assets/candidate_profile.md --kind letter --tags <tags>` (same tags as the CV, level tag included, see `resume-tailor` Step 4a). `0 FAIL` is required before the gate. A `WARN` on a ceiling word is expected when the letter names a gap; any other kept warning is listed in `cover_letter_notes.md` with its reason.
 
 The self-check does not replace the red team. The drafter is the worst judge of its own tics.
 
@@ -164,6 +173,7 @@ asked whether this letter should replace the §5.4 reference letter for its lang
 - **Every fact is on the final CV or in `candidate_profile.md`**, and within the ceilings in `Notes/Matt Cornet.md`. A fact he cut from the CV stays out.
 - **The letter answers the §5.4 questions in order**: why this role, why this company, applicable experience, the gap if any, his situation, a one-line close.
 - **Figures are worded as in the Current values table**, and the letter passes `cv_check.py --kind letter` before the red team. Until 2026-11-16 only the CV skills checked figures, so a duration or a count corrected in the log could still go out in a letter.
+- **Level framing as on the CV.** Manager-level posting: no scale figure in the first two paragraphs, one first-hand fact, and the choice of level answered once.
 - **Passes the swap test.** If it still works with a competitor's name, it is not finished.
 - **No sentence from the CV, the reference letters, or another employer's letter.**
 - **Voice rules come only from `Notes/Writing voice.md`, loaded through `general:writing-voice` in vault-required mode.** Never from `_assets/voice_matt.md` or `candidate_profile.md`, both stubs since 2026-09-10, and never from the short voice block in Matt's preferences.

@@ -70,6 +70,7 @@ Brief (fill the braces):
 > 8. **Form.** Length against §5.4, salutation and closing against the §5.4 frame, recipient and company names spelled as in the JD, language and register, US spelling in English, one page.
 > 9. **Copied text.** Any sentence reused from the reference letters, the CV or the form answers, apart from the logistics line.
 > 10. **Figure audit.** One row for EVERY figure, duration, count, percentage, amount and list of places or clients in the letter: letter wording | record wording | source (Current values row, or the latest dated log entry with its line number) | verdict `matches`, `superseded`, `differs` or `no record`. The log is append-only: take the latest entry. Also flag any figure worded differently in the letter and in the CV. Every row that is not `matches` is High and gets an edit.
+> 11. **Level.** The posting is **{manager-level | director-level}**. Manager-level: does the letter read as someone who will do this job, or as an executive stepping down? Quote any scale figure (headcount, P&L, board, C-level) in the first two paragraphs (High), any sentence that manages downward, and say whether one fact in the letter is first-hand work. Does it say, once and plainly, why he wants a role of this size? If not, that is High: the recruiter will ask. Director-level or freelance: flag understated seniority instead.
 > Then produce (a) a prioritized redline plan as `OLD -> NEW` or `CUT`, OLD copied verbatim from the letter, every NEW grounded only in the CV, candidate_profile, the stated motivations and the company overview, within the ceilings; (b) questions for the candidate where a fix needs a fact you do not have; (c) a verdict: send / fix first / rewrite, and the single biggest problem.
 
 Require at least **3 substantive problems**, or a specific justification per category for why
@@ -136,6 +137,7 @@ kinds of edit he has rejected before, and do not propose them again without a ne
 - **Truth ceiling holds.** Edits may cut, sharpen and reorder; they never invent facts, motivations or company claims.
 - **Never redline Matt's own words for sounding generated.** Report it; he decides.
 - **Replacement text follows `Notes/Writing voice.md`, loaded through `general:writing-voice`.** A sharper line he would never write is not an improvement. The short voice block in Matt's preferences is not a substitute for the note.
+- **The level test is answered** (brief item 11).
 - **Every figure is audited** (brief item 10), and the redline passes `cv_check.py --kind letter`.
 - **Every reviewer question is accounted for**: asked, or listed in the notes as dropped with the reason.
 - **Redline, don't overwrite. No PDF.**

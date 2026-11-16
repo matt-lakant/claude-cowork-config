@@ -24,6 +24,9 @@ Usage:
              individual-contributor roles) or level_director (director, head-of, VP, freelance mission).
              Conditions that apply to this posting; a check with "when": ["non_sales"] only
              runs when that tag is passed. Checks with no "when" always run.
+  --hands-on  "SQL control scripts;SOWs written": fragments of the first-hand facts (work Matt did
+             himself) that the CV shows above the skills matrix. Each fragment must be found there.
+             With the tag level_manager, fewer than 2 is a FAIL (rule R19).
   --top-keywords  "EMEA;master data;professional services": words of the job title and core
              nouns of the posting that must appear above the skills matrix (header, profile,
              areas of expertise), where a six-second skim stops. One FAIL per missing keyword.
@@ -119,6 +122,7 @@ def main():
     ap.add_argument("--tags", default="")
     ap.add_argument("--top-keywords", default="")
     ap.add_argument("--kind", default="cv", choices=["cv", "letter", "text"])
+    ap.add_argument("--hands-on", default="")
     a = ap.parse_args()
     tags = {t.strip() for t in a.tags.split(",") if t.strip()}
     is_docx = a.docx.lower().endswith(".docx")
@@ -127,6 +131,22 @@ def main():
     for kind, content, _ in blocks:
         for t in ([content] if kind == "p" else content):
             lines.extend(x for x in t.split("\n") if x.strip())
+    # zones: "top" = everything above the first table (header, profile, areas of expertise);
+    # "role_lead" = the first bullet under each role title (role titles are one-row tables)
+    top_lines, lead_lines = [], []
+    seen_table = False
+    for i, (kind, content, style) in enumerate(blocks):
+        if kind == "tbl":
+            seen_table = True
+            for k2, c2, st2 in blocks[i + 1:]:
+                if k2 == "tbl":
+                    break
+                if c2.strip() and not st2.lower().startswith("heading"):
+                    lead_lines.append(c2)
+                    break
+        elif not seen_table:
+            top_lines.extend(x for x in content.split("\n") if x.strip())
+    zones = {"top": top_lines, "role_lead": lead_lines}
     results = []  # (level, id, message)
 
     def add(level, cid, msg):
@@ -149,7 +169,7 @@ def main():
         kind = c["type"]
         if kind == "forbid":
             rx = re.compile(c["pattern"], flags)
-            for l in lines:
+            for l in zones.get(c.get("zone"), lines) if is_docx or not c.get("zone") else []:
                 m = rx.search(l)
                 if m:
                     add(level, c["id"], c.get("message", "") + " | " + excerpt(l, m))
@@ -196,8 +216,6 @@ def main():
             hit = [t for t in c["budgets"] if t in tags]
             budget = c["budgets"][hit[0]] if hit else c.get("default")
             n = sum(len(l.split()) for l in lines)
-            if not hit:
-                add("WARN", c["id"], "no level tag passed (%s): budget of %s words assumed" % (" or ".join(c["budgets"]), budget))
             if budget and n > budget:
                 add(level, c["id"], "%d words for a budget of %d (%s): cut %d words, least relevant bullets first" % (n, budget, hit[0] if hit else "default", n - budget))
         elif kind == "filename":
@@ -218,6 +236,18 @@ def main():
             if k.lower() not in top_text:
                 add("FAIL", "top-keywords", "'%s' is absent above the skills matrix (header, profile, areas of expertise)" % k)
 
+    if not ({"level_manager", "level_director"} & tags):
+        add("WARN", "level", "no level tag passed (level_manager or level_director): the level-framing rules R18 and R19 were not checked")
+    hands = [k.strip() for k in a.hands_on.split(";") if k.strip()]
+    if a.kind == "cv" and is_docx:
+        top_text = " ".join(top_lines).lower()
+        found = [h for h in hands if h.lower() in top_text]
+        for h in hands:
+            if h not in found:
+                add("FAIL", "R19-hands-on", "'%s' is not above the skills matrix" % h)
+        if "level_manager" in tags and len(found) < 2:
+            add("FAIL", "R19-hands-on", "manager-level posting: %d first-hand fact(s) shown above the skills matrix, 2 required (pass them with --hands-on)" % len(found))
+
     if a.profile:
         never = load_never_print(a.profile)
         if never is None:
@@ -231,10 +261,11 @@ def main():
 
     words = sum(len(l.split()) for l in lines)
     fails = [r for r in results if r[0] == "FAIL"]
+    warns = [r for r in results if r[0] == "WARN"]
     for level, cid, msg in sorted(results):
         print("%s [%s] %s" % (level, cid, msg))
     print("INFO kind=%s words=%d (all tracked changes accepted) tags=%s" % (a.kind, words, ",".join(sorted(tags)) or "none"))
-    print("RESULT: %d FAIL, %d WARN" % (len(fails), len(results) - len(fails)))
+    print("RESULT: %d FAIL, %d WARN" % (len(fails), len(warns)))
     sys.exit(1 if fails else 0)
 
 
