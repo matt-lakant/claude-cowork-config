@@ -55,7 +55,7 @@ The posting PDF is the employer's text, not Matt's document: the "never produce 
 ### Step 1 — Parse the posting
 Extract:
 - Role title, level, function
-- **Level tag (decide it here, it drives the framing of the whole CV):** `level_manager` for manager, team-lead and individual-contributor postings, which are most of Matt's applications; `level_director` for director, head-of, VP and C-level postings and for freelance missions. When a posting spans levels, use the level Matt applies at; when the title and the scope disagree (a "Head of" with a team of 4), go by the scope and say so. If `fit_report.md` gives a level, use the same one.
+- **Role tag, `hands_on` or `leadership` (decide it here, it drives the framing of the whole CV).** The question is whether the role requires doing the work oneself, not the title and not the contract type. `hands_on`: the person in the role produces the work (builds, writes, configures, delivers, runs the projects), alone or with a small team. That is the case of individual-contributor and manager postings, and of **most freelance missions**, which are individual-contributor roles. `leadership`: the role is held through other people and the posting does not ask for the work to be done personally (director, head-of, VP, C-level, and the freelance missions that are leadership mandates, such as running a department or a programme through its managers). A title can mislead in both directions: a "Head of" with a team of 4, or a "player-coach", is `hands_on`; a freelance "programme director" steering several project managers is `leadership`. When the posting asks for both, tag it `hands_on`: showing that he can do the work never hurts a leadership reader, and the reverse does. Say in the memo which words of the posting decided it. If `fit_report.md` gives the tag, use the same one.
 - Hard requirements (must-have skills, certifications, years of experience)
 - Soft requirements (nice-to-haves)
 - Top 15–25 ATS keywords (skills, tools, methodologies, domain terms — verbatim phrasing)
@@ -116,16 +116,18 @@ Why a table: on 2026-11-16 Matt answered "lead with the direct team", and the dr
 
 ### Step 3 — Rewrite with these rules
 
-**Level framing comes first (rules R18 to R20 of `cv_rules.md`, Matt, 2026-11-16).** What Matt cares about most is the seniority the CV conveys. On a mid-management posting he must not look too senior for the job or disconnected from the work, and both independent reviewers of 2026-11-16 rejected drafts for exactly that: "reads as a Global Director who delegates". Length matters far less.
+**Level framing comes first (rules R18 to R20 of `cv_rules.md`, Matt, 2026-11-16).** What Matt cares about most is the seniority the CV conveys, and that it shows his capacity to do the work himself wherever the role calls for it. On such a posting he must not look too senior for the job or disconnected from the work, and both independent reviewers of 2026-11-16 rejected drafts for exactly that: "reads as a Global Director who delegates". Length matters far less.
 
-*Manager-level posting (`level_manager`):*
+*Role that requires doing the work oneself (`hands_on`), whatever the title and whether it is a permanent job or a freelance mission:*
 - **Scale markers stay out of the top third**: no headcount of 80+ or 110, no ~USD 40M P&L, no board, C-level or SVP, no "through regional directors" in the header, the profile or the areas of expertise. The reader of a manager role stops reading there, and those words answer a question nobody asked while raising two: why this job, and for how long.
 - **The first bullet of each role says what he did himself or with his direct team** (5 to 10 managers and experts). Scale goes once into the Context line of the role, where a reader who wants it finds it.
 - **At least two first-hand facts above the skills matrix** (R19): work he did himself, from the record. Examples on file: SQL control scripts he wrote on data migrations (both FactSet periods), effort estimates and SOWs he wrote, the Standard Chartered deployment he put back on plan as last point of escalation, lakant.io built end to end, the Power BI model and reports he built. Write the fact; never the adjective "hands-on".
 - **Verbs of distance are replaced by what happened**: "oversaw", "sponsored", "governed", "ran through" become what he did (wrote, reviewed, staffed, decided, recovered), when the record supports it. When it does not, the line moves down, it is not rewritten into a claim.
 - **Titles are facts.** "Global Director" stays in the role titles. Nothing is renamed, no scope is denied: the scale is placed lower, not hidden. If asked, Matt owns it.
 
-*Director-level posting or freelance mission (`level_director`):* the opposite (R20). Scale and seniority lead, and are never deflated: a director who goes independent is the profile the client expects.
+*Leadership role (`leadership`), permanent or freelance:* the capacity to do the work oneself is not what is being bought. Scale and seniority lead and are not deflated (R20). Keep one or two first-hand facts in the experience bullets all the same: they cost nothing and answer the "too far from the ground" doubt.
+
+**The contract type never decides the framing.** An earlier rule (September 2026) said seniority is never deflated on a freelance mission. Matt corrected it on 2026-11-16: most freelance missions are individual-contributor roles, so they follow the `hands_on` rules; only leadership mandates keep seniority up front.
 
 Record the level and these choices as the first rows of the decisions table (Step 2c), whether or not Matt was asked: they are standing decisions, not a question to put to him again.
 
@@ -147,7 +149,7 @@ Record the level and these choices as the first rows of the decisions table (Ste
 - Embed JD keywords inside real achievements, not as a stuffed keyword list
 - Quantify wherever the master has a number — never invent metrics
 - **Write every figure as the Current values table words it** (duration, reference date and unit included). For a figure with no row in the table, grep the log for it, take the latest dated entry, and report the figure to `asset-updater` so the row gets added. This applies to figures inherited from the base file too: a previous tailored CV is not evidence that a figure is still current.
-- Drop bullets that are irrelevant to this role. Length is reported by Step 4a for information (R17: about 1,100 words for manager-level postings, 1,400 for director-level ones); it is not a target to hit at the cost of a relevant line
+- Drop bullets that are irrelevant to this role. Length is reported by Step 4a for information (R17: about 1,100 words for `hands_on` postings, 1,400 for `leadership` ones); it is not a target to hit at the cost of a relevant line
 - Put the bullet answering the JD's entry criterion in the top three of its role. A line sitting seventh on page two does not exist during a six-second screen.
 
 **Employer outside financial services: speak its domain (rule from Matt, 2026-10-08):**
@@ -202,7 +204,7 @@ python3 <skill dir>/scripts/cv_check.py <cv.docx> --rules <project>/_assets/cv_r
 - **`--top-keywords`** takes the top-third keywords from Step 1. A missing keyword is a `FAIL`: put it in the header, the profile or an expertise line as part of a true statement, never as a bare list.
 - **Then check the decisions table from Step 2c by hand.** For each row, quote in the memo the CV line that applies it. A row with no line to quote means the decision was not applied: fix the CV before the red-team, not after.
 
-- **Level tag:** always pass `level_manager` or `level_director` (Step 1). With `level_manager` the script fails a scale marker above the skills matrix (R18), warns on one in the first bullet of a role, and requires two first-hand facts above the matrix (R19). Without a level tag none of this is checked, and the script says so.
+- **Role tag:** always pass `hands_on` or `leadership` (Step 1). With `hands_on` the script fails a scale marker above the skills matrix (R18), warns on one in the first bullet of a role, and requires two first-hand facts above the matrix (R19). Without a role tag none of this is checked, and the script says so.
 - **`--hands-on "<fragment 1>;<fragment 2>"`** names the first-hand facts of R19 by a few verbatim words each (for example `SQL control scripts;SOWs written`). Each must be found above the matrix. The script cannot tell a first-hand fact from another line: choosing honest fragments is your job, and the red-team checks them against the record.
 - **Tags** describe the posting, and you decide them: `non_sales` when the role is not a sales role (most postings), `non_finance` when the employer is outside financial services, `ps_role` for Professional Services, implementation or delivery roles. Say in the memo which tags you passed.
 - **Where to run it.** The script ships with the plugin, so it is in the cloud workspace. Stage the `.docx`, `cv_rules.md` and `candidate_profile.md` with `device_stage_files` and run it there; if the plugin folder is also reachable from `device_bash`, running it there is fine too. Nothing is installed anywhere.
@@ -282,7 +284,7 @@ Give him links to the red-teamed `.docx` (with the recruiter's tracked changes),
 - **Never read voice rules from `_assets/voice_matt.md` or from `candidate_profile.md`.** Both are stubs as of 2026-09-10. The vault note is the only source, loaded through `general:writing-voice`; the short voice block in Matt's preferences is not a substitute.
 - **Facts travel between pieces; sentences and framings never repeat.** Each piece does its own job. See Step 4b.
 - **A form field answers its question.** Never substitute a generic pitch for an answer to what was actually asked.
-- **Level framing before everything else** (R18 to R20). A manager-level CV with a scale marker above the skills matrix, or without two first-hand facts there, does not go to the red-team. Length is informational (R17).
+- **Level framing before everything else** (R18 to R20). A CV for a `hands_on` role (most postings, most freelance missions included) with a scale marker above the skills matrix, or without two first-hand facts there, does not go to the red-team. The role tag follows what the role requires, never the title or the contract type. Length is informational (R17).
 - **Preserve formatting** by editing the base file chosen in Step 3a in place rather than rebuilding. The page is A4.
 - **Deliver the `.docx` and nothing else — never a PDF** of the resume or letter. See Step 4. The one exception is `<Company>_JobPost_<Role>.pdf`, the captured posting (LinkedIn, Collective or supplied PDF, Step 0b).
 

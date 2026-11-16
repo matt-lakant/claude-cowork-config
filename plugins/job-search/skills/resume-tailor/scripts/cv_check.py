@@ -20,13 +20,14 @@ Usage:
   --rules    file holding the fenced block  ```json cv-checks ... ```  (the machine-readable rules)
   --profile  candidate_profile.md; the "Never print" column of its "Current values" table is
              turned into forbidden strings (superseded figures and wordings)
-  --tags     also carries the level of the role for the word budget: level_manager (manager and
-             individual-contributor roles) or level_director (director, head-of, VP, freelance mission).
+  --tags     also carries the role tag: hands_on (the role requires doing the work oneself:
+             individual contributor, manager, most freelance missions) or leadership (the role is
+             held through other people, permanent or freelance). It decides rules R18 to R20.
              Conditions that apply to this posting; a check with "when": ["non_sales"] only
              runs when that tag is passed. Checks with no "when" always run.
   --hands-on  "SQL control scripts;SOWs written": fragments of the first-hand facts (work Matt did
              himself) that the CV shows above the skills matrix. Each fragment must be found there.
-             With the tag level_manager, fewer than 2 is a FAIL (rule R19).
+             With the tag hands_on, fewer than 2 is a FAIL (rule R19).
   --top-keywords  "EMEA;master data;professional services": words of the job title and core
              nouns of the posting that must appear above the skills matrix (header, profile,
              areas of expertise), where a six-second skim stops. One FAIL per missing keyword.
@@ -236,8 +237,8 @@ def main():
             if k.lower() not in top_text:
                 add("FAIL", "top-keywords", "'%s' is absent above the skills matrix (header, profile, areas of expertise)" % k)
 
-    if not ({"level_manager", "level_director"} & tags):
-        add("WARN", "level", "no level tag passed (level_manager or level_director): the level-framing rules R18 and R19 were not checked")
+    if not ({"hands_on", "leadership"} & tags):
+        add("WARN", "level", "no role tag passed (hands_on or leadership): the level-framing rules R18 and R19 were not checked")
     hands = [k.strip() for k in a.hands_on.split(";") if k.strip()]
     if a.kind == "cv" and is_docx:
         top_text = " ".join(top_lines).lower()
@@ -245,8 +246,8 @@ def main():
         for h in hands:
             if h not in found:
                 add("FAIL", "R19-hands-on", "'%s' is not above the skills matrix" % h)
-        if "level_manager" in tags and len(found) < 2:
-            add("FAIL", "R19-hands-on", "manager-level posting: %d first-hand fact(s) shown above the skills matrix, 2 required (pass them with --hands-on)" % len(found))
+        if "hands_on" in tags and len(found) < 2:
+            add("FAIL", "R19-hands-on", "hands-on role: %d first-hand fact(s) shown above the skills matrix, 2 required (pass them with --hands-on)" % len(found))
 
     if a.profile:
         never = load_never_print(a.profile)
