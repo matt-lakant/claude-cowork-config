@@ -84,7 +84,7 @@ reply (Valiantys 38/50, UpSlide 37/50) scored no higher than four that were ghos
 - If yes: use it.
 - If no: ask him — *"Quel est le nom de cette opportunité ?"* (FR) or *"What is the name of this opportunity?"* (EN) — wait for his answer before proceeding.
 
-Once the name is confirmed, **immediately display this reminder as a blockquote at the top of your response**, before any other output:
+As soon as the name is known (named by Matt, or read from the posting as `<Company> – <Role>`), **send this reminder with `SendUserMessage` before any further work**, and repeat it at the top of the final answer (rule and reason in `opportunity-intake` Step 1):
 
 > 📝 **Renommer cette conversation en :** "[OpportunityName]"
 

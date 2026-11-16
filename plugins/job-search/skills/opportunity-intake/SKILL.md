@@ -49,15 +49,26 @@ one. See *Non-opportunity outputs* below.
 
 ## Step 1 — Confirm the opportunity name
 
-Check whether Matt has already named it in this conversation.
+The name is known as soon as either holds:
 
-- If yes: use it.
-- If no: ask — *"Quel est le nom de cette opportunité ?"* (FR) or *"What is the name of
-  this opportunity?"* (EN) — and wait for the answer before writing anything.
+- Matt has named it in this conversation, or
+- the company and the role can be read from what he sent: the posting page, a PDF, a
+  pasted text, a recruiter message. Name it `<Company> – <Role>` with an en dash (never an
+  em dash), the role as the posting words it: *"Huron – Directeur EPM"*.
 
-Once confirmed, display this reminder as a blockquote at the top of the response:
+Only when neither holds, ask *"Quel est le nom de cette opportunité ?"* (FR) or *"What is
+the name of this opportunity?"* (EN) and wait for the answer before writing anything.
+
+**Display the rename reminder the moment the name is known**, before any further work:
 
 > 📝 **Renommer cette conversation en :** "[OpportunityName]"
+
+- Send it with `SendUserMessage` as soon as the name is known, even mid-turn. Text written
+  between tool calls is summarized, not shown verbatim, so a reminder left there or held
+  for the final answer is lost. Observed 2026-11-16 (Huron): the name came from the
+  LinkedIn page halfway through the turn and the reminder never appeared.
+- Repeat it as the first line of the final answer.
+- Claude cannot rename a conversation itself; Matt does it in the interface.
 
 ## Step 2 — Resolve the slug
 
