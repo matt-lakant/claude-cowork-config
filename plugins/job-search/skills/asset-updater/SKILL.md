@@ -50,7 +50,8 @@ The old locations are now pointers and **must never be written to**:
 
 1. *(vault)* `Notes/Writing voice.md` — the voice reference. **Primary destination for every voice-class edit.**
 2. *(vault)* `Notes/Matt Cornet.md` — durable identity: background, education, technology and scope ceilings, target roles. Read before classifying anything as a factual correction or a net-new fact.
-3. *(project)* `_assets/candidate_profile.md` — the append-only tailoring Q&A log and the resume-facing profile detail
+3. *(project)* `_assets/candidate_profile.md` — the append-only tailoring Q&A log and the resume-facing profile detail. Its **"Current values" table** (top of the file) holds the current wording of every figure printed on CVs; this skill owns it
+3b. *(project)* `_assets/cv_rules.md` — Matt's standing CV rules (Part 1) and their machine-readable checks (Part 2, read by `resume-tailor/scripts/cv_check.py`); this skill owns it too
 4. *(project)* `_assets/master_resume.docx` — current master CV
 5. The Claude-drafted deliverable that Matt edited (tailored resume, cover letter, form answers, recruiter message)
 6. Matt's edited final version (provided by Matt or read from the same file if he edited in place)
@@ -96,6 +97,8 @@ Skip cosmetic changes (whitespace, single-word polish that doesn't shift meaning
 | **Voice / tone preference** | Matt rewrites for register, brevity, or directness without changing facts | *(vault)* `Notes/Writing voice.md` — see Step 2b, which governs this class |
 | **Role-specific framing** | Matt's edit only fits this one application (e.g., a JD-specific keyword) | Application folder only — do NOT promote |
 | **Net-new fact** | Matt adds an experience, certification, or metric not in the master | *(vault)* `Notes/Matt Cornet.md` (with explicit confirmation) + *(project)* `candidate_profile.md` log |
+| **Figure or wording change** | Matt changes a number, a duration, a unit, a reference date, or the way a figure must be worded | *(project)* `candidate_profile.md`: log entry **and** the Current values row (see Step 4) |
+| **Standing CV rule** | Matt states a rule that applies to future CVs (a title wording, what to drop for a kind of role, a count, a layout rule) | *(project)* `_assets/cv_rules.md` Part 1, plus a check in Part 2 when it can be tested mechanically; feedback memory as before |
 
 When in doubt, ask Matt to classify. Do not silently promote a change to a systemic guardrail.
 
@@ -133,6 +136,12 @@ In order:
 3. *(vault)* **`Notes/Matt Cornet.md`** — only for durable identity facts and ceilings, only with Matt's confirmation. Add to the existing section; never edit `type` or `created` in the frontmatter; use `[[wikilinks]]` for internal references. The vault's own `CLAUDE.md` governs, and it wins over this skill on any conflict.
 4. *(project)* **`candidate_profile.md`** — append to the append-only "Confirmed details from tailoring Q&A" log, and to Areas of expertise / Experience where the resume needs the detail. Use the existing markdown structure; never rewrite from scratch. **Do not write voice or style rules here** — that section is a pointer now.
 5. *(project)* **`master_resume.docx`** — only with explicit Matt sign-off. Edit text in place using `python-docx`, preserve styles. Save a versioned backup (`master_resume_pre_<YYYY-MM-DD>.docx`) before overwriting.
+
+**Current values table and `cv_rules.md` (added 2026-11-16).** Both exist because a decision written only in the log or in memory came back wrong on later CVs.
+
+- **A figure changes, or Matt confirms one that has no row:** in the Current values table, write the new wording in "Print as", move the previous wording to "Never print" (in backticks, separated by `;`, as the exact string a CV would contain), set "Since" to today, and name the log entry. Keep the "Never print" string specific enough not to hit another fact: `to 32% over 3 years`, not `over 3 years`. Never delete a row; a figure Matt withdraws keeps its row with "Print as: not printable" and the old wording under "Never print".
+- **A standing rule appears or changes:** add or edit the row in `cv_rules.md` Part 1 with its date and the tag that says when it applies (`non_sales`, `non_finance`, `ps_role`, or always). If a regular expression can test it, add the check to the JSON block of Part 2 and keep the block valid JSON. Then run `cv_check.py` on the CV in hand to confirm the new check behaves (it fails on the old wording, passes on the new one).
+- **Prior tailored CVs:** a changed figure makes every earlier CV that prints the old wording stale as a base file. Name them under Step 5.
 
 **A guardrail written only into a log does not propagate itself.** When a correction implies a change to the skills matrix, the profile body, the vault ceilings section or the master CV, make that change in the same run. On 2026-09-04 a "remove PMP" decision sat in the Q&A log for nine days while the matrix in the same file still said PMP, and the error shipped in a tailored CV.
 
@@ -201,6 +210,8 @@ When Matt asks "do a sweep" or "review my master", run this passive variant:
 4. Surface any feedback memories older than 90 days that haven't been used and may be stale
 5. Check *(vault)* `Notes/Writing voice.md`: if the corpus in §2 has not grown in 90 days while applications shipped, the sample loop is not running — say so explicitly
 6. Check that `_assets/voice_matt.md` is still only a stub. If anything has written content back into it, that is a skill still pointing at the old location — name it so it can be fixed
+7. Reconcile the Current values table with the log: for each row, grep the log for a later entry on the same figure; list every figure printed in the CVs of the last 90 days that has no row. Run `cv_check.py` on the latest sent CV of each role family and report what fails
+8. Check `_assets/cv_rules.md` against the project preferences in memory: a rule present in one and absent from the other is reported
 
 Output is a single markdown report (`asset_sweep_<YYYY-MM-DD>.md` at the project root) plus a chat summary. No edits without Matt's go-ahead.
 
@@ -214,6 +225,7 @@ Output is a single markdown report (`asset_sweep_<YYYY-MM-DD>.md` at the project
 - **Never silently edit `master_resume.docx`.** Matt sign-off required, every time. Save a timestamped backup before overwriting.
 - **Every Matt rewrite feeds the corpus.** §2 of the vault note grows on every run where he changed a sentence. Skipping it is the failure mode this skill exists to prevent.
 - **Never write voice content into `_assets/voice_matt.md` or into `candidate_profile.md`.** Both are pointers as of 2026-09-10. Writing there splits the source of truth again, and the split will not be noticed for weeks.
+- **A figure or a standing rule is never left in the log alone.** The Current values table and `cv_rules.md` are updated in the same run as the log entry.
 - **Never promote a role-specific framing to the master.** When in doubt, leave it in the application folder.
 - **Never delete memory entries without showing Matt the content first.** Stale is not the same as wrong.
 - **Always dedup memories.** If a feedback memory already covers a topic, update it in place instead of writing a second file. Two memories that disagree are worse than one memory that's slightly out of date.

@@ -35,6 +35,8 @@ Produces a tailored version of Matt's master resume for a specific job posting. 
 2. *(vault)* `Notes/Matt Cornet.md` — durable identity and the "Technology and scope ceilings" list. Read the ceilings before writing any claim about a tool, a certification, a sector or a scope.
 3. *(project)* `_assets/candidate_profile.md` — canonical experience, target roles, accuracy guardrails, and the append-only tailoring Q&A log. **Read this first.**
 4. *(project)* `_assets/master_resume.docx` — the formatted master. Use this as the template for the .docx output (preserve fonts, table layout, section structure).
+5. *(project)* `_assets/cv_rules.md` — Matt's standing CV rules in one place (title wording for non-sales roles, wording for non-finance employers, number of client engagements, header, mandatory wordings). **Read Part 1 before drafting.** The rules used to live in session memory, the voice note and the Q&A log, and a run that missed one source missed the rule: on 2026-11-16 a draft went out with finance wording and a four-line header because both rules were only in memory.
+6. *(project)* the **"Current values" table at the top of `_assets/candidate_profile.md`** — the current wording of every figure that goes on a CV. The log under it is append-only and too long to read in full (900+ lines), so a later entry can annul an earlier one without anyone noticing. On 2026-11-16 a CV printed "EBITDA margin 27% to 32% over 3 years", a duration Matt had replaced by "24 to 30 months" six days earlier; the stale wording came in through the previous CV used as the base file.
 
 ## Workflow
 
@@ -115,6 +117,7 @@ This step is **mandatory on every run** (not just for out-of-track or tool-heavy
 - Lead bullets with action verbs from the JD when accurate ("Spearheaded", "Drove", "Reorganized", "Designed", "Architected")
 - Embed JD keywords inside real achievements, not as a stuffed keyword list
 - Quantify wherever the master has a number — never invent metrics
+- **Write every figure as the Current values table words it** (duration, reference date and unit included). For a figure with no row in the table, grep the log for it, take the latest dated entry, and report the figure to `asset-updater` so the row gets added. This applies to figures inherited from the base file too: a previous tailored CV is not evidence that a figure is still current.
 - Drop bullets that are irrelevant to this role to keep length tight (target 2 pages max)
 - Put the bullet answering the JD's entry criterion in the top three of its role. A line sitting seventh on page two does not exist during a six-second screen.
 
@@ -146,6 +149,21 @@ Where:
 - All CV/cover-letter filenames start with the `CORNET_` prefix (see `feedback_filename_convention`). If a same-dated file already exists and is locked (OneDrive placeholder) or you've materially revised it, save a `_v2` / `_v3` copy rather than overwriting — the per-application folder doubles as version history.
 - `<role-slug>` is a kebab-cased short version of the role title (e.g., `head-of-product`).
 - `<YYYY-MM-DD>` is **the date the file is being generated today** — i.e. today's date in the user's timezone, not the JD posting date, the application deadline, or any date pulled from the posting itself. Run `date +%Y-%m-%d` (or check `currentDate` in env) at generation time. If the resume is regenerated later (e.g., after Matt's manual edits or a JD update), save under a new file with the new date and leave the older one in place — the per-application folder doubles as a version history.
+
+### Step 4a — Mechanical check (mandatory, before the memo and the red-team)
+
+Run `scripts/cv_check.py` (in this skill's directory; standard library only) on the `.docx` just generated. It reads the file with tracked changes accepted, applies the machine-readable checks of `_assets/cv_rules.md` Part 2, and fails on any string listed under "Never print" in the Current values table.
+
+```text
+python3 <skill dir>/scripts/cv_check.py <cv.docx> --rules <project>/_assets/cv_rules.md \
+        --profile <project>/_assets/candidate_profile.md --tags <tags>
+```
+
+- **Tags** describe the posting, and you decide them: `non_sales` when the role is not a sales role (most postings), `non_finance` when the employer is outside financial services, `ps_role` for Professional Services, implementation or delivery roles. Say in the memo which tags you passed.
+- **Where to run it.** The script ships with the plugin, so it is in the cloud workspace. Stage the `.docx`, `cv_rules.md` and `candidate_profile.md` with `device_stage_files` and run it there; if the plugin folder is also reachable from `device_bash`, running it there is fine too. Nothing is installed anywhere.
+- **`FAIL`** blocks delivery: fix the CV and run again until the result line reads `0 FAIL`.
+- **`WARN`** is a judgment call (a finance term that is a client's own name, a header line near the limit). Keep it only with a reason, and list each kept warning with that reason under "Open questions" in the memo.
+- The script checks what can be tested mechanically. It does not replace reading Part 1 of `cv_rules.md`: rules such as "no sales mandate" or "wording that echoes the employer's products" still need your reading of the whole CV.
 
 ### Step 4b — The prose pieces: facts travel, sentences do not
 
@@ -209,6 +227,7 @@ Give him links to the red-teamed `.docx` (with the recruiter's tracked changes),
   flat, no subfolders" preference does **not** apply to Job Applications — see the
   `opportunity-intake` skill, which wins on any conflict.
 - **Never invent experience, metrics, employers, dates, or certifications.** If the JD asks for something Matt doesn't have, surface it as a gap in the diagnostic — do not paper over it.
+- **Standing rules come from `_assets/cv_rules.md`, figures from the Current values table.** Neither is recalled from memory or copied from a previous CV. `cv_check.py` must end on `0 FAIL` before the file goes to the red-team.
 - **Respect the vault ceilings.** The "Technology and scope ceilings" section of `Notes/Matt Cornet.md` is a hard limit on every claim, however well the JD would be served by exceeding it.
 - **Never use "I" in resume bullets.** Profile is third person; bullets are implicit-first-person action verbs.
 - **No figures of speech in the prose.** No metaphor, no calque of an English idiom, no defining Matt against an implied lesser peer, no sentence announcing what the next one will do. See `Notes/Writing voice.md` §3.

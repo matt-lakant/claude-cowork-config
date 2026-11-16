@@ -37,19 +37,22 @@ If the same context that wrote (or just read the rationale for) the resume also 
 3. *(project)* `_assets/candidate_profile.md` — the **ground truth** of what Matt has really done, including the append-only Q&A log. Used to tell "unsupported claim" apart from "under-sold real experience."
 4. *(vault)* `Notes/Matt Cornet.md` — the **"Technology and scope ceilings" section is the truth ceiling**. Any resume line that exceeds a ceiling is a High-severity credibility risk, not a matter of taste. Include this section in the subagent's packet.
 5. The tailored resume `.docx` produced by `resume-tailor` (extract its text).
+6. *(project)* the **"Current values" table at the top of `_assets/candidate_profile.md`** — the current wording of each figure. The reviewer audits every printed figure against it (brief item 6).
+7. *(project)* `_assets/cv_rules.md` — Matt's standing CV rules. Part 1 goes into the brief as constraints, so the reviewer does not spend edits on proposals Matt has already refused.
 
 Claude (not the subagent) also reads *(vault)* `Notes/Writing voice.md` before writing any replacement text in Step 3.
 
 ## Workflow
 
 ### Step 1 — Assemble the adversary's packet
-Extract the tailored resume to plain text (`extract-text` or unpack). Gather the JD, `company_overview.md`, `candidate_profile.md`, and the ceilings section of `Notes/Matt Cornet.md`. Do **not** include the fit score, the tailoring memo, or any "this is why it fits" narrative. If the JD file carries an internal coverage or fit matrix, tell the subagent explicitly to ignore that section — it is your own note, not a primary source, and it leaks the drafting rationale into the adversary's packet.
+Extract the tailored resume to plain text (`extract-text` or unpack). Gather the JD, `company_overview.md`, `candidate_profile.md`, and the ceilings section of `Notes/Matt Cornet.md`. Do **not** include the fit score, the tailoring memo, or any "this is why it fits" narrative. If the JD file carries an internal coverage or fit matrix, tell the subagent explicitly to ignore that section — it is your own note, not a primary source, and it leaks the drafting rationale into the adversary's packet. Add the Current values table (top of `candidate_profile.md`) and Part 1 of `_assets/cv_rules.md`. `candidate_profile.md` no longer fits in a pasted packet: give the reviewer its path and have it read the file itself (the table and lines 1 to 141 in full, then grep on the log with the date of each entry it cites).
 
 ### Step 2 — Spawn the adversarial subagent
 Use the `Task` tool (subagent type `general-purpose`). Give it this brief (fill the braces):
 
 > You are a skeptical hiring manager screening for **{role}** at **{company}**. You reject most resumes in 6 seconds. Your job is to find every reason this candidate would NOT make the shortlist — do not praise, do not validate.
 > Inputs: [paste JD] / [paste company_overview.md] / [paste candidate_profile.md as ground truth] / [paste the Technology and scope ceilings section as the hard truth ceiling] / [paste the tailored resume text].
+> Also given: the Current values table (current wording of each figure) and the candidate's standing CV rules. Treat the rules as constraints: do not propose an edit that breaks one.
 > Do two reads: (1) a 6-second skim — does the top third earn a deep read for THIS role? (2) a deep read against every JD requirement.
 > Return, with severity (High/Med/Low) on each item:
 > 1. **Weakest bullets** — limp, generic, or low-signal lines that waste prime space.
@@ -57,14 +60,19 @@ Use the `Task` tool (subagent type `general-purpose`). Give it this brief (fill 
 > 3. **Removable** — lines that add nothing for THIS JD and should be cut to tighten the read.
 > 4. **Missing** — JD must-haves, company-overview signals, and ATS keywords absent or buried; note which are likely real-but-undocumented (check candidate_profile) vs genuine gaps vs blocked by a stated ceiling.
 > 5. **Credibility risks** — over-claims, unsupported scope/scale, seniority mismatch, any line that breaches a ceiling, or anything that invites a hostile interview question.
+> 6. **Figure audit** — a table with one row for EVERY figure, duration, count, percentage, amount and list of places or clients printed on the resume (the same figure printed twice gets one row with both locations). Columns: resume wording | record wording | source (the Current values row, or the log entry with its date and line number) | verdict: `matches`, `superseded` (a later entry changes it: quote that entry), `differs` (scope, period, unit or attribution is not what the record says), or `no record`. Read the Current values table first. For a figure with no row there, grep the log and take the LATEST dated entry, because the log is append-only and a later entry can annul an earlier one. A place or client list counts as a figure: check that each item is attributed to the right client and period. Every `superseded`, `differs` and `no record` row is a High-severity credibility risk and gets an edit in the redline plan.
 > Then produce: (a) a prioritized **redline plan** as specific `OLD → NEW` text edits (or `CUT`), each grounded only in facts present in candidate_profile and within the ceilings — never invent. Copy the `OLD` text verbatim from the resume so each edit can be applied automatically. (b) a short list of **questions for the candidate** where a line could be stronger but you lack the fact to fix it.
 > End with a one-line verdict: shortlist / borderline / reject, and the single biggest thing holding it back.
+
+**The figure audit must be complete.** Count the figures in the resume text yourself before reading the report; if the audit table has fewer rows, send the reviewer back for the missing ones. On 2026-11-16 a reviewer without this item verified twenty claims it chose itself and missed two errors it had not picked: an EBITDA duration superseded six days earlier, and a four-country footprint attributed to a client present in one country.
 
 Require at least **5 substantive problems**. If the subagent returns a thin or congratulatory critique, push back and re-run — that is a failed adversary, not a clean resume.
 
 ### Step 2b — Verify the critique before acting on it
 
 The subagent argues from dated entries in `candidate_profile.md` and from the vault ceilings. **Check that the entries behind the edits you are about to apply actually say what it claims.** One grep on the dates it cites is enough. Watch for superseded entries in particular: the log is append-only, so a later entry can annul an earlier one, and an adversary reading only the earlier one will produce a confident, wrong edit. This check is what separates a redline Matt can trust from one he has to audit himself.
+
+**Check the figure audit the same way.** For each `superseded`, `differs` or `no record` row, open the cited entry and confirm it before applying the edit. A confirmed `superseded` row is a factual error: fix it directly in both files (it is not a proposal), and hand the figure to `asset-updater` so the Current values row is added or corrected in the same run.
 
 ### Step 3 — Apply the redline as tracked changes
 Bring the subagent's `OLD → NEW` / `CUT` edits into the `.docx` as **Word tracked changes** (see the `docx` skill: `<w:ins>` / `<w:del>`), authored **"Recruiter"** so Matt can accept/reject each one and see exactly what was attacked. Apply only edits grounded in `candidate_profile.md` and within the vault ceilings; hold back any edit that would require an unconfirmed fact and route it to Step 4 instead.
@@ -81,12 +89,15 @@ Save a redline copy — never overwrite the tailored file: `applications/<slug>/
 
 **Decisions Matt has already made are not proposals.** If he has settled a point — in this session or in a logged preference — apply it directly to both files instead of offering it as a tracked change. The redline is for the arbitrations he still owes; every settled item left in it is one more click of noise.
 
+**Run `cv_check.py` on the redline before presenting it** (`resume-tailor` Step 4a: same script, same tags). It reads the file with every tracked change accepted, so it tests the CV Matt gets if he accepts everything. A `NEW` string can break a rule the draft respected: `0 FAIL` is required here too.
+
 ### Step 4 — Question Matt, then strengthen
 Ask the subagent's questions with `AskUserQuestion` (batch into rounds of up to 4; grounded, one-click options; room to add detail). For every answer:
 - Append it (dated) to the `## Confirmed details from tailoring Q&A (append-only log)` in `candidate_profile.md` (standing rule), and promote durable items via `asset-updater`.
 - Convert "under-sold real experience" flags into real, specific tracked-change edits. Never invent — if Matt confirms nothing, leave the gap and name it in the memo.
 - **If a finding is a factual error rather than a weakness** — a certification he does not hold, a guardrail decided but never applied — fix it at the source in the same run: *(project)* `_assets/candidate_profile.md`, *(project)* `_assets/master_resume.docx`, and *(vault)* `Notes/Matt Cornet.md` when it is a ceiling, not only the CV in hand. Otherwise it returns on the next tailoring run.
 - **If an answer moves a ceiling** — he has in fact done the thing a ceiling said he had not — update the ceilings section in the same run and note which log entry it supersedes. A stale ceiling silently under-sells him on every future application.
+- **If an answer sets or changes a figure or its wording**, the Current values table is updated in the same run through `asset-updater`: new wording in "Print as", old wording in "Never print", today's date in "Since". The log entry alone does not stop the old wording from coming back.
 - **If Matt rewrites one of the redline strings**, add his version verbatim to §2 of *(vault)* `Notes/Writing voice.md` in the same turn.
 
 ### Step 5 — Present to Matt
@@ -101,6 +112,7 @@ Save a short critique memo: `applications/<slug>/redteam_notes.md` — the prior
   `opportunity-intake` skill, which wins on any conflict.
 - **Find problems — never rubber-stamp.** ≥5 substantive issues per run, or an explicit, specific justification for why a category is genuinely clean.
 - **Independence is mandatory.** The critique runs in a fresh-context subagent; do not let prior drafting rationale leak into its packet.
+- **Every printed figure is audited.** Brief item 6 is not optional and not a sample: one row per figure, checked against the Current values table or the latest dated log entry.
 - **Truth ceiling holds.** Tracked-change edits may cut, sharpen, and reorder freely, but must not invent experience, metrics, employers, dates, or certifications, and must not breach the ceilings in `Notes/Matt Cornet.md`. Under-selling becomes a question, not a fabrication. Respect the accuracy guardrails in `candidate_profile.md`.
 - **Replacement text follows `Notes/Writing voice.md`.** A sharper line that Matt would never say is not an improvement.
 - **Never read voice rules from `_assets/voice_matt.md` or from `candidate_profile.md`.** Both are stubs as of 2026-09-10.
