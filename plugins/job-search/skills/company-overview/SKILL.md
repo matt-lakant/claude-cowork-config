@@ -69,6 +69,7 @@ Use `WebSearch` / `web_fetch` (company site first, then secondary sources). Cove
 
 Save to `applications/<slug>/company_overview.md` (create the folder if it doesn't exist yet). Keep it to ~1 page:
 
+- **Website:** the company's official website URL, as the first line of the file, above the title or any other content (write "not found" + where checked if none exists; for an intermediary, give the intermediary's site and the end client's if identified)
 - **Company:** name (+ a note if the real employer is reached via an intermediary or is anonymous)
 - **What they do:** 1–2 sentences
 - **Business model:** how they make money
@@ -93,6 +94,7 @@ Save the file, present it to Matt with a link, and return a 2-line summary. Othe
   `opportunity-intake` skill, which wins on any conflict.
 - **Search before writing — never fabricate.** Every factual claim must come from a source; cite URLs. If something can't be verified, mark it "unconfirmed" rather than guessing.
 - **Flag intermediaries / anonymity.** Be explicit when the posting is via a recruiter/agency or the end client is undisclosed.
+- **Website first.** The company's official website URL is always the first line of `company_overview.md`, above everything else.
 - **Keep it to ~1 page.** This is a working brief, not a dossier.
 - **Date recent facts** (funding, headcount, news) and prefer current sources — company facts go stale.
 - **One file per opportunity.** Reuse or refresh `company_overview.md`; don't create duplicates.
