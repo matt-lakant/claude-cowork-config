@@ -40,7 +40,7 @@ If the same context that wrote (or just read the rationale for) the resume also 
 6. *(project)* the **"Current values" table at the top of `_assets/candidate_profile.md`** — the current wording of each figure. The reviewer audits every printed figure against it (brief item 6).
 7. *(project)* `_assets/cv_rules.md` — Matt's standing CV rules. Part 1 goes into the brief as constraints, so the reviewer does not spend edits on proposals Matt has already refused.
 
-Claude (not the subagent) also reads *(vault)* `Notes/Writing voice.md` before writing any replacement text in Step 3.
+Claude (not the subagent) also reads *(vault)* `Notes/Writing voice.md` before writing any replacement text in Step 3. For a CV redline, the **CV mode** of `general:writing-voice` is enough (§1, §3, §4 with 4.1, §5.2).
 
 ## Workflow
 
@@ -89,7 +89,7 @@ Save a redline copy — never overwrite the tailored file: `applications/<slug>/
 
 **Decisions Matt has already made are not proposals.** If he has settled a point — in this session or in a logged preference — apply it directly to both files instead of offering it as a tracked change. The redline is for the arbitrations he still owes; every settled item left in it is one more click of noise.
 
-**Run `cv_check.py` on the redline before presenting it** (`resume-tailor` Step 4a: same script, same tags). It reads the file with every tracked change accepted, so it tests the CV Matt gets if he accepts everything. A `NEW` string can break a rule the draft respected: `0 FAIL` is required here too.
+**Run `cv_check.py` on the redline before presenting it** (`resume-tailor` Step 4a: same script, same tags and `--top-keywords`; the redline keeps the page size of the draft, which must be A4). It reads the file with every tracked change accepted, so it tests the CV Matt gets if he accepts everything. A `NEW` string can break a rule the draft respected: `0 FAIL` is required here too.
 
 ### Step 4 — Question Matt, then strengthen
 Ask the subagent's questions with `AskUserQuestion` (batch into rounds of up to 4; grounded, one-click options; room to add detail). For every answer:

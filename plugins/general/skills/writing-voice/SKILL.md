@@ -35,6 +35,7 @@ by Matt.
 | **Vault** | The note can be read | `Notes/Writing voice.md`, read in full |
 | **Fallback** | No linked computer (claude.ai chat), folder access declined, or the device is offline | The `Writing voice` block in the preferences Claude receives (`<user_preferences>`) |
 | **Vault required** | A calling skill says so (`cover-letter`, `cover-letter-redteam`) | The note only. **No fallback**: if it cannot be read, stop and say why |
+| **CV mode** | A calling skill says so (`resume-tailor` and `resume-redteam`, on a run that writes CV bullets and no prose piece) | The note only, sections §1, §3, §4 with 4.1, and §5.2. No fallback either |
 
 ## Step 1: Reach the vault
 
@@ -44,6 +45,7 @@ by Matt.
 2. Read `$HOME/mnt/obsidian-vault/Notes/Writing voice.md` **in full** with `cat`. Not a grep,
    not a section: the corpus in §2 is what gets imitated, and the rules in §3 and §4 only work
    next to it.
+   **Exception, CV mode (2026-11-16):** read only §1, §3, §4 with 4.1, and §5.2 (print them with `sed` between the section headings). The corpus is letters and messages; CV bullets are governed by the banned-construction table and the CV surface rules. If the run goes on to draft a form answer, a message or a letter, read the note in full before that.
 3. If there are no remote-device tools, or the request is declined or unanswered, or the
    device is unreachable: fallback mode (unless the caller requires the vault).
 

@@ -13,6 +13,9 @@ Usage:
              turned into forbidden strings (superseded figures and wordings)
   --tags     conditions that apply to this posting; a check with "when": ["non_sales"] only
              runs when that tag is passed. Checks with no "when" always run.
+  --top-keywords  "EMEA;master data;professional services": words of the job title and core
+             nouns of the posting that must appear above the skills matrix (header, profile,
+             areas of expertise), where a six-second skim stops. One FAIL per missing keyword.
 
 Exit code 1 when at least one FAIL is reported. WARN lines never fail the run: they are judged
 by the model and listed in the memo.
@@ -50,6 +53,16 @@ def load_blocks(path):
         elif ch.tag == W + "tbl":
             blocks.append(("tbl", [par_text(p) for p in ch.iter(W + "p")], ""))
     return blocks
+
+
+def page_size(path):
+    """(width, height) in twips of the first section, or None."""
+    xml = zipfile.ZipFile(path).read("word/document.xml").decode("utf-8")
+    m = re.search(r"<w:pgSz[^>]*>", xml)
+    if not m:
+        return None
+    w, h = re.search(r'w:w="(\d+)"', m.group(0)), re.search(r'w:h="(\d+)"', m.group(0))
+    return (int(w.group(1)), int(h.group(1))) if w and h else None
 
 
 def load_checks(rules_path):
@@ -91,6 +104,7 @@ def main():
     ap.add_argument("--rules", required=True)
     ap.add_argument("--profile")
     ap.add_argument("--tags", default="")
+    ap.add_argument("--top-keywords", default="")
     a = ap.parse_args()
     tags = {t.strip() for t in a.tags.split(",") if t.strip()}
     blocks = load_blocks(a.docx)
@@ -154,11 +168,27 @@ def main():
                     i += 1
             if counts != c["expected"]:
                 add(level, c["id"], "%s: found %s, expected %s" % (c.get("message", "client engagements per role"), counts, c["expected"]))
+        elif kind == "page":
+            size = page_size(a.docx)
+            if size != (c["width"], c["height"]):
+                add(level, c["id"], "%s: page is %s twips, expected (%d, %d). Run to_a4.py" % (c.get("message", "page size"), size, c["width"], c["height"]))
         elif kind == "filename":
             if not re.match(c["pattern"], os.path.basename(a.docx)):
                 add(level, c["id"], c.get("message", "") + " | " + os.path.basename(a.docx))
         else:
             add("WARN", c.get("id", "?"), "unknown check type " + kind)
+
+    kws = [k.strip() for k in a.top_keywords.split(";") if k.strip()]
+    if kws:
+        top = []
+        for kind, content, _ in blocks:
+            if kind == "tbl":
+                break
+            top.append(content)
+        top_text = " ".join(top).lower()
+        for k in kws:
+            if k.lower() not in top_text:
+                add("FAIL", "top-keywords", "'%s' is absent above the skills matrix (header, profile, areas of expertise)" % k)
 
     if a.profile:
         never = load_never_print(a.profile)

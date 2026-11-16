@@ -31,10 +31,12 @@ Produces a tailored version of Matt's master resume for a specific job posting. 
 
 > **Voice reference moved, 2026-09-10.** How Matt writes now lives in *(vault)* `Notes/Writing voice.md`, not in this project. §2 is the corpus of his own sentences, §3 the banned-construction table, §4 the review test, §5 the per-surface rules (5.1 candidature prose, 5.2 resume, 5.3 LinkedIn post). Load it through `general:writing-voice` in vault-required mode: it requests `C:\Users\mattc\Obsidian\obsidian-vault` itself if the folder is not connected, reads the note in full, and flags drift with the voice block in Matt's preferences. No fallback: if the note cannot be read, do not draft any prose. `_assets/voice_matt.md` and the "Voice & style guidelines" section of `candidate_profile.md` are stubs pointing there — never read them as rules, never write to them.
 
+> **CV-only runs read the rules, not the corpus (2026-11-16).** When this run produces a CV and no prose piece (no form answer, no message), load the note in the **CV mode** of `general:writing-voice`: §1, §3, §4 with 4.1, and §5.2. The corpus in §2 is sentences from letters and messages, and a CV is bullets governed by §3 and §5.2. As soon as a form field or any other prose is drafted in the run, read the note in full first.
+
 1. *(vault)* `Notes/Writing voice.md` — the voice reference. Governs **every line of prose** (profile paragraph, form answers) via §5.1, and **every resume bullet** via §5.2.
 2. *(vault)* `Notes/Matt Cornet.md` — durable identity and the "Technology and scope ceilings" list. Read the ceilings before writing any claim about a tool, a certification, a sector or a scope.
 3. *(project)* `_assets/candidate_profile.md` — canonical experience, target roles, accuracy guardrails, and the append-only tailoring Q&A log. **Read this first.**
-4. *(project)* `_assets/master_resume.docx` — the formatted master. Use this as the template for the .docx output (preserve fonts, table layout, section structure).
+4. *(project)* `_assets/master_resume.docx` — the formatted master (A4 since 2026-11-16). It is the template of last resort: Step 3a picks the base file, which is usually a CV Matt has already finalized for a similar role.
 5. *(project)* `_assets/cv_rules.md` — Matt's standing CV rules in one place (title wording for non-sales roles, wording for non-finance employers, number of client engagements, header, mandatory wordings). **Read Part 1 before drafting.** The rules used to live in session memory, the voice note and the Q&A log, and a run that missed one source missed the rule: on 2026-11-16 a draft went out with finance wording and a four-line header because both rules were only in memory.
 6. *(project)* the **"Current values" table at the top of `_assets/candidate_profile.md`** — the current wording of every figure that goes on a CV. The log under it is append-only and too long to read in full (900+ lines), so a later entry can annul an earlier one without anyone noticing. On 2026-11-16 a CV printed "EBITDA margin 27% to 32% over 3 years", a duration Matt had replaced by "24 to 30 months" six days earlier; the stale wording came in through the previous CV used as the base file.
 
@@ -56,6 +58,7 @@ Extract:
 - Hard requirements (must-have skills, certifications, years of experience)
 - Soft requirements (nice-to-haves)
 - Top 15–25 ATS keywords (skills, tools, methodologies, domain terms — verbatim phrasing)
+- **Top-third keywords (3 to 6):** the words of the job title that qualify the role (a region such as "EMEA", a function such as "Professional Services") and the posting's core nouns (what the employer sells or what the role runs, e.g. "master data"). Keep only words Matt can claim; a word blocked by a ceiling is never in this list. They must appear above the skills matrix, and Step 4a tests it. On 2026-11-16 two drafts for an "EMEA" role at a master-data vendor went to the red-team without "EMEA", and one without "master data".
 - Hiring signal: what would make a candidate stand out (impact metrics, scale, geos, regulatory, AI/ML, etc.)
 - Tone of the JD (corporate, startup, consulting) — match it in the cover sections
 - **Every question the application asks, verbatim.** Form fields ("why do you want to join us?") are deliverables in their own right, governed by Step 4b.
@@ -98,6 +101,18 @@ Matt has 20+ years of broad experience; the master resume captures only the head
 
 This step is **mandatory on every run** (not just for out-of-track or tool-heavy roles). It can be abbreviated only for a near-identical re-tailor of a role he has already been fully mined on — and even then, re-ask any requirement the prior run left Partial / Absent. (Implements the `feedback_tailoring_alignment_questions` practice.)
 
+### Step 2c — Record the decisions before writing
+
+Matt's answers in Step 2b include decisions about the CV itself, not only facts: how to handle the level, what to lead with, what to leave out, which title wording. Facts go to the log; **decisions go into a table in `tailoring_notes.md`, written now, before any drafting:**
+
+| Decision | Source | Where it must show |
+|---|---|---|
+| e.g. open on the direct team of 5 to 10, keep 80+ and the P&L lower | Matt, Step 2b, question 4 | profile sentence 2; first bullet of FactSet 2019-2024 |
+
+Add the rules of `cv_rules.md` that the tags trigger for this posting (for example R3 and R5), one row each. The third column is filled before drafting, with the place where a reader will see the decision.
+
+Why a table: on 2026-11-16 Matt answered "lead with the direct team", and the draft still opened on "through regional directors", 80+ people and ~USD 40M. The answer had been logged as a fact and nothing carried it into the draft. The red-team caught it as its first High finding.
+
 ### Step 3 — Rewrite with these rules
 
 **Profile paragraph (3–4 sentences, impersonal voice — NEVER third person):**
@@ -137,9 +152,19 @@ List **3 client engagements under FactSet 2019-2024** and **2 under FactSet 2007
 
 **Education and footer:** unchanged.
 
+### Step 3a — Choose and audit the base file
+
+The base file is the `.docx` you edit in place. Choose it deliberately and say which one in the memo.
+
+1. **Candidates:** CVs Matt finalized and sent (the tracker and each folder's `redteam_notes.md` name the file that went out), in the posting's language, for the nearest role family (professional services, programme or transformation, customer success, product, AI adoption). Take the most recent one that fits. A draft or a redline Matt never returned is not a candidate.
+2. **Fallback:** `_assets/master_resume.docx` when no finalized CV is close.
+3. **Audit it before editing.** A finalized CV carries Matt's layout and phrasing, which is why it is a better start than the master. It also carries whatever was true on the day it was sent. Run `cv_check.py` on the base file with this posting's tags and `--profile`: each `FAIL` is a line to rewrite, not a line to keep (a superseded figure, a title or wording rule that did not apply to the earlier posting).
+4. **Set the page to A4** if the base predates 2026-11-16: `python3 <skill dir>/scripts/to_a4.py <base.docx> <working copy.docx>`. It keeps the text width, so no line moves.
+5. **The base is not evidence.** A sentence written for another employer (its keywords, its sector wording, its level framing) is rewritten or dropped. A figure is printed because the Current values table or the log supports it, never because the base file had it.
+
 ### Step 4 — Generate the .docx
 
-Use `_assets/master_resume.docx` as the formatting template. Open it with `python-docx`, replace text in place where possible to preserve styles, fonts, and table layout. Don't rebuild from scratch — that loses the master's polish.
+Edit the base file chosen in Step 3a (`_assets/master_resume.docx` when no finalized CV fits). Open it with `python-docx`, replace text in place where possible to preserve styles, fonts, and table layout. Don't rebuild from scratch — that loses the template's polish.
 
 Save to: `applications/<company>-<role-slug>/CORNET_<Company>_<Role>_<YYYY-MM-DD>.docx`
 
@@ -156,8 +181,12 @@ Run `scripts/cv_check.py` (in this skill's directory; standard library only) on 
 
 ```text
 python3 <skill dir>/scripts/cv_check.py <cv.docx> --rules <project>/_assets/cv_rules.md \
-        --profile <project>/_assets/candidate_profile.md --tags <tags>
+        --profile <project>/_assets/candidate_profile.md --tags <tags> \
+        --top-keywords "<keyword 1>;<keyword 2>;..."
 ```
+
+- **`--top-keywords`** takes the top-third keywords from Step 1. A missing keyword is a `FAIL`: put it in the header, the profile or an expertise line as part of a true statement, never as a bare list.
+- **Then check the decisions table from Step 2c by hand.** For each row, quote in the memo the CV line that applies it. A row with no line to quote means the decision was not applied: fix the CV before the red-team, not after.
 
 - **Tags** describe the posting, and you decide them: `non_sales` when the role is not a sales role (most postings), `non_finance` when the employer is outside financial services, `ps_role` for Professional Services, implementation or delivery roles. Say in the memo which tags you passed.
 - **Where to run it.** The script ships with the plugin, so it is in the cloud workspace. Stage the `.docx`, `cv_rules.md` and `candidate_profile.md` with `device_stage_files` and run it there; if the plugin folder is also reachable from `device_bash`, running it there is fine too. Nothing is installed anywhere.
@@ -194,6 +223,9 @@ Contents:
 - Top 10 ATS keywords used + where they appear in the resume
 - Trade-offs made (what was de-emphasized, what got cut)
 - The exact question each form field asked, and which facts were used to answer it
+- Base file used (Step 3a) and what its audit flagged
+- Decisions table (Step 2c), each row with the CV line that applies it
+- Top-third keywords and the tags passed to `cv_check.py`
 - Open questions / things to verify before submitting
 - Recommended cover letter angle (2 sentences): the 2–3 CV facts that best answer this JD and the "why this company" fact from `company_overview.md`. `cover-letter` reads this as a starting point, not a script.
 
@@ -235,7 +267,7 @@ Give him links to the red-teamed `.docx` (with the recruiter's tracked changes),
 - **Facts travel between pieces; sentences and framings never repeat.** Each piece does its own job. See Step 4b.
 - **A form field answers its question.** Never substitute a generic pitch for an answer to what was actually asked.
 - **Two pages max** for senior roles unless Matt asks otherwise. If the master overflows, cut the oldest/least-relevant role bullets first.
-- **Preserve formatting** by editing `master_resume.docx` in place rather than rebuilding.
+- **Preserve formatting** by editing the base file chosen in Step 3a in place rather than rebuilding. The page is A4.
 - **Deliver the `.docx` and nothing else — never a PDF** of the resume or letter. See Step 4. The one exception is `<Company>_JobPost_<Role>.pdf`, the captured posting (LinkedIn, Collective or supplied PDF, Step 0b).
 
 ## Edge cases
