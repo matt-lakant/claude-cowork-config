@@ -28,12 +28,12 @@ Play a **skeptical hiring manager / senior recruiter for this specific role** wh
 
 ## Why this runs in a fresh-context subagent
 
-If the same context that wrote (or just read the rationale for) the resume also critiques it, it will defend its own choices. To stay genuinely adversarial, **the critique MUST run in a fresh-context subagent** (the `Task` tool) that is handed only the primary sources and the resume text — never the tailoring rationale, the fit memo, or "why this is a good fit" framing. This subagent spawn is an explicit, standing part of Matt's setup; it is sanctioned even though agents are not spawned by default.
+If the same context that wrote (or just read the rationale for) the resume also critiques it, it will defend its own choices. To stay genuinely adversarial, **the critique MUST run in a fresh-context subagent** (the session's agent tool, named `Agent` in current sessions and `Task` in older ones) that is handed only the primary sources and the resume text — never the tailoring rationale, the fit memo, or "why this is a good fit" framing. This subagent spawn is an explicit, standing part of Matt's setup; it is sanctioned even though agents are not spawned by default.
 
 ## Source materials (the subagent reads these, not Claude's prior work)
 
 1. The job description: `applications/<slug>/job_description.md` (the most recent `job_description_<YYYY-MM-DD>.md` if dated copies exist). Only if no `.md` exists, fall back to the posting PDF (`*_JobPost_*.pdf`, or `job_description.pdf` in older folders), and tell Matt the `.md` is missing so `opportunity-intake` Step 3b can create it.
-2. `applications/<slug>/company_overview.md` — what the company actually wants and screens for.
+2. `applications/<slug>/company_overview.md` — what the company actually wants and screens for. **Without its "Positioning implications for Matt" section**: that section is drafting advice written for the tailoring step, and a reviewer who reads it knows the angle the CV was built on. Cut from that heading (or bold label, in older files) to the next heading or to "Sources".
 3. *(project)* `_assets/candidate_profile.md` — the **ground truth** of what Matt has really done, including the append-only Q&A log. Used to tell "unsupported claim" apart from "under-sold real experience."
 4. *(vault)* `Notes/Matt Cornet.md` — the **"Technology and scope ceilings" section is the truth ceiling**. Any resume line that exceeds a ceiling is a High-severity credibility risk, not a matter of taste. Include this section in the subagent's packet.
 5. The tailored resume `.docx` produced by `resume-tailor` (extract its text).
@@ -45,13 +45,20 @@ Claude (not the subagent) also reads *(vault)* `Notes/Writing voice.md` before w
 ## Workflow
 
 ### Step 1 — Assemble the adversary's packet
-Extract the tailored resume to plain text (`extract-text` or unpack). Gather the JD, `company_overview.md`, `candidate_profile.md`, and the ceilings section of `Notes/Matt Cornet.md`. Do **not** include the fit score, the tailoring memo, or any "this is why it fits" narrative. If the JD file carries an internal coverage or fit matrix, tell the subagent explicitly to ignore that section — it is your own note, not a primary source, and it leaks the drafting rationale into the adversary's packet. Add the Current values table (top of `candidate_profile.md`) and Part 1 of `_assets/cv_rules.md`. `candidate_profile.md` no longer fits in a pasted packet: give the reviewer its path and have it read the file itself (the table and lines 1 to 141 in full, then grep on the log with the date of each entry it cites).
+**Build the packet from text, not from memory of the drafting.**
+
+- **Resume text:** `python3 <this skill's dir>/scripts/docx_dump.py <cv.docx>` prints the body in document order, tables included (the skills matrix and the role titles live in tables, and `python-docx`'s `paragraph.text` misses both them and any tracked insertion). Paste that output.
+- **Pasted in full:** the JD, `company_overview.md` minus its positioning section, the "Framing guardrails" and "Technology and scope ceilings" sections of `Notes/Matt Cornet.md`, the Current values table, and Part 1 of `_assets/cv_rules.md`.
+- **Given as a path, not pasted:** `_assets/candidate_profile.md`. It is several hundred kilobytes and no longer fits in a brief. Tell the reviewer to read the top of the file through the Experience section in full, then to grep the append-only log for each claim it checks, citing the date and line of each entry, and to take the latest entry when two disagree. Tell it which tool reaches the file (`device_bash` when the project folder is on Matt's computer) and that it must not write anything.
+- **Named as off-limits:** `tailoring_notes.md`, `fit_report.md`, `redteam_notes.md`, any other CV or redline in the folder, and any other application folder. Say so explicitly in the brief: a reviewer that can read the folder will otherwise open them.
+
+Do **not** include the fit score, the tailoring memo, or any "this is why it fits" narrative. If the JD file carries an internal coverage or fit matrix, tell the subagent explicitly to ignore that section — it is your own note, not a primary source, and it leaks the drafting rationale into the adversary's packet.
 
 ### Step 2 — Spawn the adversarial subagent
-Use the `Task` tool (subagent type `general-purpose`). Give it this brief (fill the braces):
+Use the session's agent tool (`Agent`; `Task` in older sessions), subagent type `general-purpose`, and wait for its report before doing anything else on the CV. Give it this brief (fill the braces):
 
 > You are a skeptical hiring manager screening for **{role}** at **{company}**. You reject most resumes in 6 seconds. Your job is to find every reason this candidate would NOT make the shortlist — do not praise, do not validate.
-> Inputs: [paste JD] / [paste company_overview.md] / [paste candidate_profile.md as ground truth] / [paste the Technology and scope ceilings section as the hard truth ceiling] / [paste the tailored resume text].
+> Inputs: [paste JD] / [paste company_overview.md without its positioning section] / [path of candidate_profile.md, the ground truth, with how to read it] / [paste the Framing guardrails and the Technology and scope ceilings sections as the hard truth ceiling] / [paste the tailored resume text from docx_dump.py] / [list of files it must not open].
 > Also given: the Current values table (current wording of each figure) and the candidate's standing CV rules. Treat the rules as constraints: do not propose an edit that breaks one.
 > Do two reads: (1) a 6-second skim — does the top third earn a deep read for THIS role? (2) a deep read against every JD requirement.
 > Return, with severity (High/Med/Low) on each item:
@@ -75,7 +82,17 @@ The subagent argues from dated entries in `candidate_profile.md` and from the va
 **Check the figure audit the same way.** For each `superseded`, `differs` or `no record` row, open the cited entry and confirm it before applying the edit. A confirmed `superseded` row is a factual error: fix it directly in both files (it is not a proposal), and hand the figure to `asset-updater` so the Current values row is added or corrected in the same run.
 
 ### Step 3 — Apply the redline as tracked changes
-Bring the subagent's `OLD → NEW` / `CUT` edits into the `.docx` as **Word tracked changes** (see the `docx` skill: `<w:ins>` / `<w:del>`), authored **"Recruiter"** so Matt can accept/reject each one and see exactly what was attacked. Apply only edits grounded in `candidate_profile.md` and within the vault ceilings; hold back any edit that would require an unconfirmed fact and route it to Step 4 instead.
+Write the verified edits to a JSON file and apply them with the script shipped in this skill:
+
+```text
+python3 <this skill's dir>/scripts/redline.py <draft.docx> <redline.docx> <edits.json>
+```
+
+`edits.json` is a list of `{"old": "<verbatim text>", "new": "<replacement>"}` (an empty `new` deletes) and `{"cut": "<first words of the paragraph>"}` for a whole paragraph. The script writes Word tracked changes authored **"Recruiter"**, so Matt can accept or reject each one, handles an `OLD` that spans several runs, and **exits with an error naming every edit it could not apply**. Fix those edits (usually an `OLD` that is not verbatim, or one that overlaps an earlier edit: merge the two into one) and run again until all are applied. Copy `OLD` strings from the `docx_dump.py` output, never from the reviewer's report, which may have normalized quotes or spaces. Read the result with `docx_dump.py <redline.docx> --view marked`.
+
+Do not write a tracked-changes script of your own: until 2026-11-16 each run did, and it was the most error-prone step of the pipeline (insertions invisible to `paragraph.runs`, header line breaks lost, edits skipped without notice).
+
+Apply only edits grounded in `candidate_profile.md` and within the vault ceilings; hold back any edit that would require an unconfirmed fact and route it to Step 4 instead.
 
 **Every `NEW` string lands in Matt's resume, so it follows *(vault)* `Notes/Writing voice.md`** — no metaphor, no calque of an English idiom, no self-definition against an implied lesser candidate, no sentence announcing what the next one will do, and §5.2's resume rules on top. An adversary optimizing for punch will happily write a flourish; run the §4 review test over every `NEW` string and rewrite it plain before it goes in the file.
 
@@ -92,7 +109,14 @@ Save a redline copy — never overwrite the tailored file: `applications/<slug>/
 **Run `cv_check.py` on the redline before presenting it** (`resume-tailor` Step 4a: same script, same tags and `--top-keywords`; the redline keeps the page size of the draft, which must be A4). It reads the file with every tracked change accepted, so it tests the CV Matt gets if he accepts everything. A `NEW` string can break a rule the draft respected: `0 FAIL` is required here too.
 
 ### Step 4 — Question Matt, then strengthen
-Ask the subagent's questions with `AskUserQuestion` (batch into rounds of up to 4; grounded, one-click options; room to add detail). For every answer:
+**Account for every question the reviewer raised.** Number them in `redteam_notes.md` under "Questions". Each one ends in exactly one state:
+
+- **asked**: put to Matt with `AskUserQuestion`, in rounds of up to 4 (grounded, one-click options, room to add detail), **until none is left**. The reviewer may return eight; the tool takes four per call, so that is two rounds, not a selection of four;
+- **dropped**, with the reason written next to it: already answered in the log (cite the entry and apply it), blocked by a ceiling, or not worth Matt's time for this posting (say why).
+
+On 2026-11-16 one run asked 4 of the reviewer's 8 questions and another asked none, and nothing recorded what happened to the rest. A question that is neither asked nor listed is a fact that could have fixed a weak line and was lost. If Matt is not there to answer (unattended run), list the questions as open in the memo and in your closing message instead of dropping them.
+
+For every answer:
 - Append it (dated) to the `## Confirmed details from tailoring Q&A (append-only log)` in `candidate_profile.md` (standing rule), and promote durable items via `asset-updater`.
 - Convert "under-sold real experience" flags into real, specific tracked-change edits. Never invent — if Matt confirms nothing, leave the gap and name it in the memo.
 - **If a finding is a factual error rather than a weakness** — a certification he does not hold, a guardrail decided but never applied — fix it at the source in the same run: *(project)* `_assets/candidate_profile.md`, *(project)* `_assets/master_resume.docx`, and *(vault)* `Notes/Matt Cornet.md` when it is a ceiling, not only the CV in hand. Otherwise it returns on the next tailoring run.
@@ -116,6 +140,8 @@ Save a short critique memo: `applications/<slug>/redteam_notes.md` — the prior
 - **Truth ceiling holds.** Tracked-change edits may cut, sharpen, and reorder freely, but must not invent experience, metrics, employers, dates, or certifications, and must not breach the ceilings in `Notes/Matt Cornet.md`. Under-selling becomes a question, not a fabrication. Respect the accuracy guardrails in `candidate_profile.md`.
 - **Replacement text follows `Notes/Writing voice.md`.** A sharper line that Matt would never say is not an improvement.
 - **Never read voice rules from `_assets/voice_matt.md` or from `candidate_profile.md`.** Both are stubs as of 2026-09-10.
+- **Tracked changes are applied with `scripts/redline.py`** and the result is read with `scripts/docx_dump.py`. No hand-written tracked-changes code.
+- **Every reviewer question is asked or listed as dropped with its reason.**
 - **Redline, don't overwrite.** Tracked changes authored "Recruiter"; save a new `_redline` / `_vN` file; `CORNET_` filename prefix.
 - **No PDF, ever.** The redlined `.docx` is the deliverable; tracked changes are meaningless in a PDF anyway. See Step 3.
 - **Match the application language** (EN posting → EN edits; FR posting → FR edits).

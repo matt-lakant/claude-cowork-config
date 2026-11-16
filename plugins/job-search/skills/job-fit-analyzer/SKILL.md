@@ -212,8 +212,17 @@ optimizer would insert, and inserting them would put a false claim on the resume
 
 ### Step 5 — Output
 
-Report the fit analysis **in chat**. The fit report itself stays in chat: no file is written for
-it. Make sure the `company_overview.md` from Step 0 has been saved to the application folder and
+Report the fit analysis **in chat**, and **save the same report as `applications/<slug>/fit_report.md`** (changed 2026-11-16: it used to live only in chat, so `resume-tailor` in a later session, `interview-prep` weeks later, and any comparison between two runs had nothing to read). Send the file with `SendUserFile` like every other deliverable.
+
+Open the file with three lines before the structure below:
+
+- `Scored: <YYYY-MM-DD>, <before | after> mining.` "Before" is the normal case: the score reflects what is documented, and the 🟡 and ❓ rows are still questions. Write "after" when Matt's answers for this posting are already in the log (a re-run), and say so, because the two scores are not comparable.
+- `Sources read:` the files and the vault sections the score rests on.
+- `Superseded by:` empty. If the fit is scored again later, do not overwrite: save `fit_report_<YYYY-MM-DD>.md` and fill this line in the older file.
+
+`fit_report.md` is a working note for Matt and for the drafting skills. It never goes into a red-team packet (`resume-redteam` and `cover-letter-redteam` list it as off-limits).
+
+Make sure the `company_overview.md` from Step 0 has been saved to the application folder and
 link it for Matt. Structure:
 
 ```

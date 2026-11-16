@@ -23,7 +23,7 @@ finds nothing has failed.
 ## Why a fresh-context subagent
 
 The context that wrote the letter cannot see its own tics, and will defend its own choices.
-**The critique MUST run in a fresh-context subagent** (`Task` tool, `general-purpose`) that
+**The critique MUST run in a fresh-context subagent** (the session's agent tool, `Agent` in current sessions and `Task` in older ones, type `general-purpose`) that
 receives only primary sources and the letter text: never `cover_letter_notes.md`, the
 tailoring memo, or any "why this fits" narrative. This spawn is a standing, sanctioned part
 of Matt's setup.
@@ -35,9 +35,10 @@ own final edit remains the last test, and `asset-updater` feeds it back.
 ## The adversary's packet
 
 1. `applications/<slug>/job_description.md` (most recent dated copy if several).
-2. `applications/<slug>/company_overview.md`.
+2. `applications/<slug>/company_overview.md`, **without its "Positioning implications for Matt" section** (cut from that heading to the next heading or the end): it is drafting advice, and a reviewer who reads it knows the angle the letter was built on.
 3. **The final CV**: the file Matt sent back and `asset-updater` filed (`..._final.docx` or the most recent Matt-returned CV), as text.
 4. *(project)* `_assets/candidate_profile.md`: ground truth. Tell the subagent the Q&A log is append-only and a later entry can supersede an earlier one.
+4b. *(project)* the **"Current values" table** at the top of `candidate_profile.md` and Part 1 of `_assets/cv_rules.md`, pasted into the brief. The table is the current wording of each figure; the rules are constraints the reviewer must not propose against. Give the path of `candidate_profile.md` instead of pasting the file: it no longer fits in a brief, and the reviewer greps the log itself, citing the date of each entry.
 5. *(vault)* `Notes/Matt Cornet.md`, "Technology and scope ceilings" section only.
 6. *(vault)* `Notes/Writing voice.md`, **loaded through `general:writing-voice` in vault-required
    mode** before spawning (no fallback: if the note cannot be read, stop), then pasted into the
@@ -46,7 +47,7 @@ own final edit remains the last test, and `asset-updater` feeds it back.
 8. Any form answers already drafted for this application.
 9. The letter text.
 
-Leave out `cover_letter_notes.md`, `tailoring_notes.md` and any fit matrix inside the JD file.
+Leave out `cover_letter_notes.md`, `tailoring_notes.md`, `fit_report.md` and any fit matrix inside the JD file.
 
 ## Workflow
 
@@ -56,6 +57,7 @@ Brief (fill the braces):
 
 > You are a recruiter screening for **{role}** at **{company}**. You read two hundred cover letters a month and most are generated; you stop reading the moment a letter sounds like one, or like it could be sent to any company. Find every reason this letter would be skimmed or would hurt the candidate. Do not praise.
 > Inputs: [JD] / [company overview] / [final CV, the version actually sent] / [candidate_profile as ground truth] / [ceilings as the hard truth limit] / [Writing voice rules and the two reference letters, which are voice samples, not templates] / [candidate's stated motivations] / [form answers] / [the letter].
+> Also given: the Current values table (current wording of each figure) and the candidate's standing rules. Do not propose an edit that breaks a rule.
 > First, a 10-second read: after the first two sentences, would you keep reading? Why?
 > Then return, with severity High / Med / Low on each item and the exact sentence quoted:
 > 1. **Reads as generated.** Every item from list 4.1 and the structural forms under it (decorative triads, uniform rhythm, a moral at the end of every paragraph, three or more parallel openings, summary close, em dash). Then the three sentences you would bet were written by a model, and why.
@@ -67,12 +69,15 @@ Brief (fill the braces):
 > 7. **Hostile questions invited.** Any line that sets up an awkward interview question.
 > 8. **Form.** Length against §5.4, salutation and closing against the §5.4 frame, recipient and company names spelled as in the JD, language and register, US spelling in English, one page.
 > 9. **Copied text.** Any sentence reused from the reference letters, the CV or the form answers, apart from the logistics line.
+> 10. **Figure audit.** One row for EVERY figure, duration, count, percentage, amount and list of places or clients in the letter: letter wording | record wording | source (Current values row, or the latest dated log entry with its line number) | verdict `matches`, `superseded`, `differs` or `no record`. The log is append-only: take the latest entry. Also flag any figure worded differently in the letter and in the CV. Every row that is not `matches` is High and gets an edit.
 > Then produce (a) a prioritized redline plan as `OLD -> NEW` or `CUT`, OLD copied verbatim from the letter, every NEW grounded only in the CV, candidate_profile, the stated motivations and the company overview, within the ceilings; (b) questions for the candidate where a fix needs a fact you do not have; (c) a verdict: send / fix first / rewrite, and the single biggest problem.
 
 Require at least **3 substantive problems**, or a specific justification per category for why
 it is clean. A congratulatory or thin critique is a failed adversary: push back and re-run.
 
 ### Step 2: Verify the critique before applying it
+
+Count the figures in the letter yourself: the audit table of item 10 must have a row for each, or the reviewer goes back for the missing ones. A confirmed `superseded` figure is a factual error: fix it directly in the draft and the redline, and hand it to `asset-updater` for the Current values table.
 
 Check each edit against its source: the dated `candidate_profile.md` entry it relies on (and
 any later entry that supersedes it), the ceilings, the CV. Drop AI-tell flags that hit a
@@ -83,7 +88,7 @@ him as observations, do not redline his own words. Drop flags on exact domain te
 ### Step 3: Apply the redline as tracked changes
 
 Apply the verified `OLD -> NEW` / `CUT` edits as Word tracked changes authored **"Recruiter"**
-(see the `docx` skill). **Every NEW string follows `Writing voice.md`**: run §4 points 1 to 9
+with `python3 <resume-redteam skill dir>/scripts/redline.py <draft.docx> <redline.docx> <edits.json>` (edits as `{"old": ..., "new": ...}` or `{"cut": ...}`; the script exits with an error if one edit is not applied). **Every NEW string follows `Writing voice.md`**: run §4 points 1 to 9
 on it before it goes in (`general:writing-voice` Step 4, surface §5.4). An adversary optimizing for punch writes flourishes; rewrite them
 plain.
 
@@ -93,12 +98,12 @@ instead of leaving it as a tracked change.
 Save `applications/<slug>/CORNET_<Company>_Cover_Letter_<YYYY-MM-DD>_redline.docx` (or the
 `_Lettre_` equivalent; `_vN` if one exists). Never overwrite the draft. **No PDF.**
 
-Tracked-change traps, as in `resume-redteam`: runs inside `w:ins` are invisible to
-`python-docx`'s `paragraph.runs`, so later passes must walk `w:t` nodes; a run carrying
-`<w:br/>` loses its line break if rebuilt carelessly.
+Read the result with `docx_dump.py --view marked` (same folder as `redline.py`), not with `python-docx`: `paragraph.text` skips text inside tracked insertions. Then run `cv_check.py --kind letter` on the redline (`cover-letter` Step 5): `0 FAIL` with every change accepted.
 
 ### Step 4: Ask Matt, then strengthen
 
+
+**Account for every question the reviewer raised.** Number them in `cl_redteam_notes.md`. Each one is either asked, in rounds of up to 4 until none is left, or marked dropped with one of three reasons: already answered in the log (cite the entry), blocked by a ceiling, or not worth Matt's time for this letter (say why). A question that is neither asked nor listed has been lost, and with it a fact that could have fixed a weak line.
 Ask the adversary's questions with `AskUserQuestion` (rounds of up to 4, concrete options, room
 for detail). Log every confirmed fact, dated, in `candidate_profile.md`'s append-only Q&A log
 and turn it into a tracked-change edit. If he confirms nothing, leave the gap and name it in the
@@ -131,6 +136,8 @@ kinds of edit he has rejected before, and do not propose them again without a ne
 - **Truth ceiling holds.** Edits may cut, sharpen and reorder; they never invent facts, motivations or company claims.
 - **Never redline Matt's own words for sounding generated.** Report it; he decides.
 - **Replacement text follows `Notes/Writing voice.md`, loaded through `general:writing-voice`.** A sharper line he would never write is not an improvement. The short voice block in Matt's preferences is not a substitute for the note.
+- **Every figure is audited** (brief item 10), and the redline passes `cv_check.py --kind letter`.
+- **Every reviewer question is accounted for**: asked, or listed in the notes as dropped with the reason.
 - **Redline, don't overwrite. No PDF.**
 - **Match the letter's language.**
 

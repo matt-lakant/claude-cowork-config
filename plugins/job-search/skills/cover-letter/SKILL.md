@@ -62,6 +62,8 @@ CV that is about to change is drafted twice.
 6. `applications/<slug>/tailoring_notes.md`: the recommended cover letter angle. A starting
    point, not a script.
 7. *(project)* `_assets/candidate_profile.md`: ground truth, including the append-only Q&A log.
+   Its **"Current values" table** (top of the file) gives the current wording of every figure. A figure in the letter is written as worded there, even when the final CV words it differently: the CV may predate a correction. If the two disagree, say so to Matt instead of choosing silently.
+7b. *(project)* `_assets/cv_rules.md`: the standing rules. The ones that apply to a letter are R4 (wording for a non-finance employer), R6 (the 90% wording, which Matt set for letters and emails too), R11 to R15. R10 works the other way here: the gap between the profile and the posting is handled in the letter.
 8. `applications/<slug>/notes.md` and any form answers already drafted (`form_answers*.md`),
    to avoid twin sentences.
 9. *(project)* `_assets/cover_letter_template_<EN|FR>.docx`: the layout.
@@ -131,6 +133,7 @@ Run the full §4 review test, points 1 to 9 (`general:writing-voice` Step 4, sur
 - Read the letter next to the final CV and any form answers: no twin sentences.
 - Count words.
 - Check each §5.4 question is answered, in order.
+- Run the mechanical check on the `.docx`: `python3 <resume-tailor skill dir>/scripts/cv_check.py <file> --rules <project>/_assets/cv_rules.md --profile <project>/_assets/candidate_profile.md --kind letter --tags <tags>` (same tags as the CV, see `resume-tailor` Step 4a). `0 FAIL` is required before the gate. A `WARN` on a ceiling word is expected when the letter names a gap; any other kept warning is listed in `cover_letter_notes.md` with its reason.
 
 The self-check does not replace the red team. The drafter is the worst judge of its own tics.
 
@@ -160,6 +163,7 @@ asked whether this letter should replace the §5.4 reference letter for its lang
 - **Never invent** experience, metrics, employers, dates, motivations or company facts. A motivation he did not state is not written.
 - **Every fact is on the final CV or in `candidate_profile.md`**, and within the ceilings in `Notes/Matt Cornet.md`. A fact he cut from the CV stays out.
 - **The letter answers the §5.4 questions in order**: why this role, why this company, applicable experience, the gap if any, his situation, a one-line close.
+- **Figures are worded as in the Current values table**, and the letter passes `cv_check.py --kind letter` before the red team. Until 2026-11-16 only the CV skills checked figures, so a duration or a count corrected in the log could still go out in a letter.
 - **Passes the swap test.** If it still works with a competitor's name, it is not finished.
 - **No sentence from the CV, the reference letters, or another employer's letter.**
 - **Voice rules come only from `Notes/Writing voice.md`, loaded through `general:writing-voice` in vault-required mode.** Never from `_assets/voice_matt.md` or `candidate_profile.md`, both stubs since 2026-09-10, and never from the short voice block in Matt's preferences.

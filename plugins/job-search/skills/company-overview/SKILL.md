@@ -78,8 +78,8 @@ Save to `applications/<slug>/company_overview.md` (create the folder if it doesn
 - **Funding & growth trajectory:** rounds (or "none found" + where checked), headcount and revenue trend, published forecasts (or "none published"), registry signals
 - **Recent signals:** 2–4 dated bullets
 - **Why this role exists:** the problem they're hiring to solve (infer from the posting + the business)
-- **Positioning implications for Matt:** 3–5 bullets — how he should frame himself given this company
 - **Sources:** the URLs used
+- **Positioning implications for Matt:** 3–5 bullets — how he should frame himself given this company **Always the last section of the file, under its own heading `## Positioning implications for Matt`.** Everything above it describes the company; this section is advice to the drafting skills. The red-team skills cut the file at this heading before giving it to the reviewer, so nothing a reviewer needs may be written below it, and no positioning advice may be written above it.
 
 ### Step 4 — Output
 

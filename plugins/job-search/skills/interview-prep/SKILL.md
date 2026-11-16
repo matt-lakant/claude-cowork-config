@@ -31,6 +31,8 @@ The grounding is what makes this useful — generic STAR prompts produce generic
 1. *(vault)* `Notes/Writing voice.md` — **model answers are spoken aloud by Matt.** A sentence he would not say is worse here than in any written deliverable: he has to deliver it out loud, under pressure, to someone watching his face. Corpus, banned constructions, review test.
 2. *(vault)* `Notes/Matt Cornet.md` — durable identity and the "Technology and scope ceilings" list. In an interview a breached ceiling is not a bad line, it is a claim he will be asked to defend and cannot. Read it before drafting any answer about a tool, a certification, a sector or a scope.
 3. *(project)* `_assets/candidate_profile.md` — real engagements, metrics, and the append-only Q&A log
+   **Figures come from the "Current values" table at the top of that file**, worded as it words them. Matt will say these numbers aloud to someone holding his CV: a figure that differs from the CV, or one he corrected since, is the worst place for an error. For a figure with no row, take the latest dated log entry.
+3b. Optional: `applications/<company>-<role>/fit_report.md` — the requirement coverage matrix and the gaps, if `job-fit-analyzer` ran. The 🟡 and 🚫 rows are where the hard questions will come from.
 4. The job posting (Matt should provide; if missing, ask)
 5. Optional: the tailored resume from `applications/<company>-<role>/` — read it if it exists, since the interviewer probably read it too
 6. Optional: `applications/<company>-<role>/redteam_notes.md` — if a red-team ran on this application, its "gaps assumed" and "prepare for interview" sections are the hostile questions, already identified by something trying to reject him. Start there.
@@ -67,6 +69,7 @@ Bias the predictions toward what *this specific JD* signals — not a generic to
 For each behavioral/situational question, draft a 4–6 sentence model answer using STAR (Situation–Task–Action–Result) anchored on a real entry from `candidate_profile.md`. Specifically:
 
 - Match the question to the most relevant engagement (APG, NBIM, FactSet P&L, lakant.io platform, BlueMatrix integration, Goldman quant tools, etc.)
+- Check each metric against the Current values table before writing it (duration, reference date, unit). Print the figure the CV he sent carries when both are current; flag to Matt any figure where the sent CV and the table disagree, so he knows what the interviewer has in hand
 - Include the real metric ("drove 15% YoY growth", "~60 institutional accounts", "global deployment NY/London/Tokyo/HK")
 - Keep it conversational — bullet-form STAR answers sound robotic when spoken
 - Close with the lesson or the link to "and that's why I'd approach this role's challenge by..."
@@ -95,6 +98,8 @@ Save to `applications/<company>-<role>/interview_prep/`:
 
 - `questions_and_answers.md` — full prep pack with all 15 questions and model answers
 - `cheat_sheet.md` — the one-pager
+
+Before delivering, run `python3 <resume-tailor skill dir>/scripts/cv_check.py <file> --rules <project>/_assets/cv_rules.md --profile <project>/_assets/candidate_profile.md --kind text` on `questions_and_answers.md` and on `cheat_sheet.md`. A `FAIL` is a superseded figure or a mandatory wording missing: fix it. A `WARN` on a ceiling word (Snowflake, PMP...) is expected where an answer names a gap honestly; check that it names the gap and does not claim the tool.
 
 **Never produce a PDF.** If Matt wants to print the one-pager, hand him the `.md` (or a `.docx` if he asks for one) and let him make the PDF himself from Word. Do not use the `pdf` skill for deliverables in this project.
 

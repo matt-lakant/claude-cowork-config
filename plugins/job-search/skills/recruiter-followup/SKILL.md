@@ -31,6 +31,7 @@ Drafts short, in-voice follow-up messages for the four most common recruiter tou
 1. ***(vault)* `Notes/Writing voice.md` — read this before writing a single sentence.** It holds the corpus of Matt's own sentences, the literal list of constructions never to write, and the review test. Abstract guidance ("sober, no hype") has repeatedly failed to prevent the specific turns of phrase he cuts; the corpus and the banned-construction table are what actually work. The §2 corpus already contains a LinkedIn connection note he wrote himself — start from it for that channel.
 2. *(vault)* `Notes/Matt Cornet.md` — durable identity and the "Technology and scope ceilings" list. A hook that breaches a ceiling turns a follow-up into a claim he has to walk back.
 3. *(project)* `_assets/candidate_profile.md` — for concrete hooks and factual guardrails
+   Any figure in a message is written as worded in the **"Current values" table** at the top of that file (Matt's 90% wording rule covers emails explicitly). `_assets/cv_rules.md` holds the standing rules; R4, R6 and R11 to R14 apply to messages.
 4. Any prior thread context Matt provides (paste of original message, last reply, etc.)
 
 ## Inputs to gather
@@ -93,6 +94,8 @@ Under 300 characters. State the concrete reason for reaching out, ask one answer
 Before output, run the §4 review test in *(vault)* `Notes/Writing voice.md` (`general:writing-voice` Step 4, surface §5.1): strike every image, every "I am not the kind of person who…", every sentence that announces the next one, every verb of certainty that should be an observation. Count characters if there is a cap.
 
 Deliver the message to the outputs panel with `SendUserFile` so Matt can open and copy it (see the `feedback_show_short_texts_in_chat` guidance), and keep a copy under `applications/<company>-<role>/correspondence/<YYYY-MM-DD>_<recipient>.md`. Never produce a PDF.
+
+**Mechanical check before delivery.** Save the message as its `.md` file, then run `python3 <resume-tailor skill dir>/scripts/cv_check.py <file> --rules <project>/_assets/cv_rules.md --profile <project>/_assets/candidate_profile.md --kind text --tags <tags>`. Fix every `FAIL` (a superseded figure, the 90% figure without its reference, an em dash). A message with no figure and no tool name passes in one second; the check is for the ones that carry a number.
 
 ### Step 5 — Feed the corpus
 

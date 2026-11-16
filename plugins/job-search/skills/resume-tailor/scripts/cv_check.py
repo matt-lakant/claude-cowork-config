@@ -1,12 +1,21 @@
 #!/usr/bin/env python3
-"""Mechanical pre-delivery check of a tailored CV (.docx) against Matt's standing rules.
+"""Mechanical pre-delivery check of a CV, a letter or a text piece against Matt's standing rules.
 
 Standard library only. Reads the document as it would look with every tracked change
 accepted (inserted text kept, deleted text dropped), so it works on a draft and on a redline.
 
 Usage:
-  python3 cv_check.py <cv.docx> --rules <_assets/cv_rules.md> [--profile <_assets/candidate_profile.md>]
-                      [--tags non_sales,non_finance,ps_role]
+  python3 cv_check.py <file> --rules <_assets/cv_rules.md> [--profile <_assets/candidate_profile.md>]
+                      [--kind cv|letter|text] [--tags non_sales,non_finance,ps_role]
+                      [--top-keywords "a;b;c"]
+
+  <file>     a .docx (CV or letter) or a .md / .txt file (message, form answers, interview prep)
+  --kind     cv (default), letter (cover letter .docx) or text (anything else Matt sends or says:
+             recruiter message, form answer, interview answers). A check that carries
+             "kinds": ["cv"] in the rules only runs for that kind; "level_by_kind" lets a check
+             be a FAIL on a CV and a WARN elsewhere (a letter may name a tool Matt has not used,
+             because gaps are handled there; a CV may not). Layout checks (header, page, file
+             name, client engagements) are skipped for a text file.
 
   --rules    file holding the fenced block  ```json cv-checks ... ```  (the machine-readable rules)
   --profile  candidate_profile.md; the "Never print" column of its "Current values" table is
@@ -44,6 +53,8 @@ def par_style(p):
 
 def load_blocks(path):
     """Body content in document order: ('p', text, style) and ('tbl', [cell texts])."""
+    if not path.lower().endswith(".docx"):
+        return [("p", l, "") for l in open(path, encoding="utf-8").read().splitlines()]
     root = ET.fromstring(zipfile.ZipFile(path).read("word/document.xml"))
     body = root.find(W + "body")
     blocks = []
@@ -105,8 +116,10 @@ def main():
     ap.add_argument("--profile")
     ap.add_argument("--tags", default="")
     ap.add_argument("--top-keywords", default="")
+    ap.add_argument("--kind", default="cv", choices=["cv", "letter", "text"])
     a = ap.parse_args()
     tags = {t.strip() for t in a.tags.split(",") if t.strip()}
+    is_docx = a.docx.lower().endswith(".docx")
     blocks = load_blocks(a.docx)
     lines = []
     for kind, content, _ in blocks:
@@ -125,7 +138,11 @@ def main():
         when = c.get("when")
         if when and not (set(when) & tags):
             continue
-        level = c.get("level", "FAIL").upper()
+        if c.get("kinds") and a.kind not in c["kinds"]:
+            continue
+        if not is_docx and c["type"] in ("header", "page", "filename", "engagements"):
+            continue
+        level = c.get("level_by_kind", {}).get(a.kind, c.get("level", "FAIL")).upper()
         flags = 0 if c.get("case") else re.I
         kind = c["type"]
         if kind == "forbid":
@@ -205,7 +222,7 @@ def main():
     fails = [r for r in results if r[0] == "FAIL"]
     for level, cid, msg in sorted(results):
         print("%s [%s] %s" % (level, cid, msg))
-    print("INFO words=%d (all tracked changes accepted) tags=%s" % (words, ",".join(sorted(tags)) or "none"))
+    print("INFO kind=%s words=%d (all tracked changes accepted) tags=%s" % (a.kind, words, ",".join(sorted(tags)) or "none"))
     print("RESULT: %d FAIL, %d WARN" % (len(fails), len(results) - len(fails)))
     sys.exit(1 if fails else 0)
 

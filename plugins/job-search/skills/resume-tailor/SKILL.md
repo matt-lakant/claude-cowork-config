@@ -85,7 +85,7 @@ This lets Matt sanity-check before you spend tokens generating the .docx. Pause 
 
 Matt has 20+ years of broad experience; the master resume captures only the headline version. The goal of this step is that **no requirement is left weakly evidenced when he actually has the experience to back it** — for the resume *and* the cover letter. So work requirement-by-requirement, not by a fixed quota of questions.
 
-1. **Build the requirement checklist.** List every requirement the posting states — each hard requirement, each soft / "nice-to-have", and every named tool, platform, method, certification, regulation, sector, and scope/scale bar. If `job-fit-analyzer` already produced a Requirement coverage matrix for this role, start from it.
+1. **Build the requirement checklist.** List every requirement the posting states — each hard requirement, each soft / "nice-to-have", and every named tool, platform, method, certification, regulation, sector, and scope/scale bar. If `job-fit-analyzer` already ran, read `applications/<slug>/fit_report.md` and start from its Requirement coverage matrix and its "Not claimable" list.
 2. **Classify each against the vault ceilings + `_assets/candidate_profile.md` + `master_resume.docx`:**
    - **Blocked** — the "Technology and scope ceilings" section of *(vault)* `Notes/Matt Cornet.md` says it cannot be claimed. Do not question, do not soften; it is a stated gap.
    - **Strong** — already clearly evidenced with specifics. No question needed.
