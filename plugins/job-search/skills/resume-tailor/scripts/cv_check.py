@@ -25,6 +25,8 @@ Usage:
              held through other people, permanent or freelance). It decides rules R18 to R20.
              Conditions that apply to this posting; a check with "when": ["non_sales"] only
              runs when that tag is passed. Checks with no "when" always run.
+             The language tag (lang_fr or lang_en) is detected from the text and added by the
+             script: never pass it.
   --hands-on  "SQL control scripts;SOWs written": fragments of the first-hand facts (work Matt did
              himself) that the CV shows above the skills matrix. Each fragment must be found there.
              With the tag hands_on, fewer than 2 is a FAIL (rule R19).
@@ -148,6 +150,11 @@ def main():
         elif not seen_table:
             top_lines.extend(x for x in content.split("\n") if x.strip())
     zones = {"top": top_lines, "role_lead": lead_lines}
+    # the language is detected, not passed: a check with "when": ["lang_fr"] runs on French text only
+    joined = " ".join(lines).lower()
+    fr = len(re.findall(r"\b(les|des|une|et|avec|pour|dans|sur)\b", joined))
+    en = len(re.findall(r"\b(the|and|with|for|of|in|on)\b", joined))
+    tags.add("lang_fr" if fr > en else "lang_en")
     results = []  # (level, id, message)
 
     def add(level, cid, msg):

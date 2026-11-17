@@ -156,6 +156,8 @@ Save a redline copy — never overwrite the tailored file: `applications/<slug>/
 
 **Decisions Matt has already made are corrections, not proposals.** If he has settled a point — in this session, in `cv_rules.md` or in a logged preference — it goes in with `"track": false` and is listed in the memo. Every settled item left as a tracked change is one more click of noise.
 
+**French CV: run `fr_spaces.py` on the redline** (`python3 <resume-tailor skill dir>/scripts/fr_spaces.py <redline.docx> <redline.docx>`), after `redline.py` and before the check. The replacement strings you wrote and the text kept from the draft both get a non-breaking space before `;` `:` `?` `!` and inside `« »` (R22); the tracked changes are left as they are.
+
 **Run `cv_check.py` on the redline before presenting it** (`resume-tailor` Step 5.1: same script, same tags including the role tag (`hands_on` or `leadership`), same `--top-keywords` and `--hands-on`, all read from the brief; the redline keeps the page size of the draft, which must be A4). It reads the file with every tracked change accepted, so it tests the CV Matt gets if he accepts everything. A `NEW` string can break a rule the draft respected: `0 FAIL` is required here too.
 
 ### Step 4 — Question Matt, then strengthen

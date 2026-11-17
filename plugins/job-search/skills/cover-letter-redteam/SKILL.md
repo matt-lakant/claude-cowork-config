@@ -111,7 +111,7 @@ instead of leaving it as a tracked change.
 Save `applications/<slug>/CORNET_<Company>_Cover_Letter_<YYYY-MM-DD>_redline.docx` (or the
 `_Lettre_` equivalent; `_vN` if one exists). Never overwrite the draft. **No PDF.**
 
-Read the result with `docx_dump.py --view marked` (same folder as `redline.py`), not with `python-docx`: `paragraph.text` skips text inside tracked insertions. Then run `cv_check.py --kind letter` on the redline (`cover-letter` Step 5): `0 FAIL` with every change accepted.
+Read the result with `docx_dump.py --view marked` (same folder as `redline.py`), not with `python-docx`: `paragraph.text` skips text inside tracked insertions. For a French letter, run `fr_spaces.py` on the redline first (`<resume-tailor skill dir>/scripts/fr_spaces.py <redline.docx> <redline.docx>`, rule R22). Then run `cv_check.py --kind letter` on the redline (`cover-letter` Step 5): `0 FAIL` with every change accepted.
 
 ### Step 4: Ask Matt, then strengthen
 

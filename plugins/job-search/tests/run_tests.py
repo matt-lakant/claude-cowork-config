@@ -26,6 +26,7 @@ SEARCH = os.path.join(SK, "application-brief", "scripts", "profile_search.py")
 GATE = os.path.join(SK, "application-brief", "scripts", "gate.py")
 FACTS = os.path.join(SK, "asset-updater", "scripts", "build_facts.py")
 BASES = os.path.join(SK, "application-brief", "scripts", "base_audit.py")
+FRSP = os.path.join(SK, "resume-tailor", "scripts", "fr_spaces.py")
 RED = os.path.join(SK, "resume-redteam", "scripts", "redline.py")
 DUMP = os.path.join(SK, "resume-redteam", "scripts", "docx_dump.py")
 results = []
@@ -294,6 +295,25 @@ None.
     rc2, out2 = run(GATE, "draft", g, "--suffix", "_run2")
     check("gate --suffix: the CV and redline of another run do not satisfy a comparison run",
           rc == 1 and "_run2" in out and rc2 == 1 and "no CORNET_*_run2*.docx" in out2, out + out2)
+
+    # --- French typography: R22 fails on plain spaces, fr_spaces.py repairs them, English is not touched
+    d = docx.Document(j("CORNET_good_fr.docx"))
+    p = d.add_paragraph()
+    p.add_run("Projets clients")
+    p.add_run(" ")
+    p.add_run(": trois livrés ; deux en cours ? Oui ! Dit « prêt » hier.")
+    for _ in range(4):
+        d.add_paragraph("Pilotage des projets et des équipes pour les clients, avec les directions métier et les équipes dans les pays, sur une période de trois ans.")
+    d.save(j("CORNET_fr_plain.docx"))
+    rc, out = run(CHK, j("CORNET_fr_plain.docx"), "--rules", a.rules, "--tags", "non_sales")
+    check("R22: a French CV with plain spaces before ; : ? ! fails, and the language is detected", rc == 1 and "R22-nbsp" in out and "lang_fr" in out, out)
+    rc, out = run(FRSP, j("CORNET_fr_plain.docx"), j("CORNET_fr_fixed.docx"))
+    rc2, out2 = run(CHK, j("CORNET_fr_fixed.docx"), "--rules", a.rules, "--tags", "non_sales")
+    _, dumped = run(DUMP, j("CORNET_fr_fixed.docx"))
+    check("fr_spaces: repairs every case, including a space alone in its run, and the file then passes R22",
+          rc == 0 and "R22-nbsp" not in out2 and "clients\u00a0: trois livrés\u00a0; deux en cours\u00a0? Oui\u00a0! Dit «\u00a0prêt\u00a0» hier." in dumped, out + out2 + dumped[-300:])
+    rc, out = run(CHK, j("CORNET_good_en.docx"), "--rules", a.rules, "--tags", "non_sales")
+    check("R22: an English CV is not checked for French spacing", "R22" not in out and "lang_en" in out, out)
 
     # --- record split in three files: profile_search reads the sibling log, build_facts builds the sheets
     fa = os.path.join(tmp, "assets")

@@ -14,7 +14,7 @@ Run the steps in this order. Steps 1, 5 and 8 are gates: the run does not go pas
 | 1 | Checks the brief exists and is complete | `GATE brief: PASS` | the brief is missing or incomplete: run `application-brief` |
 | 2 | Loads the rules that govern the text | nothing | the vault note cannot be read |
 | 3 | Drafts the content: framing, profile, expertise, bullets, matrix | the text of the CV | never |
-| 4 | Writes the `.docx` on the base file | `CORNET_<Company>_<Role>_<date>.docx` | the base file cannot be opened |
+| 4 | Writes the `.docx` on the base file; French: runs `fr_spaces.py` on it | `CORNET_<Company>_<Role>_<date>.docx` | the base file cannot be opened |
 | 5 | Runs the mechanical check, matches evidence and decisions to CV lines | `RESULT: 0 FAIL`; two filled tables | any `FAIL`, an unused fact, an unapplied decision |
 | 6 | Writes the form answers, if the posting has questions | `form_answers.md` | the voice note was not read in full |
 | 7 | Writes the memo and updates the tracker | `tailoring_notes.md`, tracker row | never |
@@ -87,6 +87,8 @@ Work in this order. The role tag in the brief decides the framing before a singl
 ## Step 4: Write the `.docx`
 
 Edit the base file named in the brief, in place, with `python-docx`: replace text and keep styles, fonts and tables. Do not rebuild the document. If the base is not A4, convert the working copy first: `python3 <this skill's dir>/scripts/to_a4.py <base.docx> <working copy.docx>`.
+
+**French CV: fix the spacing on the file you just wrote** (R22): `python3 <this skill's dir>/scripts/fr_spaces.py <cv.docx> <cv.docx>`. The CVs Matt returns from Word carry plain spaces before `;` `:` `?` `!`, so every French base brings them into the draft, and the text you add is right or wrong depending on the run. The script puts a non-breaking space everywhere in one pass; `cv_check.py` fails the file otherwise. Run it on `form_answers.md` too when the answers are in French.
 
 Save as `applications/<slug>/CORNET_<Company>_<Role>_<YYYY-MM-DD>.docx`, with today's date. Never overwrite an Office file: a revision is `_v2`, `_v3`. **Never produce a PDF** of the CV; Matt makes his own from Word. To count pages, convert in a temporary folder outside the project and leave nothing behind.
 
