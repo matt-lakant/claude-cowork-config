@@ -133,6 +133,10 @@ def main():
 
     d = docx.Document(); s = d.sections[0]; s.page_width, s.page_height = Emu(7560310), Emu(10692130)
     d.add_paragraph("Dear Sam,"); d.add_paragraph("I have not delivered on Snowflake. I wrote the SQL controls myself.")
+    d.save(j("CORNET_letter_unsigned.docx"))
+    rc, out = run(CHK, j("CORNET_letter_unsigned.docx"), "--rules", a.rules, "--kind", "letter", "--tags", "non_sales,hands_on")
+    check("R23: a letter that does not end on the signature fails", rc == 1 and "R23-signature" in out, out)
+    d.add_paragraph("Matthieu Cornet")
     d.save(j("CORNET_letter.docx"))
     rc, out = run(CHK, j("CORNET_letter.docx"), "--rules", a.rules, "--kind", "letter", "--tags", "non_sales,hands_on")
     check("cv_check: a ceiling word in a letter is a WARN, not a FAIL", rc == 0 and "R14-ceilings" in ids(out, "WARN"), out)
@@ -289,6 +293,14 @@ None.
     build_cv(gp("CORNET_Acme_PS-Manager_2026-11-17_redline.docx"))
     rc, out = run(GATE, "redteam", g)
     check("gate redteam: complete memo and redline pass", rc == 0 and "GATE redteam: PASS" in out, out)
+    open(gp("CORNET_Acme_PS-Manager_2026-11-17.pdf"), "w").write("x")
+    rc, out = run(GATE, "redteam", g)
+    check("gate: a PDF of the CV in the folder fails every stage", rc == 1 and "PDF" in out, out)
+    os.rename(gp("CORNET_Acme_PS-Manager_2026-11-17.pdf"), gp("posting_copy.pdf"))
+    open(gp("application_brief.md"), "w", encoding="utf-8").write(brief.replace("None: every hard requirement has a fact on record.", "| # | Question | Answer | Logged |\n|---|---|---|---|\n| 1 | How many SOWs a year? | 20+ | |"))
+    rc, out = run(GATE, "brief", g)
+    check("gate brief: an answer with no date of its log entry fails", rc == 1 and "profile_log.md" in out, out)
+    open(gp("application_brief.md"), "w", encoding="utf-8").write(brief)
     for n in ("application_brief", "tailoring_notes", "redteam_notes"):
         shutil.copy(gp(n + ".md"), gp(n + "_run2.md"))
     rc, out = run(GATE, "redteam", g, "--suffix", "_run2")
@@ -314,6 +326,9 @@ None.
           rc == 0 and "R22-nbsp" not in out2 and "clients\u00a0: trois livrés\u00a0; deux en cours\u00a0? Oui\u00a0! Dit «\u00a0prêt\u00a0» hier." in dumped, out + out2 + dumped[-300:])
     rc, out = run(CHK, j("CORNET_good_en.docx"), "--rules", a.rules, "--tags", "non_sales")
     check("R22: an English CV is not checked for French spacing", "R22" not in out and "lang_en" in out, out)
+    rc, out = run(CHK, j("CORNET_good_en.docx"), "--rules", a.rules, "--tags", "non_sales", "--lang", "fr")
+    rc2, out2 = run(CHK, j("CORNET_fr_fixed.docx"), "--rules", a.rules, "--tags", "non_sales", "--lang", "fr")
+    check("R12: an English CV for a French posting fails, a French one does not", rc == 1 and "R12-language" in out and "R12-language" not in out2, out + out2)
 
     # --- record split in three files: profile_search reads the sibling log, build_facts builds the sheets
     fa = os.path.join(tmp, "assets")

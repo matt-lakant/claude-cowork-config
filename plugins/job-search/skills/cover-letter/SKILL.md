@@ -160,7 +160,7 @@ Run the full §4 review test, points 1 to 9 (`general:writing-voice` Step 4, sur
 - Count words.
 - Check each §5.4 question is answered, in order.
 - French letter: run `python3 <resume-tailor skill dir>/scripts/fr_spaces.py <letter.docx> <letter.docx>` on the file you just wrote, so every space before `;` `:` `?` `!` and inside `« »` is non-breaking (R22).
-- Run the mechanical check on the `.docx`: `python3 <resume-tailor skill dir>/scripts/cv_check.py <file> --rules <project>/_assets/cv_rules.md --profile <project>/_assets/candidate_profile.md --kind letter --tags <tags>` (same tags as the CV, role tag included, see `resume-tailor` Step 4a). `0 FAIL` is required before the gate. A `WARN` on a ceiling word is expected when the letter names a gap; any other kept warning is listed in `cover_letter_notes.md` with its reason.
+- Run the mechanical check on the `.docx`: `python3 <resume-tailor skill dir>/scripts/cv_check.py <file> --rules <project>/_assets/cv_rules.md --profile <project>/_assets/candidate_profile.md --lang <fr or en> --kind letter --tags <tags>` (same tags as the CV, role tag included, see `resume-tailor` Step 4a). `0 FAIL` is required before the gate. A `WARN` on a ceiling word is expected when the letter names a gap; any other kept warning is listed in `cover_letter_notes.md` with its reason.
 
 The self-check does not replace the red team. The drafter is the worst judge of its own tics.
 

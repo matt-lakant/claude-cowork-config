@@ -99,6 +99,7 @@ Save as `applications/<slug>/CORNET_<Company>_<Role>_<YYYY-MM-DD>.docx`, with to
 ```text
 python3 <this skill's dir>/scripts/cv_check.py <cv.docx> --rules <project>/_assets/cv_rules.md \
         --profile <project>/_assets/candidate_profile.md --tags <cv_check tags of the brief> \
+        --lang <fr or en, the brief's Language line> \
         --top-keywords "<top-third keywords of the brief, separated by ;>" \
         --hands-on "<fragments of the first-hand facts of the brief, separated by ;>"
 ```

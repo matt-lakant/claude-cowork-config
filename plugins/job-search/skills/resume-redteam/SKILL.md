@@ -158,7 +158,7 @@ Save a redline copy — never overwrite the tailored file: `applications/<slug>/
 
 **French CV: run `fr_spaces.py` on the redline** (`python3 <resume-tailor skill dir>/scripts/fr_spaces.py <redline.docx> <redline.docx>`), after `redline.py` and before the check. The replacement strings you wrote and the text kept from the draft both get a non-breaking space before `;` `:` `?` `!` and inside `« »` (R22); the tracked changes are left as they are.
 
-**Run `cv_check.py` on the redline before presenting it** (`resume-tailor` Step 5.1: same script, same tags including the role tag (`hands_on` or `leadership`), same `--top-keywords` and `--hands-on`, all read from the brief; the redline keeps the page size of the draft, which must be A4). It reads the file with every tracked change accepted, so it tests the CV Matt gets if he accepts everything. A `NEW` string can break a rule the draft respected: `0 FAIL` is required here too.
+**Run `cv_check.py` on the redline before presenting it** (`resume-tailor` Step 5.1: same script, same tags including the role tag (`hands_on` or `leadership`), same `--lang`, `--top-keywords` and `--hands-on`, all read from the brief; the redline keeps the page size of the draft, which must be A4). It reads the file with every tracked change accepted, so it tests the CV Matt gets if he accepts everything. A `NEW` string can break a rule the draft respected: `0 FAIL` is required here too.
 
 ### Step 4 — Question Matt, then strengthen
 **Account for every question the reviewer raised.** Number them in `redteam_notes.md` under "Questions". Each one ends in exactly one state:

@@ -96,6 +96,8 @@ def gate_brief(folder, suf, miss):
     for r in rows(q):
         if len(r) < 3 or not r[2]:
             miss.append("question '%s' has no answer recorded" % (r[1][:50] if len(r) > 1 else "?"))
+        elif len(r) < 4 or not re.search(r"20\d\d-\d\d-\d\d", r[3]):
+            miss.append("question '%s': the answer has no date of its entry in profile_log.md (log it, then write the date)" % r[1][:50])
     dec = rows(find(s, "Decisions"))
     if not dec:
         miss.append("Decisions: no row (the role tag and the triggered rules of cv_rules.md are standing rows)")
@@ -171,6 +173,19 @@ def gate_redteam(folder, suf, miss):
         miss.append("no CORNET_*%s*redline*.docx in the folder" % suf)
 
 
+def project_checks(folder, miss):
+    """Rules that hold for the folder and the project whatever the stage."""
+    for f in glob.glob(os.path.join(folder, "CORNET_*.pdf")):
+        miss.append("a PDF of a CV or a letter is in the folder (%s): Matt makes his own from Word; move it to _assets/archive/" % os.path.basename(f))
+    assets = os.path.join(os.path.abspath(folder), "..", "..", "_assets")
+    script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "asset-updater", "scripts", "build_facts.py")
+    if os.path.exists(os.path.join(assets, "facts", "themes.json")) and os.path.exists(script):
+        import subprocess
+        r = subprocess.run([sys.executable, script, assets, "--check"], capture_output=True, text=True)
+        if r.returncode != 0:
+            miss.append("the fact sheets are older than profile_log.md: run build_facts.py on _assets")
+
+
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     suf = ""
@@ -182,6 +197,7 @@ def main():
     stage, folder = args
     miss = []
     {"brief": gate_brief, "draft": gate_draft, "redteam": gate_redteam}[stage](folder, suf, miss)
+    project_checks(folder, miss)
     for m in miss:
         print("MISSING " + m)
     print("GATE %s: %s" % (stage, "PASS" if not miss else "%d item(s) missing" % len(miss)))

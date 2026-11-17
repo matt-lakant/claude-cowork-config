@@ -27,6 +27,8 @@ Usage:
              runs when that tag is passed. Checks with no "when" always run.
              The language tag (lang_fr or lang_en) is detected from the text and added by the
              script: never pass it.
+  --lang     fr or en: the language of the posting (the brief's "Language" line). The file fails
+             when it reads as the other language (R12).
   --hands-on  "SQL control scripts;SOWs written": fragments of the first-hand facts (work Matt did
              himself) that the CV shows above the skills matrix. Each fragment must be found there.
              With the tag hands_on, fewer than 2 is a FAIL (rule R19).
@@ -126,6 +128,7 @@ def main():
     ap.add_argument("--top-keywords", default="")
     ap.add_argument("--kind", default="cv", choices=["cv", "letter", "text"])
     ap.add_argument("--hands-on", default="")
+    ap.add_argument("--lang", default="", choices=["", "fr", "en"])
     a = ap.parse_args()
     tags = {t.strip() for t in a.tags.split(",") if t.strip()}
     is_docx = a.docx.lower().endswith(".docx")
@@ -155,6 +158,7 @@ def main():
     fr = len(re.findall(r"\b(les|des|une|et|avec|pour|dans|sur)\b", joined))
     en = len(re.findall(r"\b(the|and|with|for|of|in|on)\b", joined))
     tags.add("lang_fr" if fr > en else "lang_en")
+    lang_fail = a.lang and ("lang_" + a.lang) not in tags
     results = []  # (level, id, message)
 
     def add(level, cid, msg):
@@ -164,6 +168,9 @@ def main():
         s, e = max(0, m.start() - 40), min(len(line), m.end() + 40)
         return "..." + line[s:e] + "..."
 
+    if lang_fail:
+        add("FAIL", "R12-language", "the posting is in %s and this file reads as %s: every deliverable follows the posting's language" % (
+            {"fr": "French", "en": "English"}[a.lang], "English" if a.lang == "fr" else "French"))
     for c in load_checks(a.rules):
         when = c.get("when")
         if when and not (set(when) & tags):
@@ -187,6 +194,10 @@ def main():
                 for l in lines:
                     if re.search(c["if"], l, flags) and not rx.search(l):
                         add(level, c["id"], c.get("message", "") + " | " + l[:120])
+        elif kind == "last_line":
+            last = lines[-1].strip() if lines else ""
+            if not re.search(c["pattern"], last, flags):
+                add(level, c["id"], c.get("message", "") + " | last line: " + last[:80])
         elif kind == "header":
             # first non-empty paragraph after the name: every visual line must fit on one line
             ps = [b for b in blocks if b[0] == "p" and b[1].strip()]
