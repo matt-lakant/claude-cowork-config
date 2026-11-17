@@ -28,7 +28,7 @@ Produces a concise, factual one-page brief on the company behind a specific oppo
 
 ## Source materials
 
-> All paths in this skill are relative to the **Job Applications project root** — the folder that contains this `skills/` directory. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications").
+> All paths in this skill are relative to the **Job Applications project root** — the folder that holds `applications/`, `_assets/` and `applications_tracker.md`. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications").
 
 - The job posting (URL or pasted text) — for the employer name and role context.
 - `WebSearch` / `web_fetch` for research. The company's own website is the primary source; supplement with recent, reputable news.

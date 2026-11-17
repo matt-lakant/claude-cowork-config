@@ -24,7 +24,7 @@ Drafts short, in-voice follow-up messages for the four most common recruiter tou
 
 ## Source materials
 
-> Paths marked *(project)* are relative to the **Job Applications project root** — the folder that contains this `skills/` directory. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications"). Paths marked *(vault)* are relative to the connected `obsidian-vault` folder.
+> Paths marked *(project)* are relative to the **Job Applications project root** — the folder that holds `applications/`, `_assets/` and `applications_tracker.md`. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications"). Paths marked *(vault)* are relative to the connected `obsidian-vault` folder.
 
 > **Voice reference moved, 2026-09-10.** How Matt writes lives in *(vault)* `Notes/Writing voice.md`: §2 corpus, §3 banned constructions, §4 review test, §5.1 the candidature-prose surface, §5.3 for a LinkedIn post rather than a message. Load it through `general:writing-voice` in vault-required mode: it requests `C:\Users\mattc\Obsidian\obsidian-vault` itself if the folder is not connected, reads the note in full, and flags drift with the voice block in Matt's preferences. No fallback: if the note cannot be read, do not write. `_assets/voice_matt.md` and the "Voice & style guidelines" section of `candidate_profile.md` are stubs — never read them as rules, never write to them.
 

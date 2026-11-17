@@ -16,7 +16,7 @@ Do not write anything before the folder exists. If the slug is unknown, ask. If 
 Job Applications project folder is not connected, stop and say so — never fall back to
 the project root, to another connected folder, or to chat-only delivery.
 
-> Paths marked *(project)* are relative to the **Job Applications project root** — the folder that contains this `skills/` directory. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications"). Paths marked *(vault)* are relative to the connected `obsidian-vault` folder.
+> Paths marked *(project)* are relative to the **Job Applications project root** — the folder that holds `applications/`, `_assets/` and `applications_tracker.md`. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications"). Paths marked *(vault)* are relative to the connected `obsidian-vault` folder.
 
 > **Voice reference moved, 2026-09-10.** Replacement text is governed by *(vault)* `Notes/Writing voice.md`: §2 corpus, §3 banned constructions, §4 review test, §5.2 resume surface. Run `ls $HOME/mnt/` and check for `obsidian-vault`; if it is not connected, ask Matt to connect `C:\Users\mattc\Obsidian\obsidian-vault` before writing any replacement string. `_assets/voice_matt.md` and the "Voice & style guidelines" section of `candidate_profile.md` are stubs — never read them as rules, never write to them.
 
@@ -181,7 +181,7 @@ Present the **redlined `.docx`** and the memo. Open the summary with the count (
 - **Match the application language** (EN posting → EN edits; FR posting → FR edits).
 
 ## Pipeline position
-Runs as the **final gate of `resume-tailor`** (after the product/balanced passes, before the file is presented to Matt) and is also invokable standalone on any existing tailored resume.
+Runs as the **final gate of `resume-tailor`** (after its mechanical check, before the file is presented to Matt) and is also invokable standalone on any existing tailored resume.
 
 What follows it (2026-09-24): Matt downloads the redlined `.docx`, accepts or rejects the Recruiter changes and edits in Word, then attaches the final file back to the chat. That triggers `asset-updater` in returned-file mode (his rewrites go to `Writing voice.md` §2, and the Recruiter edits he rejected are logged under "Rejected by Matt" in `redteam_notes.md` so this skill can see where it over-reaches), then `cover-letter`, which drafts from that final CV.
 

@@ -18,7 +18,7 @@ the project root, to another connected folder, or to chat-only delivery.
 
 ## What this skill does
 
-> All paths in this skill are relative to the **Job Applications project root** — the folder that contains this `skills/` directory. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications").
+> All paths in this skill are relative to the **Job Applications project root** — the folder that holds `applications/`, `_assets/` and `applications_tracker.md`. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications").
 
 Owns the application tracker file at the project root: `applications_tracker.md`.
 
@@ -106,7 +106,7 @@ The opportunity name is used to:
    - `screen` / `interview-*` → +2 days post-interview (thank-you note)
    - `offer` → +3 days (decision/counter)
 8. **Re-render the "what's open this week" sub-block** with the new row included.
-9. Save. Show Matt a 1-line confirmation in chat plus a computer:// link.
+9. Save. Confirm in one line in chat and send the tracker as a file card with `SendUserFile`.
 
 ### Updating status
 
@@ -154,7 +154,7 @@ that did:
 
 1. Read the file.
 2. Match X against Company and Role across the summary table, fuzzy.
-3. If found, answer with the ID, Status, Date applied and Next action, plus a `computer://` link to the application folder.
+3. If found, answer with the ID, Status, Date applied and Next action, plus the path of the application folder (`applications/<slug>/`).
 4. If not found, say so plainly and offer to add it. Never infer an application from the existence of a folder under `applications/` — the row is the record, the folder is not.
 
 ### Quarterly pruning
@@ -169,7 +169,7 @@ declines, leave everything in place and do not ask again that quarter.
 
 ## Delivery
 
-- The tracker file is the deliverable. After every write, confirm in one line in chat with a `computer://` link to it.
+- The tracker file is the deliverable. After every write, confirm in one line in chat and send it as a file card with `SendUserFile`.
 - Chat output is a table, never a prose summary.
 - Never produce a PDF, and never export the tracker back to xlsx. See the format note above.
 

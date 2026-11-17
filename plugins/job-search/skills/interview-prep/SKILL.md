@@ -24,7 +24,7 @@ The grounding is what makes this useful — generic STAR prompts produce generic
 
 ## Source materials
 
-> Paths marked *(project)* are relative to the **Job Applications project root** — the folder that contains this `skills/` directory. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications"). Paths marked *(vault)* are relative to the connected `obsidian-vault` folder.
+> Paths marked *(project)* are relative to the **Job Applications project root** — the folder that holds `applications/`, `_assets/` and `applications_tracker.md`. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications"). Paths marked *(vault)* are relative to the connected `obsidian-vault` folder.
 
 > **Voice reference moved, 2026-09-10.** How Matt speaks and writes lives in *(vault)* `Notes/Writing voice.md`: §2 corpus, §3 banned constructions, §4 review test, §5.1 the candidature-prose surface that spoken answers follow. Load it through `general:writing-voice` in vault-required mode: it requests `C:\Users\mattc\Obsidian\obsidian-vault` itself if the folder is not connected, reads the note in full, and flags drift with the voice block in Matt's preferences. No fallback: if the note cannot be read, do not draft answers. `_assets/voice_matt.md` and the "Voice & style guidelines" section of `candidate_profile.md` are stubs — never read them as rules, never write to them.
 
@@ -70,7 +70,7 @@ For each behavioral/situational question, draft a 4–6 sentence model answer us
 
 - Match the question to the most relevant engagement (APG, NBIM, FactSet P&L, lakant.io platform, BlueMatrix integration, Goldman quant tools, etc.)
 - Check each metric against the Current values table before writing it (duration, reference date, unit). Print the figure the CV he sent carries when both are current; flag to Matt any figure where the sent CV and the table disagree, so he knows what the interviewer has in hand
-- Include the real metric ("drove 15% YoY growth", "~60 institutional accounts", "global deployment NY/London/Tokyo/HK")
+- Include the real metric, worded as in the Current values table (for example "NPS from 22 to 51 in 12 months", "~60 enterprise accounts", "50 platform replacements, 90% live on the date planned at project start"). Check every example against the ceilings before using it: Goldman Sachs was London with on-site work in New York, never "deployment in NY, London, Tokyo and Hong Kong"; a sales figure such as revenue growth is used only when the role is a sales role
 - Keep it conversational — bullet-form STAR answers sound robotic when spoken
 - Close with the lesson or the link to "and that's why I'd approach this role's challenge by..."
 

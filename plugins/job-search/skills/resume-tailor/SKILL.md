@@ -27,7 +27,7 @@ Produces a tailored version of Matt's master resume for a specific job posting. 
 
 ## Source materials (read these every run)
 
-> Paths marked *(project)* are relative to the **Job Applications project root** — the folder that contains this `skills/` directory. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications"). Paths marked *(vault)* are relative to the connected `obsidian-vault` folder.
+> Paths marked *(project)* are relative to the **Job Applications project root** — the folder that holds `applications/`, `_assets/` and `applications_tracker.md`. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications"). Paths marked *(vault)* are relative to the connected `obsidian-vault` folder.
 
 > **Voice reference moved, 2026-09-10.** How Matt writes now lives in *(vault)* `Notes/Writing voice.md`, not in this project. §2 is the corpus of his own sentences, §3 the banned-construction table, §4 the review test, §5 the per-surface rules (5.1 candidature prose, 5.2 resume, 5.3 LinkedIn post). Load it through `general:writing-voice` in vault-required mode: it requests `C:\Users\mattc\Obsidian\obsidian-vault` itself if the folder is not connected, reads the note in full, and flags drift with the voice block in Matt's preferences. No fallback: if the note cannot be read, do not draft any prose. `_assets/voice_matt.md` and the "Voice & style guidelines" section of `candidate_profile.md` are stubs pointing there — never read them as rules, never write to them.
 
@@ -311,7 +311,7 @@ Give him links to the red-teamed `.docx` (with the recruiter's tracked changes),
 - **Never invent experience, metrics, employers, dates, or certifications.** If the JD asks for something Matt doesn't have, surface it as a gap in the diagnostic — do not paper over it.
 - **Standing rules come from `_assets/cv_rules.md`, figures from the Current values table.** Neither is recalled from memory or copied from a previous CV. `cv_check.py` must end on `0 FAIL` before the file goes to the red-team.
 - **Respect the vault ceilings.** The "Technology and scope ceilings" section of `Notes/Matt Cornet.md` is a hard limit on every claim, however well the JD would be served by exceeding it.
-- **Never use "I" in resume bullets.** Profile is third person; bullets are implicit-first-person action verbs.
+- **Never "I" in resume bullets, never third person anywhere.** The profile uses impersonal constructions ("Professional services leader...", "Built..."); bullets are implicit first person (action verbs).
 - **No figures of speech in the prose.** No metaphor, no calque of an English idiom, no defining Matt against an implied lesser peer, no sentence announcing what the next one will do. See `Notes/Writing voice.md` §3.
 - **Never read voice rules from `_assets/voice_matt.md` or from `candidate_profile.md`.** Both are stubs as of 2026-09-10. The vault note is the only source, loaded through `general:writing-voice`; the short voice block in Matt's preferences is not a substitute.
 - **Facts travel between pieces; sentences and framings never repeat.** Each piece does its own job. See Step 4b.
@@ -324,6 +324,6 @@ Give him links to the red-teamed `.docx` (with the recruiter's tracked changes),
 ## Edge cases
 
 - **The vault is not connected:** `general:writing-voice` requests access itself; if it is declined or the computer is unreachable, stop before drafting prose. Do not fall back to the stubs, and do not draft from memory of the voice rules.
-- **JD is for a role well outside fintech (e.g., pure tech, generic consulting):** Lead the diagnostic with this fit gap. Ask Matt to confirm before tailoring.
-- **JD requires a tool Matt hasn't used (e.g., Snowflake specifically vs. his MS Fabric / Spark experience):** Surface honestly; suggest "transferable from MS Fabric / Spark" framing rather than implying direct experience.
+- **JD is for a role outside financial services:** this is the normal case now, not an exception: most of Matt's applications are outside fintech. Do not pause to ask. Apply R4 of `cv_rules.md` (wording that is not finance-specific) from the first draft and say in the memo which sector vocabulary you used.
+- **JD requires a tool Matt hasn't used (e.g. Snowflake):** check the ceilings in `Notes/Matt Cornet.md` first. A tool under "Never claim at all" is not named on the CV, and no "transferable from..." phrasing is written there either: Matt's rule is that a gap is stated in the memo and answered in the letter or at interview, never dressed up on the CV. What he did use (for example lakehouse architecture, Spark and Microsoft Fabric at prototype stage) is written as what it is.
 - **JD is in French:** Generate the resume in French. Matt is bilingual — ask him to confirm if the formal/informal register isn't obvious from the JD.

@@ -1,6 +1,6 @@
 ---
 name: asset-updater
-description: "Closes the learning loop after each application cycle by diffing Matt Cornet's edits against Claude-drafted deliverables (resumes, cover letters, form answers) and propagating systemic corrections back into the master assets: the vault notes Writing voice.md and Matt Cornet.md, candidate_profile.md, master_resume.docx, and feedback memories. Use whenever Matt edits a tailored deliverable, says \"save this for next time\", asks to \"update the master\", flags an inflated framing, or mentions running a quarterly sweep across recent applications. Also use proactively after resume-tailor when Matt has made non-trivial edits to the output, and always in returned-file mode when Matt attaches back a CV or cover letter he finalized in Word (resume-tailor and cover-letter call it for this)."
+description: "Closes the learning loop after each application cycle by diffing Matt Cornet's edits against Claude-drafted deliverables (resumes, cover letters, form answers) and propagating systemic corrections back into the master assets: the vault notes Writing voice.md and Matt Cornet.md, candidate_profile.md, master_resume.docx, cv_rules.md and redteam_lessons.md. Use whenever Matt edits a tailored deliverable, says \"save this for next time\", asks to \"update the master\", flags an inflated framing, or mentions running a quarterly sweep across recent applications. Also use proactively after resume-tailor when Matt has made non-trivial edits to the output, and always in returned-file mode when Matt attaches back a CV or cover letter he finalized in Word (resume-tailor and cover-letter call it for this)."
 ---
 
 # Asset Updater
@@ -22,7 +22,7 @@ Keeps Matt's master assets honest and current as the application cadence picks u
 
 1. **The master drifts from real voice** — every tailoring run that goes uncorrected leaves a slightly inflated or off-tone framing in the wild
 2. **The same overreach resurfaces** — a correction made in application A is forgotten by the time application B is tailored, and the panel for B sees the same inflated wording the panel for A would have
-3. **Memory becomes incoherent** — feedback memories accumulate without dedup, contradict each other, or stay too narrow ("for the Anthropic CV") when they should be promoted to general guardrails
+3. **Rules become incoherent** — corrections accumulate in several places (the log, saved preferences, a skill), contradict each other, or stay too narrow ("for the Anthropic CV") when they should become general rules in `cv_rules.md` or ceilings in the vault
 
 This skill triages Matt's edits, classifies them, and either promotes them to the master assets (with sign-off) or files them as application-specific notes.
 
@@ -46,7 +46,7 @@ The old locations are now pointers and **must never be written to**:
 
 ## Source materials (read these every run)
 
-> Paths marked *(project)* are relative to the **Job Applications project root**, the folder that contains this `skills/` directory. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications"). Paths marked *(vault)* are relative to the connected `obsidian-vault` folder.
+> Paths marked *(project)* are relative to the **Job Applications project root**, the folder that holds `applications/`, `_assets/` and `applications_tracker.md`. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications"). Paths marked *(vault)* are relative to the connected `obsidian-vault` folder.
 
 1. *(vault)* `Notes/Writing voice.md` — the voice reference. **Primary destination for every voice-class edit.**
 2. *(vault)* `Notes/Matt Cornet.md` — durable identity: background, education, technology and scope ceilings, target roles. Read before classifying anything as a factual correction or a net-new fact.
@@ -55,7 +55,7 @@ The old locations are now pointers and **must never be written to**:
 4. *(project)* `_assets/master_resume.docx` — current master CV
 5. The Claude-drafted deliverable that Matt edited (tailored resume, cover letter, form answers, recruiter message)
 6. Matt's edited final version (provided by Matt or read from the same file if he edited in place)
-7. Recent feedback memories under the auto-memory directory — to dedup against existing guardrails
+7. Matt's saved preferences as they appear in the session context, to avoid restating a rule that already exists. There is no memory directory or `MEMORY.md` index to read or maintain: the session's memory keeps itself up to date from the conversation, and this skill never writes to it
 
 ## Inputs Matt will give you
 
@@ -92,13 +92,13 @@ Skip cosmetic changes (whitespace, single-word polish that doesn't shift meaning
 
 | Class | Definition | Where it propagates |
 |---|---|---|
-| **Factual correction** | Matt's version is more accurate (location, role, scope, count, date, who-did-what) | *(vault)* `Notes/Matt Cornet.md` when it is a durable fact or ceiling; *(project)* `candidate_profile.md` log + feedback memory |
-| **Scope guardrail** | Matt walks back an embellishment Claude introduced | *(vault)* `Notes/Matt Cornet.md`, "Technology and scope ceilings" + feedback memory |
+| **Factual correction** | Matt's version is more accurate (location, role, scope, count, date, who-did-what) | *(vault)* `Notes/Matt Cornet.md` when it is a durable fact or ceiling; *(project)* `candidate_profile.md` log (and the Current values row when a figure is involved) |
+| **Scope guardrail** | Matt walks back an embellishment Claude introduced | *(vault)* `Notes/Matt Cornet.md`, "Technology and scope ceilings" |
 | **Voice / tone preference** | Matt rewrites for register, brevity, or directness without changing facts | *(vault)* `Notes/Writing voice.md` — see Step 2b, which governs this class |
 | **Role-specific framing** | Matt's edit only fits this one application (e.g., a JD-specific keyword) | Application folder only — do NOT promote |
 | **Net-new fact** | Matt adds an experience, certification, or metric not in the master | *(vault)* `Notes/Matt Cornet.md` (with explicit confirmation) + *(project)* `candidate_profile.md` log |
 | **Figure or wording change** | Matt changes a number, a duration, a unit, a reference date, or the way a figure must be worded | *(project)* `candidate_profile.md`: log entry **and** the Current values row (see Step 4) |
-| **Standing CV rule** | Matt states a rule that applies to future CVs (a title wording, what to drop for a kind of role, a count, a layout rule) | *(project)* `_assets/cv_rules.md` Part 1, plus a check in Part 2 when it can be tested mechanically; feedback memory as before |
+| **Standing CV rule** | Matt states a rule that applies to future CVs (a title wording, what to drop for a kind of role, a count, a layout rule) | *(project)* `_assets/cv_rules.md` Part 1, plus a check in Part 2 when it can be tested mechanically |
 
 When in doubt, ask Matt to classify. Do not silently promote a change to a systemic guardrail.
 
@@ -120,19 +120,19 @@ Before touching anything, present a short table to Matt in chat:
 
 | Change | Class | Proposed action |
 |---|---|---|
-| "trading floor" → "research floor" (Santander) | Scope guardrail | Ceilings section of `Matt Cornet.md` + feedback memory |
+| "trading floor" → "research floor" (Santander) | Scope guardrail | Ceilings section of `Matt Cornet.md` |
 | "où ranger les méthodes" → "établir des méthodes pour ne pas refaire deux fois la même erreur" | Voice preference | Sample → `Writing voice.md` §2 now; second metaphor cut, so "no metaphor" → §3 |
-| "across NY/London/Tokyo/HK" → "in London" (Goldman) | Factual correction | Same as above |
+| "across NY/London/Tokyo/HK" → "based in London, with on-site work in New York" (Goldman) | Factual correction | Same as above |
 | Added "OpenAI platform exposure" framing | Role-specific | Application folder only, not propagated |
 
-Wait for Matt's go-ahead. The default is "do nothing without confirmation" for any change touching `master_resume.docx` or `Notes/Matt Cornet.md`. For `Writing voice.md`, the `candidate_profile.md` log and feedback memories, propose-then-apply is acceptable for factual corrections and voice samples; ask first for banned-construction rules and net-new facts.
+Wait for Matt's go-ahead. The default is "do nothing without confirmation" for any change touching `master_resume.docx` or `Notes/Matt Cornet.md`. For `Writing voice.md`, the `candidate_profile.md` log, `cv_rules.md` and `redteam_lessons.md`, propose-then-apply is acceptable for factual corrections and voice samples; ask first for banned-construction rules and net-new facts.
 
 ### Step 4 — Apply the changes
 
 In order:
 
 1. *(vault)* **`Notes/Writing voice.md`** — append the sample to §2; add a row to §3 only if the threshold in Step 2b is met; add a surface habit to §5 where it belongs. Leave the YAML frontmatter untouched. Never restructure the note while adding a line.
-2. **Feedback memory** — write or update the memory file under the auto-memory directory. Dedup against existing memories first; update in place rather than creating a new file when the topic overlaps. Keep the index (`MEMORY.md`) tidy.
+2. **Standing rules** — a rule Matt states for future documents goes into *(project)* `_assets/cv_rules.md` (Part 1, plus a check in Part 2 when it can be tested). Do not write memory files: a rule that lives only in the session's memory is not read by the skills, which is how rules were missed before 2026-11-16.
 3. *(vault)* **`Notes/Matt Cornet.md`** — only for durable identity facts and ceilings, only with Matt's confirmation. Add to the existing section; never edit `type` or `created` in the frontmatter; use `[[wikilinks]]` for internal references. The vault's own `CLAUDE.md` governs, and it wins over this skill on any conflict.
 4. *(project)* **`candidate_profile.md`** — append to the append-only "Confirmed details from tailoring Q&A" log, and to Areas of expertise / Experience where the resume needs the detail. Use the existing markdown structure; never rewrite from scratch. **Do not write voice or style rules here** — that section is a pointer now.
 5. *(project)* **`master_resume.docx`** — only with explicit Matt sign-off. Edit text in place using `python-docx`, preserve styles. Save a versioned backup (`master_resume_pre_<YYYY-MM-DD>.docx`) before overwriting.
@@ -156,9 +156,9 @@ If a propagated correction means earlier tailored CVs in `applications/<company-
 
 Default action for `applied` apps: flag for interview prep, do NOT auto-resubmit. Default action for `drafted` apps: offer to regenerate.
 
-### Step 6 — Update memory index and confirm
+### Step 6 — Confirm
 
-Update `MEMORY.md` index entries if any memory titles changed. Show Matt a 3-line summary of what was changed and where. Provide computer:// links to every modified file, vault notes included.
+Show Matt a 3-line summary of what was changed and where, and send every modified project file as a file card with `SendUserFile` (vault notes: give the note's name, they are not sent as cards).
 
 ## Returned-file mode (added 2026-09-24)
 
@@ -207,7 +207,7 @@ When Matt asks "do a sweep" or "review my master", run this passive variant:
 1. List all `applications/<company-role>/tailoring_notes.md` files modified in the last 90 days
 2. For each, identify any "Trade-offs made" entries that introduced framings beyond the master
 3. Surface a consolidated table of repeated tailoring choices (e.g., "10 of 12 recent CVs added 'partner-channel delivery' to the profile" → propose promoting it to the master)
-4. Surface any feedback memories older than 90 days that haven't been used and may be stale
+4. List the rules of `_assets/cv_rules.md` and the lines of `_assets/redteam_lessons.md` that no application of the last 90 days triggered: they may be stale, and Matt decides
 5. Check *(vault)* `Notes/Writing voice.md`: if the corpus in §2 has not grown in 90 days while applications shipped, the sample loop is not running — say so explicitly
 6. Check that `_assets/voice_matt.md` is still only a stub. If anything has written content back into it, that is a skill still pointing at the old location — name it so it can be fixed
 7. Reconcile the Current values table with the log: for each row, grep the log for a later entry on the same figure; list every figure printed in the CVs of the last 90 days that has no row. Run `cv_check.py` on the latest sent CV of each role family and report what fails
@@ -227,8 +227,8 @@ Output is a single markdown report (`asset_sweep_<YYYY-MM-DD>.md` at the project
 - **Never write voice content into `_assets/voice_matt.md` or into `candidate_profile.md`.** Both are pointers as of 2026-09-10. Writing there splits the source of truth again, and the split will not be noticed for weeks.
 - **A figure or a standing rule is never left in the log alone.** The Current values table and `cv_rules.md` are updated in the same run as the log entry.
 - **Never promote a role-specific framing to the master.** When in doubt, leave it in the application folder.
-- **Never delete memory entries without showing Matt the content first.** Stale is not the same as wrong.
-- **Always dedup memories.** If a feedback memory already covers a topic, update it in place instead of writing a second file. Two memories that disagree are worse than one memory that's slightly out of date.
+- **Never remove a rule, a Current values row or a lesson without showing Matt the content first.** Stale is not the same as wrong.
+- **One rule, one place.** If `cv_rules.md` already covers a topic, update that row instead of adding a second one. Two rules that disagree are worse than one that is slightly out of date.
 - **Always link to the source application** when a guardrail is added, so future-Matt can see where the correction came from.
 - **Be conservative on voice *rules*, never on voice *samples*.** One edit is not a systemic rule; one edit is always a usable sample.
 
@@ -236,13 +236,13 @@ Output is a single markdown report (`asset_sweep_<YYYY-MM-DD>.md` at the project
 
 - **The vault is not connected:** do not fall back to the old paths. Ask Matt to connect it, or hand him the sample text verbatim so he can paste it himself, and complete every non-voice step.
 - **Matt edits a deliverable that's already been submitted:** still propagate the correction so the next application doesn't repeat it; flag the submitted version under "stale prior tailored CVs" for interview prep.
-- **Matt's edit contradicts an existing feedback memory or a vault ceiling:** show him the conflict explicitly. Do not silently overwrite the older one — ask which is canonical.
-- **Edit is genuinely a one-off (e.g., Munich-specific phrasing):** save it in the application folder as `local_voice_notes.md` so it's available if the same JD comes around again, but do not touch the vault, the master or memory.
+- **Matt's edit contradicts an existing rule of `cv_rules.md` or a vault ceiling:** show him the conflict explicitly. Do not silently overwrite the older one — ask which is canonical.
+- **Edit is genuinely a one-off (e.g., Munich-specific phrasing):** save it in the application folder as `local_voice_notes.md` so it's available if the same JD comes around again, but do not touch the vault, the master or `cv_rules.md`.
 - **No master_resume.docx access (file locked / OneDrive placeholder):** skip the master step, complete everything else, and surface the blocker so Matt can unstick it. Never create a "fresh" master from scratch — that loses formatting.
 
 ## Output: present to Matt
 
 After every run:
 - 3-line summary of what changed: `Added 2 samples to Writing voice.md §2, +1 ceiling in Matt Cornet.md, logged 1 confirmed detail in candidate_profile.md, flagged 2 stale CVs in applications/.`
-- Computer:// links to every file touched
+- A file card (`SendUserFile`) for every project file touched
 - A "next time" hint: the one thing that would have made this run unnecessary, so the drafting skills stop reintroducing the same correction.
