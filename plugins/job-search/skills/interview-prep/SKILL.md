@@ -17,6 +17,8 @@ description: "Prepares Matt Cornet for a specific interview — generates likely
 | 4 | Saves and sends the files | file cards | never |
 | 5 | Feeds the voice corpus with what Matt rewrites | via `asset-updater` | never |
 
+> **The record is three files (2026-11-17).** *(project)* `_assets/candidate_profile.md` is the short profile: identity, the Current values table, the Experience summary, the guardrails. `_assets/profile_log.md` is the dated, append-only log: **every answer and correction from Matt is appended there**, one fact per entry, never in the profile. `_assets/facts/` holds one generated sheet per theme (list in `facts/INDEX.md`): read the sheet when a whole subject is needed. Wherever this skill says "the log in `candidate_profile.md`" or "the Q&A log", it means `profile_log.md`. After appending to the log, rebuild the sheets: `python3 <asset-updater skill dir>/scripts/build_facts.py <project>/_assets`.
+
 ## Before anything else — open the opportunity
 
 **Run the `opportunity-intake` skill first.** It confirms the opportunity name, resolves

@@ -10,7 +10,8 @@ script or to the checks block of cv_rules.md. Exit code 1 if a test fails.
 What it covers: cv_check.py on an English CV that must pass, an English CV with known violations,
 a French CV that must pass (labels, "80 à 90 %", non-breaking spaces), a letter and a text file;
 redline.py (tracked, untracked, cut, text split across runs, failure on a bad edit);
-docx_dump.py views; to_a4.py; profile_search.py; gate.py (brief, draft, redteam, and that the
+docx_dump.py views; to_a4.py; profile_search.py (with the sibling log); build_facts.py;
+gate.py (brief, draft, redteam, and that the
 templates printed in the three SKILL.md files still carry every heading the gate reads).
 """
 import argparse, json, os, subprocess, sys, tempfile
@@ -23,6 +24,7 @@ CHK = os.path.join(SK, "resume-tailor", "scripts", "cv_check.py")
 A4 = os.path.join(SK, "resume-tailor", "scripts", "to_a4.py")
 SEARCH = os.path.join(SK, "application-brief", "scripts", "profile_search.py")
 GATE = os.path.join(SK, "application-brief", "scripts", "gate.py")
+FACTS = os.path.join(SK, "asset-updater", "scripts", "build_facts.py")
 RED = os.path.join(SK, "resume-redteam", "scripts", "redline.py")
 DUMP = os.path.join(SK, "resume-redteam", "scripts", "docx_dump.py")
 results = []
@@ -285,6 +287,41 @@ None.
     build_cv(gp("CORNET_Acme_PS-Manager_2026-11-17_redline.docx"))
     rc, out = run(GATE, "redteam", g)
     check("gate redteam: complete memo and redline pass", rc == 0 and "GATE redteam: PASS" in out, out)
+
+    # --- record split in three files: profile_search reads the sibling log, build_facts builds the sheets
+    a = os.path.join(tmp, "assets")
+    os.makedirs(os.path.join(a, "facts"))
+    open(os.path.join(a, "candidate_profile.md"), "w", encoding="utf-8").write("# Jane Doe\n\n## Experience\n- Ran delivery\n")
+    open(os.path.join(a, "profile_log.md"), "w", encoding="utf-8").write(
+        "# Log\n\n> rules\n\n"
+        "- **2026-09-01 — Margin (tailoring Acme):** margin went from 27% to 32% over 3 years. *(⛔ STATUS 2026-10-09: duration replaced: 24 to 30 months)*\n"
+        "- **2026-10-01 — Tailoring Globex, Head of Support (answers):** (1) **Zeta Bank:** go-live in 12 months, see point (2). (2) **Tickets:** 500 a month. (3) **Hobby:** sails.\n"
+        "- **2026-10-09 — Margin, correction:** margin from 27% to 32% over 24 to 30 months.\n"
+        "- **2026-10-10 — Red-team Globex (answers):** (1) team of 12. (2) 3 hubs. *(⛔ STATUS 2026-10-12: point (2) replaced: 4 hubs)*\n")
+    json.dump({"bundle_title": "tailoring|red-team", "themes": [
+        {"name": "clients", "description": "Named clients.", "title": None, "text": "Zeta Bank"},
+        {"name": "support", "description": "Support.", "title": "Support", "text": "tickets"},
+        {"name": "finance", "description": "Finance.", "title": "Margin", "text": "margin"},
+        {"name": "team", "description": "Team.", "title": None, "text": "team of|hubs"}]},
+        open(os.path.join(a, "facts", "themes.json"), "w"))
+    rc, out = run(SEARCH, os.path.join(a, "candidate_profile.md"), "margin;marge")
+    check("profile_search: searches profile_log.md next to the profile, latest entry first",
+          rc == 0 and "log line" in out and out.index("2026-10-09") < out.index("2026-09-01"), out)
+    rc, out = run(FACTS, a)
+    rd = lambda n: open(os.path.join(a, "facts", n), encoding="utf-8").read()
+    check("build_facts: writes one sheet per theme and an index", rc == 0 and "4 entries" in out and os.path.exists(os.path.join(a, "facts", "INDEX.md")), out)
+    fin, sup, cli, team = rd("finance.md"), rd("support.md"), rd("clients.md"), rd("team.md")
+    check("build_facts: a replaced entry goes to the bottom section with its note",
+          fin.index("24 to 30 months.") < fin.index("## Replaced or corrected") < fin.index("over 3 years") and "duration replaced" in fin, fin)
+    check("build_facts: a bundle is split per point and sorted on the text of each point, not on its title",
+          "Zeta Bank" in cli and "see point (2)" in cli and "500 a month" in sup and "Zeta" not in sup and "sails" in rd("unsorted.md"), cli + sup)
+    check("build_facts: a note naming one point moves only that point",
+          team.index("team of 12") < team.index("## Replaced or corrected") < team.index("3 hubs") and "4 hubs" in team, team)
+    rc, out = run(FACTS, a, "--check")
+    check("build_facts --check: passes when the sheets match the log", rc == 0 and "up to date" in out, out)
+    open(os.path.join(a, "profile_log.md"), "a", encoding="utf-8").write("- **2026-10-20 — Zeta Bank:** 300 users.\n")
+    rc, out = run(FACTS, a, "--check")
+    check("build_facts --check: fails when the log moved and the sheets were not rebuilt", rc == 1 and "STALE" in out, out)
 
     # --- the templates printed in the skills carry every heading the gate reads
     def heads(skill):

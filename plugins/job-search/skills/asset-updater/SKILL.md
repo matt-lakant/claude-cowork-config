@@ -17,6 +17,8 @@ This skill has three modes. Pick one first; each has its own steps.
 
 In every mode: Step 3 (the propagation plan) is shown before anything is written to the vault or the bases, and a figure that changes updates the Current values table in the same run.
 
+> **The record is three files (2026-11-17).** *(project)* `_assets/candidate_profile.md` is the short profile: identity, the Current values table, the Experience summary, the guardrails. `_assets/profile_log.md` is the dated, append-only log: **every answer and correction from Matt is appended there**, one fact per entry, never in the profile. `_assets/facts/` holds one generated sheet per theme (list in `facts/INDEX.md`): read the sheet when a whole subject is needed. Wherever this skill says "the log in `candidate_profile.md`" or "the Q&A log", it means `profile_log.md`. After appending to the log, rebuild the sheets: `python3 <asset-updater skill dir>/scripts/build_facts.py <project>/_assets`.
+
 ## Before anything else — open the opportunity
 
 **Run the `opportunity-intake` skill first.** It confirms the opportunity name, resolves
@@ -146,7 +148,7 @@ In order:
 1. *(vault)* **`Notes/Writing voice.md`** — append the sample to §2; add a row to §3 only if the threshold in Step 2b is met; add a surface habit to §5 where it belongs. Leave the YAML frontmatter untouched. Never restructure the note while adding a line.
 2. **Standing rules** — a rule Matt states for future documents goes into *(project)* `_assets/cv_rules.md` (Part 1, plus a check in Part 2 when it can be tested). Do not write memory files: a rule that lives only in the session's memory is not read by the skills, which is how rules were missed before 2026-11-16.
 3. *(vault)* **`Notes/Matt Cornet.md`** — only for durable identity facts and ceilings, only with Matt's confirmation. Add to the existing section; never edit `type` or `created` in the frontmatter; use `[[wikilinks]]` for internal references. The vault's own `CLAUDE.md` governs, and it wins over this skill on any conflict.
-4. *(project)* **`candidate_profile.md`** — append to the append-only "Confirmed details from tailoring Q&A" log, and to Areas of expertise / Experience where the resume needs the detail. Use the existing markdown structure; never rewrite from scratch. **Do not write voice or style rules here** — that section is a pointer now.
+4. *(project)* **`profile_log.md`** — append the dated entry there (one fact per entry; mark the entry it replaces with a closing `*(⛔ STATUS <date>: ...)*` note), then run `scripts/build_facts.py <project>/_assets`. In **`candidate_profile.md`**, update the Current values row when a figure moves, and Areas of expertise / Experience where the resume needs the detail. Use the existing markdown structure; never rewrite from scratch. **Do not write voice or style rules here** — that section is a pointer now.
 5. *(project)* **`master_resume.docx`** — only with explicit Matt sign-off. Edit text in place using `python-docx`, preserve styles. Save a versioned backup (`master_resume_pre_<YYYY-MM-DD>.docx`) before overwriting.
 
 **Current values table and `cv_rules.md` (added 2026-11-16).** Both exist because a decision written only in the log or in memory came back wrong on later CVs.

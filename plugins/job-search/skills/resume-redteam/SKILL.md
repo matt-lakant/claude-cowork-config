@@ -20,6 +20,8 @@ Run the steps in this order. Steps 0 and 6 are gates.
 | 5 | Writes the memo, feeds the lessons file | `redteam_notes.md`, lines in `redteam_lessons.md` | never |
 | 6 | Runs the red-team gate, presents to Matt | `GATE redteam: PASS`, file cards | the gate lists a missing item |
 
+> **The record is three files (2026-11-17).** *(project)* `_assets/candidate_profile.md` is the short profile: identity, the Current values table, the Experience summary, the guardrails. `_assets/profile_log.md` is the dated, append-only log: **every answer and correction from Matt is appended there**, one fact per entry, never in the profile. `_assets/facts/` holds one generated sheet per theme (list in `facts/INDEX.md`): read the sheet when a whole subject is needed. Wherever this skill says "the log in `candidate_profile.md`" or "the Q&A log", it means `profile_log.md`. After appending to the log, rebuild the sheets: `python3 <asset-updater skill dir>/scripts/build_facts.py <project>/_assets`.
+
 ## Step 0: Open the opportunity and run the draft gate
 
 **Run the `opportunity-intake` skill first.** It confirms the opportunity name, resolves
@@ -78,7 +80,7 @@ Claude (not the subagent) also reads *(vault)* `Notes/Writing voice.md` before w
 
 - **Resume text:** `python3 <this skill's dir>/scripts/docx_dump.py <cv.docx>` prints the body in document order, tables included (the skills matrix and the role titles live in tables, and `python-docx`'s `paragraph.text` misses both them and any tracked insertion). Paste that output.
 - **Pasted in full:** the JD, `company_overview.md` minus its positioning section, the "Framing guardrails" and "Technology and scope ceilings" sections of `Notes/Matt Cornet.md`, the Current values table, and Part 1 of `_assets/cv_rules.md`.
-- **Given as a path, not pasted:** `_assets/candidate_profile.md`. It is several hundred kilobytes and no longer fits in a brief. Tell the reviewer to read the top of the file through the Experience section in full, then to grep the append-only log for each claim it checks, citing the date and line of each entry, and to take the latest entry when two disagree. Tell it which tool reaches the file (`device_bash` when the project folder is on Matt's computer) and that it must not write anything.
+- **Given as paths, not pasted:** `_assets/candidate_profile.md` (short: the reviewer reads it in full), `_assets/profile_log.md` (the dated log, several hundred kilobytes) and `_assets/facts/` (sheets by theme, list in `facts/INDEX.md`). Tell the reviewer to read the profile in full, then, for each claim it checks, to read the matching sheet or grep the log, citing the date and line of each entry, and to take the latest entry when two disagree. Tell it which tool reaches the file (`device_bash` when the project folder is on Matt's computer) and that it must not write anything.
 - **Named as off-limits:** `application_brief.md`, `tailoring_notes.md`, `fit_report.md`, `redteam_notes.md`, any other CV or redline in the folder, and any other application folder. Say so explicitly in the brief: a reviewer that can read the folder will otherwise open them.
 
 Do **not** include the fit score, the tailoring memo, or any "this is why it fits" narrative. If the JD file carries an internal coverage or fit matrix, tell the subagent explicitly to ignore that section — it is your own note, not a primary source, and it leaks the drafting rationale into the adversary's packet.
@@ -165,7 +167,7 @@ Save a redline copy — never overwrite the tailored file: `applications/<slug>/
 On 2026-11-16 one run asked 4 of the reviewer's 8 questions and another asked none, and nothing recorded what happened to the rest. A question that is neither asked nor listed is a fact that could have fixed a weak line and was lost. If Matt is not there to answer (unattended run), list the questions as open in the memo and in your closing message instead of dropping them.
 
 For every answer:
-- Append it (dated) to the `## Confirmed details from tailoring Q&A (append-only log)` in `candidate_profile.md` (standing rule), and promote durable items via `asset-updater`.
+- Append it (dated, one fact per entry) to `_assets/profile_log.md` (standing rule), rebuild the fact sheets, and promote durable items via `asset-updater`.
 - Convert "under-sold real experience" flags into real, specific tracked-change edits. Never invent — if Matt confirms nothing, leave the gap and name it in the memo.
 - **If a finding is a factual error rather than a weakness** — a certification he does not hold, a guardrail decided but never applied — fix it at the source in the same run: *(project)* `_assets/candidate_profile.md`, *(project)* `_assets/master_resume.docx`, and *(vault)* `Notes/Matt Cornet.md` when it is a ceiling, not only the CV in hand. Otherwise it returns on the next tailoring run.
 - **If an answer moves a ceiling** — he has in fact done the thing a ceiling said he had not — update the ceilings section in the same run and note which log entry it supersedes. A stale ceiling silently under-sells him on every future application.

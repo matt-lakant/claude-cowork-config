@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""Find what is on record for a requirement in candidate_profile.md. Standard library only.
+"""Find what is on record for a requirement. Standard library only.
 
-The profile's Q&A log is append-only, several hundred kilobytes, mostly in French, and holds most
+The record is candidate_profile.md (short profile) and, next to it, profile_log.md (the dated,
+append-only log). Give the path of candidate_profile.md: when profile_log.md sits in the same
+folder it is searched too. The log is several hundred kilobytes, mostly in French, and holds most
 of the facts that make a CV specific. Nobody reads it in full, so the facts get found late, by the
 reviewer. This script is the search to run BEFORE drafting, once per requirement of the posting.
 
@@ -19,7 +21,7 @@ text around each match. "LATER ENTRY MAY SUPERSEDE" is printed when the entry it
 replaces or corrects something: read the dates before using a figure, and prefer the Current values
 table at the top of the profile when the figure has a row there.
 """
-import re, sys
+import os, re, sys
 
 DATE = re.compile(r"(20\d\d-\d\d-\d\d)")
 SUPERSEDE = re.compile(r"remplace|supersed|corrige|prévaut|annule|replaces|lève", re.I)
@@ -41,7 +43,15 @@ def main():
     rxs = [(t, re.compile(t, re.I)) for t in terms]
     hits = []
     section = ""
-    for n, line in enumerate(open(path, encoding="utf-8").read().splitlines(), 1):
+    files = [path]
+    log = os.path.join(os.path.dirname(os.path.abspath(path)), "profile_log.md")
+    if os.path.basename(path) != "profile_log.md" and os.path.exists(log):
+        files.append(log)
+    lines = []
+    for f in files:
+        tag = "log " if os.path.basename(f) == "profile_log.md" and len(files) > 1 else ""
+        lines += [(tag + "line %d" % n, l) for n, l in enumerate(open(f, encoding="utf-8").read().splitlines(), 1)]
+    for n, line in lines:
         if line.startswith("#"):
             section = line.lstrip("# ").strip()
             continue
@@ -54,11 +64,11 @@ def main():
         d = DATE.search(line[:60])
         title = re.sub(r"[*`]", "", line[:110]).strip("- ").split(":**")[0][:100]
         hits.append((len(found), d.group(1) if d else "", n, section, title, found, line))
-    hits.sort(key=lambda h: (-h[0], h[1] == "", [-ord(c) for c in h[1]]))
+    hits.sort(key=lambda h: (-h[0], h[1] == "", [-ord(c) for c in h[1]]))  # more terms, then most recent
     print("%d entries match %s; showing %d" % (len(hits), terms, min(mx, len(hits))))
     for count, date, n, section, title, found, line in hits[:mx]:
         flag = "  [LATER ENTRY MAY SUPERSEDE: check dates]" if SUPERSEDE.search(line) else ""
-        print("\n--- line %d | %s | %s%s" % (n, date or "undated (" + section[:40] + ")", title, flag))
+        print("\n--- %s | %s | %s%s" % (n, date or "undated (" + section[:40] + ")", title, flag))
         print("    terms: " + ", ".join(t for t, _ in found))
         shown = []
         for t, pos in found:

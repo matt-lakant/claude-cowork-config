@@ -22,6 +22,8 @@ Run the steps in this order. Each one leaves something in `applications/<slug>/a
 
 Why a separate skill (2026-11-17): these steps used to open `resume-tailor`, which had grown to 16 steps in one file, and the ones that decide the quality of the first draft (searching the record, asking the hard questions early, applying Matt's decisions) were the ones that got skipped. They now have their own file, their own output, and a script that checks the output.
 
+> **The record is three files (2026-11-17).** *(project)* `_assets/candidate_profile.md` is the short profile: identity, the Current values table, the Experience summary, the guardrails. `_assets/profile_log.md` is the dated, append-only log: **every answer and correction from Matt is appended there**, one fact per entry, never in the profile. `_assets/facts/` holds one generated sheet per theme (list in `facts/INDEX.md`): read the sheet when a whole subject is needed. Wherever this skill says "the log in `candidate_profile.md`" or "the Q&A log", it means `profile_log.md`. After appending to the log, rebuild the sheets: `python3 <asset-updater skill dir>/scripts/build_facts.py <project>/_assets`.
+
 ## What it reads
 
 > *(project)* paths are relative to the Job Applications project root, the folder that holds `applications/`, `_assets/` and `applications_tracker.md`. *(vault)* paths are relative to the connected `obsidian-vault` folder. If either folder is not connected, request it (`device_request_folder_access`) and stop if it is refused.
@@ -59,6 +61,8 @@ Read `job_description.md`. Extract, in the posting's own words:
 ## Step 3: Search the record for every requirement
 
 This is the step that decides how much the red-team will have to correct. Up to 2026-11-16 the red-team rewrote about 20% of each CV, and the largest cause was facts already in Matt's log that the draft had not used. The reviewer found them by searching the log requirement by requirement. Do that search here, first.
+
+First read `_assets/facts/INDEX.md` and the one or two sheets that match the role (a delivery role: `factset_delivery_and_programs` and `factset_clients`; an AI role: `ai_practice`, `bluematrix`, `lakant_io`). A sheet gives the whole subject in one read, most recent first, with the replaced statements set apart at the bottom. The search below still runs for every requirement: the sheets are sorted by keyword and a fact can sit in a neighbouring theme.
 
 For each requirement:
 

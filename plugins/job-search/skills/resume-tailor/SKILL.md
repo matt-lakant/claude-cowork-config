@@ -23,6 +23,8 @@ Run the steps in this order. Steps 1, 5 and 8 are gates: the run does not go pas
 
 This skill drafts. It does not parse the posting, search the record, question Matt or choose the base file: `application-brief` does, and its output is this skill's input. If you find yourself doing one of those things here, the brief is incomplete: go back to it.
 
+> **The record is three files (2026-11-17).** *(project)* `_assets/candidate_profile.md` is the short profile: identity, the Current values table, the Experience summary, the guardrails. `_assets/profile_log.md` is the dated, append-only log: **every answer and correction from Matt is appended there**, one fact per entry, never in the profile. `_assets/facts/` holds one generated sheet per theme (list in `facts/INDEX.md`): read the sheet when a whole subject is needed. Wherever this skill says "the log in `candidate_profile.md`" or "the Q&A log", it means `profile_log.md`. After appending to the log, rebuild the sheets: `python3 <asset-updater skill dir>/scripts/build_facts.py <project>/_assets`.
+
 ## What it reads
 
 > *(project)* paths are relative to the Job Applications project root, the folder that holds `applications/`, `_assets/` and `applications_tracker.md`. *(vault)* paths are relative to the connected `obsidian-vault` folder.
