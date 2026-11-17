@@ -41,12 +41,15 @@ The tracker is the single source of truth for what Matt has applied to, where ea
 
 ## File structure (must be preserved on every edit)
 
-The markdown file has two sections:
+The tracker is three markdown files at the project root since 2026-11-17 (it was one file of 313 KB, re-read in full on every run):
 
-1. **Summary table** at the top — one row per application, 13 columns in this order: ID, Company, Role, Fit, Channel, Referral, AI title, Seniority, Status, Reply (days), Next action due, Geo, Folder. Used for at-a-glance scan and for the outcome review.
-2. **Per-application detail sections** below — one `### ID N — Company — Role` heading per application, followed by a metadata table (the 17 fields below plus the six outcome fields) and free-form Notes. Some older sections use French labels (`Champ | Valeur`, `Statut`) or a bullet list instead of a table; keep the format a section already has. This is the rich record.
+1. **`applications_tracker.md`**, read on every run: the **summary table**, one row per application, 13 columns in this order: ID, Company, Role, Fit, Channel, Referral, AI title, Seniority, Status, Reply (days), Next action due, Geo, Folder; the **"what's open this week"** block under it; and the **outreach table** ("Outreach recruteurs & réseau") for contacts not tied to a posting.
+2. **`applications_tracker_details.md`**, read for one application at a time (search for its heading): one `### ID N — Company — Role` section per application, in ID order, with the metadata table (the 17 fields below plus the six outcome fields) and free-form dated Notes. Some older sections use French labels (`Champ | Valeur`): leave them as they are.
+3. **`applications_tracker_history.md`**: the dated event log, most recent first, one line per event.
 
-Plus a **"What's open this week"** sub-block under the summary that lists overdue and upcoming actions.
+Every change touches the files it concerns in the same edit: a new application is a summary row, a detail section and a history line; a status change is the Status cell, the Status field of the section with a dated note, and a history line. A row with no section, or a section with no row, is an error: say so when you find one instead of working around it.
+
+`applications_tracker_archive.md` receives the sections of closed applications older than six months (see Pruning).
 
 ## Schema
 

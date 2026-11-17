@@ -434,6 +434,10 @@ not belong in the project root either.
 - **The "project folders are kept flat, no subfolders" preference does not apply to
   Job Applications.** This project is an explicit exception: `applications/<slug>/`,
   `_assets/`, `_research/`. When the flat rule and this skill conflict, this skill wins.
+- **What lives at the project root, and nothing else:** `README.md`, the tracker files
+  (`applications_tracker.md`, `applications_tracker_details.md`, `applications_tracker_history.md`,
+  `applications_tracker_archive.md`), `applications/`, `_assets/` (with `_assets/archive/` for
+  retired files and backups) and `_research/`.
 - **Do not wait for a formal application.** A first call, a recruiter DM or an
   exploratory coffee opens an opportunity. The folder is cheap; the lost history is not.
 - **Do not rename or move existing application folders** without asking. The tracker's

@@ -23,3 +23,6 @@ desktop.ini
 # Session deliverables belong in the project folder under
 # OneDrive\Documents\Claude\Projects\<Project Name>, never here.
 /Claude outputs/
+
+# Python bytecode
+__pycache__/

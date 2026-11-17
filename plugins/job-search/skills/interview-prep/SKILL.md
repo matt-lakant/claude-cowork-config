@@ -49,6 +49,7 @@ The grounding is what makes this useful — generic STAR prompts produce generic
 3a. Optional: `applications/<company>-<role>/application_brief.md` — the requirement and evidence table, what is not claimable, and Matt's answers for this posting. The rows with thin evidence are where the hard questions will come from.
 3b. Optional: `applications/<company>-<role>/fit_report.md` — the requirement coverage matrix and the gaps, if `job-fit-analyzer` ran. The 🟡 and 🚫 rows are where the hard questions will come from.
 4. The job posting (Matt should provide; if missing, ask)
+4b. *(project)* `_assets/story_bank.md` — the bank of stories Matt can tell (client, symptom, what he did with his own hands, cause, fix, what changed for the team, the delivery process and the product), each in a 60-second and a 3-minute version. **Read it before drafting any behavioural or technical answer and build the answer on a story from it when one fits**; a new story Matt tells while preparing is added to it in the same format. It was opened after an interview where the answers stayed at the level of principles.
 5. Optional: the tailored resume from `applications/<company>-<role>/` — read it if it exists, since the interviewer probably read it too
 6. Optional: `applications/<company>-<role>/redteam_notes.md` — if a red-team ran on this application, its "gaps assumed" and "prepare for interview" sections are the hostile questions, already identified by something trying to reject him. Start there.
 

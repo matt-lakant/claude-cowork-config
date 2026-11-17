@@ -10,7 +10,7 @@ script or to the checks block of cv_rules.md. Exit code 1 if a test fails.
 What it covers: cv_check.py on an English CV that must pass, an English CV with known violations,
 a French CV that must pass (labels, "80 à 90 %", non-breaking spaces), a letter and a text file;
 redline.py (tracked, untracked, cut, text split across runs, failure on a bad edit);
-docx_dump.py views; to_a4.py; profile_search.py (with the sibling log); build_facts.py;
+docx_dump.py views; to_a4.py; profile_search.py (with the sibling log); build_facts.py; base_audit.py;
 gate.py (brief, draft, redteam, and that the
 templates printed in the three SKILL.md files still carry every heading the gate reads).
 """
@@ -25,6 +25,7 @@ A4 = os.path.join(SK, "resume-tailor", "scripts", "to_a4.py")
 SEARCH = os.path.join(SK, "application-brief", "scripts", "profile_search.py")
 GATE = os.path.join(SK, "application-brief", "scripts", "gate.py")
 FACTS = os.path.join(SK, "asset-updater", "scripts", "build_facts.py")
+BASES = os.path.join(SK, "application-brief", "scripts", "base_audit.py")
 RED = os.path.join(SK, "resume-redteam", "scripts", "redline.py")
 DUMP = os.path.join(SK, "resume-redteam", "scripts", "docx_dump.py")
 results = []
@@ -289,10 +290,10 @@ None.
     check("gate redteam: complete memo and redline pass", rc == 0 and "GATE redteam: PASS" in out, out)
 
     # --- record split in three files: profile_search reads the sibling log, build_facts builds the sheets
-    a = os.path.join(tmp, "assets")
-    os.makedirs(os.path.join(a, "facts"))
-    open(os.path.join(a, "candidate_profile.md"), "w", encoding="utf-8").write("# Jane Doe\n\n## Experience\n- Ran delivery\n")
-    open(os.path.join(a, "profile_log.md"), "w", encoding="utf-8").write(
+    fa = os.path.join(tmp, "assets")
+    os.makedirs(os.path.join(fa, "facts"))
+    open(os.path.join(fa, "candidate_profile.md"), "w", encoding="utf-8").write("# Jane Doe\n\n## Experience\n- Ran delivery\n")
+    open(os.path.join(fa, "profile_log.md"), "w", encoding="utf-8").write(
         "# Log\n\n> rules\n\n"
         "- **2026-09-01 — Margin (tailoring Acme):** margin went from 27% to 32% over 3 years. *(⛔ STATUS 2026-10-09: duration replaced: 24 to 30 months)*\n"
         "- **2026-10-01 — Tailoring Globex, Head of Support (answers):** (1) **Zeta Bank:** go-live in 12 months, see point (2). (2) **Tickets:** 500 a month. (3) **Hobby:** sails.\n"
@@ -303,13 +304,13 @@ None.
         {"name": "support", "description": "Support.", "title": "Support", "text": "tickets"},
         {"name": "finance", "description": "Finance.", "title": "Margin", "text": "margin"},
         {"name": "team", "description": "Team.", "title": None, "text": "team of|hubs"}]},
-        open(os.path.join(a, "facts", "themes.json"), "w"))
-    rc, out = run(SEARCH, os.path.join(a, "candidate_profile.md"), "margin;marge")
+        open(os.path.join(fa, "facts", "themes.json"), "w"))
+    rc, out = run(SEARCH, os.path.join(fa, "candidate_profile.md"), "margin;marge")
     check("profile_search: searches profile_log.md next to the profile, latest entry first",
           rc == 0 and "log line" in out and out.index("2026-10-09") < out.index("2026-09-01"), out)
-    rc, out = run(FACTS, a)
-    rd = lambda n: open(os.path.join(a, "facts", n), encoding="utf-8").read()
-    check("build_facts: writes one sheet per theme and an index", rc == 0 and "4 entries" in out and os.path.exists(os.path.join(a, "facts", "INDEX.md")), out)
+    rc, out = run(FACTS, fa)
+    rd = lambda n: open(os.path.join(fa, "facts", n), encoding="utf-8").read()
+    check("build_facts: writes one sheet per theme and an index", rc == 0 and "4 entries" in out and os.path.exists(os.path.join(fa, "facts", "INDEX.md")), out)
     fin, sup, cli, team = rd("finance.md"), rd("support.md"), rd("clients.md"), rd("team.md")
     check("build_facts: a replaced entry goes to the bottom section with its note",
           fin.index("24 to 30 months.") < fin.index("## Replaced or corrected") < fin.index("over 3 years") and "duration replaced" in fin, fin)
@@ -317,11 +318,34 @@ None.
           "Zeta Bank" in cli and "see point (2)" in cli and "500 a month" in sup and "Zeta" not in sup and "sails" in rd("unsorted.md"), cli + sup)
     check("build_facts: a note naming one point moves only that point",
           team.index("team of 12") < team.index("## Replaced or corrected") < team.index("3 hubs") and "4 hubs" in team, team)
-    rc, out = run(FACTS, a, "--check")
+    rc, out = run(FACTS, fa, "--check")
     check("build_facts --check: passes when the sheets match the log", rc == 0 and "up to date" in out, out)
-    open(os.path.join(a, "profile_log.md"), "a", encoding="utf-8").write("- **2026-10-20 — Zeta Bank:** 300 users.\n")
-    rc, out = run(FACTS, a, "--check")
+    open(os.path.join(fa, "profile_log.md"), "a", encoding="utf-8").write("- **2026-10-20 — Zeta Bank:** 300 users.\n")
+    rc, out = run(FACTS, fa, "--check")
     check("build_facts --check: fails when the log moved and the sheets were not rebuilt", rc == 1 and "STALE" in out, out)
+
+    # --- base_audit: candidates are the CVs returned as "final", letters excluded; Notes survive a rerun
+    pr = os.path.join(tmp, "project")
+    os.makedirs(os.path.join(pr, "_assets"))
+    os.makedirs(os.path.join(pr, "applications", "acme-ps-manager"))
+    import shutil
+    shutil.copy(a.rules, os.path.join(pr, "_assets", "cv_rules.md"))
+    open(os.path.join(pr, "_assets", "candidate_profile.md"), "w", encoding="utf-8").write("# Jane Doe\n")
+    build_cv(os.path.join(pr, "applications", "acme-ps-manager", "CORNET_Acme_PS-Manager_2026-11-01_v2_final.docx"))
+    build_cv(os.path.join(pr, "applications", "acme-ps-manager", "CORNET_Acme_PS-Manager_2026-10-01_final.docx"), a4=False, bad=True)
+    build_cv(os.path.join(pr, "applications", "acme-ps-manager", "CORNET_Acme_Cover_Letter_2026-11-01_final.docx"))
+    build_cv(os.path.join(pr, "applications", "acme-ps-manager", "CORNET_Acme_PS-Manager_2026-11-01.docx"))
+    rc, out = run(BASES, pr, "--write")
+    cb = open(os.path.join(pr, "_assets", "cv_bases.md"), encoding="utf-8").read()
+    rows = [l for l in cb.splitlines() if l.startswith("| 2026")]
+    check("base_audit: lists the two returned CVs, most recent first, not the letter or the draft",
+          rc == 0 and len(rows) == 2 and "2026-11-01" in rows[0] and "Cover_Letter" not in cb, cb)
+    check("base_audit: reports page size apart and counts the failures of the bad CV",
+          "| yes | 0 | 0 |" in rows[0] and "| no |" in rows[1] and "R6-ninety" in rows[1] and "R18-scale-top" in rows[1] and "R15" not in rows[1], cb)
+    open(os.path.join(pr, "_assets", "cv_bases.md"), "w", encoding="utf-8").write(cb.replace("None yet.", "- Delivery roles: prefer the Acme CV."))
+    run(BASES, pr, "--write")
+    check("base_audit: the Notes section survives a rerun",
+          "prefer the Acme CV" in open(os.path.join(pr, "_assets", "cv_bases.md"), encoding="utf-8").read())
 
     # --- the templates printed in the skills carry every heading the gate reads
     def heads(skill):

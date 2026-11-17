@@ -48,6 +48,7 @@ Drafts short, in-voice follow-up messages for the four most common recruiter tou
 2. *(vault)* `Notes/Matt Cornet.md` — durable identity and the "Technology and scope ceilings" list. A hook that breaches a ceiling turns a follow-up into a claim he has to walk back.
 3. *(project)* `_assets/candidate_profile.md` — for concrete hooks and factual guardrails
    Any figure in a message is written as worded in the **"Current values" table** at the top of that file (Matt's 90% wording rule covers emails explicitly). `_assets/cv_rules.md` holds the standing rules; R4, R6 and R11 to R14 apply to messages.
+3b. *(project)* `_assets/recruiter_outreach_playbook.md` — **for any message that is not tied to a posting** (a fund's talent partner, a search firm, an in-house recruiter, a founder or VP approached directly): the locked positioning and its three target titles, the reusable positioning blocks in French and English, the three proofs to draw on, the guardrails, the verified targets, and the message kit with the single follow-up at day 7. Start from its kit, not from the templates below, and log the contact in the "Outreach recruteurs & réseau" table of `applications_tracker.md`.
 4. Any prior thread context Matt provides (paste of original message, last reply, etc.)
 
 ## Inputs to gather

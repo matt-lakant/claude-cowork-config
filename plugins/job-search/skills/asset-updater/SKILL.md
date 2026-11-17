@@ -12,7 +12,7 @@ This skill has three modes. Pick one first; each has its own steps.
 | Mode | Trigger | Steps | What it produces |
 |---|---|---|---|
 | Standard | Matt edited a deliverable or states a correction, a fact or a preference | 1 diff, 2 classify, 2b voice edits, 3 show the plan, 4 apply, 5 flag stale CVs, 6 confirm | updated profile, Current values table, vault notes, bases |
-| Returned file | Matt attaches a CV or letter he finalized in Word | R1 file it, R2 sentence-level diff, R3 propagate in the application, R4 template and reference letter, R5 report | `..._final.docx` filed, voice note §2, "Rejected by Matt" in the red-team notes |
+| Returned file | Matt attaches a CV or letter he finalized in Word | R1 file it, R2 sentence-level diff, R3 propagate in the application, R4 template and reference letter, R4b refresh `cv_bases.md`, R5 report | `..._final.docx` filed, voice note §2, "Rejected by Matt" in the red-team notes |
 | Quarterly sweep | Matt asks for a clean-up | see "Quarterly sweep mode" | a list of stale items; nothing deleted without his list |
 
 In every mode: Step 3 (the propagation plan) is shown before anything is written to the vault or the bases, and a figure that changes updates the Current values table in the same run.
@@ -206,6 +206,10 @@ A correction he made in one deliverable applies to every deliverable of the same
 
 - If he changed the letter's **frame** (header block, salutation, closing, signature), propose updating `_assets/cover_letter_template_<EN|FR>.docx` and the frame bullets in `Writing voice.md` §5.4. Ask first.
 - If the returned letter is final and complete, ask whether it should replace the §5.4 reference letter for its language. Never replace it without his yes.
+
+### R4b — Refresh the list of bases
+
+When the returned document is a CV, run `python3 <application-brief skill dir>/scripts/base_audit.py <project> --write`: the file he just returned becomes a candidate base in `_assets/cv_bases.md`, with its state against today's rules. If it is the first CV of its kind (a first hands-on CV in a language, a new role family), add a line to the Notes section of that file.
 
 ### R5 — Report
 

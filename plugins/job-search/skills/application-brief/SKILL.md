@@ -118,8 +118,8 @@ Some answers are decisions about the documents, not facts: what to lead with, wh
 
 The base is the `.docx` that `resume-tailor` will edit in place.
 
-1. **Candidates:** CVs Matt finalized and sent (the tracker and each folder's `redteam_notes.md` name the file that went out), in the posting's language, for the nearest role family and the same role tag. Take the most recent that fits. A draft or a redline he never returned is not a candidate.
-2. **Fallback:** *(project)* `_assets/master_resume.docx`.
+1. **Candidates:** read *(project)* `_assets/cv_bases.md`. Its table lists every CV Matt returned himself, with its language and its FAIL count against today's rules read as a leadership CV and as a hands-on CV; its Notes section says which file to prefer for each role family. Take the most recent file in the posting's language, for the nearest role family, with the fewest FAIL lines for this posting's role tag. If the table is older than the last CV Matt returned, refresh it first: `python3 <this skill's dir>/scripts/base_audit.py <project> --write`. A draft or a redline he never returned is not a candidate.
+2. **Fallback:** *(project)* `_assets/master_resume.docx`, when no family fits. `master_resume_v2` and `_v3` are retired.
 3. **Audit it:** `python3 <resume-tailor skill dir>/scripts/cv_check.py <base.docx> --rules <project>/_assets/cv_rules.md --profile <project>/_assets/candidate_profile.md --tags <tags of this posting>`. Each `FAIL` is a line `resume-tailor` must rewrite: a superseded figure, a title or a wording that was right for the earlier posting and is not for this one. Paste the result lines in the brief.
 4. **The base is layout and phrasing Matt validated, not evidence.** A figure is printed because the Current values table or the log supports it, never because the base had it.
 

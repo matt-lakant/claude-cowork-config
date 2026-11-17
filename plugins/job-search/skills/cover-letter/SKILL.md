@@ -83,7 +83,7 @@ CV that is about to change is drafted twice.
 7b. *(project)* `_assets/cv_rules.md`: the standing rules. The ones that apply to a letter are R4 (wording for a non-finance employer), R6 (the 90% wording, which Matt set for letters and emails too), R11 to R15. R10 works the other way here: the gap between the profile and the posting is handled in the letter.
 8. `applications/<slug>/notes.md` and any form answers already drafted (`form_answers*.md`),
    to avoid twin sentences.
-9. *(project)* `_assets/cover_letter_template_<EN|FR>.docx`: the layout.
+9. *(project)* `_assets/cover_letter_template_<EN|FR>.docx`: the layout only (header block, date, addressee, subject, salutation, signature). Since 2026-11-17 its body holds bracketed instructions, one per paragraph, not a letter: replace each with the paragraph it describes, delete the ones the letter does not need, and leave no bracket behind (rule R21, checked by `cv_check.py`). The order and the content rules are those of §5.4 of the voice note, which wins over the brackets.
 
 ## Workflow
 
