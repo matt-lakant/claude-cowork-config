@@ -10,7 +10,8 @@ script or to the checks block of cv_rules.md. Exit code 1 if a test fails.
 What it covers: cv_check.py on an English CV that must pass, an English CV with known violations,
 a French CV that must pass (labels, "80 à 90 %", non-breaking spaces), a letter and a text file;
 redline.py (tracked, untracked, cut, text split across runs, failure on a bad edit);
-docx_dump.py views; to_a4.py; profile_search.py.
+docx_dump.py views; to_a4.py; profile_search.py; gate.py (brief, draft, redteam, and that the
+templates printed in the three SKILL.md files still carry every heading the gate reads).
 """
 import argparse, json, os, subprocess, sys, tempfile
 import docx
@@ -20,7 +21,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SK = os.path.join(HERE, "..", "skills")
 CHK = os.path.join(SK, "resume-tailor", "scripts", "cv_check.py")
 A4 = os.path.join(SK, "resume-tailor", "scripts", "to_a4.py")
-SEARCH = os.path.join(SK, "resume-tailor", "scripts", "profile_search.py")
+SEARCH = os.path.join(SK, "application-brief", "scripts", "profile_search.py")
+GATE = os.path.join(SK, "application-brief", "scripts", "gate.py")
 RED = os.path.join(SK, "resume-redteam", "scripts", "redline.py")
 DUMP = os.path.join(SK, "resume-redteam", "scripts", "docx_dump.py")
 results = []
@@ -167,6 +169,139 @@ def main():
     first = [l for l in out.splitlines() if l.startswith("--- line")]
     check("profile_search: finds entries, best match first, flags a superseding entry",
           len(first) == 2 and "2026-10-23" in first[0] and "MAY SUPERSEDE" in first[0], out)
+
+    # --- gate
+    g = os.path.join(tmp, "acme-ps-manager")
+    os.makedirs(g)
+    gp = lambda n: os.path.join(g, n)
+    brief = """# Application brief: Acme, PS Manager
+
+## Role
+- Role tag: hands_on (\"you will run the projects yourself\")
+- cv_check tags: non_sales, ps_role, hands_on
+- Language: English
+
+## Requirements and evidence
+| # | Requirement | Hard / nice | Coverage | Strongest facts on record (entry date) | First-hand | Open question |
+|---|---|---|---|---|---|---|
+| 1 | Run delivery | hard | strong | 50 platform replacements (2026-10-15) | yes | |
+| 2 | Write SOWs | hard | strong | SOWs written personally (2026-10-23) | yes | |
+| 3 | Snowflake certification | nice | blocked | | no | |
+
+## Not claimable
+- Snowflake certification: ceiling
+
+## Top-third keywords
+- EMEA
+- master data
+
+## ATS keywords
+EMEA, master data, SOW
+
+## First-hand facts
+- SQL control scripts | fragment for cv_check: "SQL control scripts written personally"
+- SOWs | fragment for cv_check: "SOWs written personally"
+
+## Questions put to Matt
+None: every hard requirement has a fact on record.
+
+## Decisions
+| Decision | Source | Where it must show |
+|---|---|---|
+| Role is hands_on | R18 | header, profile |
+
+## Lessons applied
+None: the lessons file has no line for this role family.
+
+## Base file
+- File: _assets/master_resume.docx
+- Audit: RESULT: 0 FAIL
+
+## Form questions
+None: the posting asks none.
+
+## Angle
+Delivery lead who writes the SOWs himself.
+"""
+    open(gp("application_brief.md"), "w", encoding="utf-8").write(brief)
+    rc, out = run(GATE, "brief", g)
+    check("gate brief: a complete brief passes", rc == 0 and "GATE brief: PASS" in out, out)
+    bad_brief = brief.replace("- Role tag: hands_on", "- Role: manager").replace("| 2 | Write SOWs | hard | strong | SOWs written personally (2026-10-23) | yes | |", "| 2 | Write SOWs | hard | partial | | no | |").replace("## Angle\nDelivery lead who writes the SOWs himself.\n", "")
+    os.makedirs(gp("bad"))
+    open(os.path.join(gp("bad"), "application_brief.md"), "w", encoding="utf-8").write(bad_brief)
+    rc, out = run(GATE, "brief", gp("bad"))
+    check("gate brief: missing role tag, missing section and a requirement with neither fact nor question fail",
+          rc == 1 and "Role tag" in out and "'## Angle' is missing" in out and "requirement 'Write SOWs'" in out, out)
+    rc, out = run(GATE, "draft", g)
+    check("gate draft: fails before resume-tailor has written its memo", rc == 1 and "tailoring_notes.md does not exist" in out, out)
+    open(gp("tailoring_notes.md"), "w", encoding="utf-8").write("""# Tailoring notes
+
+## Check result
+cv_check.py --tags non_sales,ps_role,hands_on
+RESULT: 0 FAIL, 1 WARN
+
+## Evidence used
+| Requirement | Fact on record | CV line |
+|---|---|---|
+| Run delivery | 50 platform replacements | "50 platform replacements, 90% live on the date planned at project start" |
+| Write SOWs | SOWs written personally | not used: reason given |
+
+## Decisions applied
+| Decision | CV line that applies it |
+|---|---|
+| Role is hands_on | "Ran delivery with 5 to 10 direct managers and experts" |
+""")
+    build_cv(gp("CORNET_Acme_PS-Manager_2026-11-17.docx"))
+    rc, out = run(GATE, "draft", g)
+    check("gate draft: brief, memo and CV present pass", rc == 0 and "GATE draft: PASS" in out, out)
+    open(gp("redteam_notes.md"), "w", encoding="utf-8").write("""# Red-team notes
+
+## Verdict
+Borderline.
+
+## Corrections applied directly
+None.
+
+## Choices for Matt
+| # | Tracked change | Severity | Trade-off | Cause |
+|---|---|---|---|---|
+| 1 | cut line | Med | shorter | F |
+
+## Questions
+| # | Question | State | Answer or reason |
+|---|---|---|---|
+| 1 | Team size in EMEA? | pending | |
+
+## First-pass count
+0 corrections, 1 choice (F: 1)
+
+## Rejected by Matt
+""")
+    rc, out = run(GATE, "redteam", g)
+    check("gate redteam: a question with no state and a missing redline fail",
+          rc == 1 and "state is not" in out and "redline" in out, out)
+    t = open(gp("redteam_notes.md"), encoding="utf-8").read().replace("| pending | |", "| dropped: answered in the log (2026-10-15) | |")
+    open(gp("redteam_notes.md"), "w", encoding="utf-8").write(t)
+    build_cv(gp("CORNET_Acme_PS-Manager_2026-11-17_redline.docx"))
+    rc, out = run(GATE, "redteam", g)
+    check("gate redteam: complete memo and redline pass", rc == 0 and "GATE redteam: PASS" in out, out)
+
+    # --- the templates printed in the skills carry every heading the gate reads
+    def heads(skill):
+        txt = open(os.path.join(SK, skill, "SKILL.md"), encoding="utf-8").read()
+        return {l[3:].split("(key)")[0].strip() for l in txt.splitlines() if l.startswith("## ")}
+    want = {"application-brief": ["Role", "Requirements and evidence", "Not claimable", "Top-third keywords", "First-hand facts",
+                                  "Questions put to Matt", "Decisions", "Lessons applied", "Base file", "Form questions", "Angle"],
+            "resume-tailor": ["Check result", "Evidence used", "Decisions applied"],
+            "resume-redteam": ["Verdict", "Corrections applied directly", "Choices for Matt", "Questions", "First-pass count", "Rejected by Matt"]}
+    for skill, keys in want.items():
+        missing = [k for k in keys if k not in heads(skill)]
+        check("template of %s has every heading the gate reads" % skill, not missing, "missing: %s" % missing)
+    for skill in sorted(os.listdir(SK)):
+        txt = open(os.path.join(SK, skill, "SKILL.md"), encoding="utf-8").read()
+        check("%s opens on a step map or a mode map" % skill, "## Step map" in txt[:1800] or "## Mode map" in txt[:1800])
+        check("%s has no stale script path" % skill,
+              "resume-tailor skill dir>/scripts/profile_search" not in txt and "resume-tailor/scripts/profile_search" not in txt)
 
     failed = [n for n, ok in results if not ok]
     print("\n%d tests, %d failed" % (len(results), len(failed)))

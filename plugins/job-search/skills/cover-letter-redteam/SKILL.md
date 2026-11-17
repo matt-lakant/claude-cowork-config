@@ -5,6 +5,17 @@ description: "Adversarial recruiter review of a cover letter produced by `cover-
 
 # Cover Letter Red-Team (Adversarial Recruiter)
 
+## Step map
+
+| Step | What it does | What it produces | Stops the run when |
+|---|---|---|---|
+| Open | Opens the opportunity; builds the packet (listed below) | the reviewer's brief | the voice note or the final CV is missing |
+| 1 | Spawns the fresh-context reviewer | its report, with the figure audit (item 10) and the level test (item 11) | the report praises or skips an item: re-run |
+| 2 | Verifies the entries the reviewer cites | confirmed edits | never |
+| 3 | Applies corrections directly and choices as tracked changes; runs `cv_check.py --kind letter` | `..._redline.docx`, `RESULT: 0 FAIL` | an edit is not applied, or a `FAIL` |
+| 4 | Puts every reviewer question to Matt, or records why not | answers logged | never |
+| 5 | Writes the notes | `cl_redteam_notes.md` | never |
+
 ## Before anything else: open the opportunity
 
 **Run the `opportunity-intake` skill first.** Every file this skill produces goes inside
@@ -47,7 +58,7 @@ own final edit remains the last test, and `asset-updater` feeds it back.
 8. Any form answers already drafted for this application.
 9. The letter text.
 
-Leave out `cover_letter_notes.md`, `tailoring_notes.md`, `fit_report.md` and any fit matrix inside the JD file.
+Leave out `cover_letter_notes.md`, `application_brief.md`, `tailoring_notes.md`, `fit_report.md` and any fit matrix inside the JD file.
 
 ## Workflow
 

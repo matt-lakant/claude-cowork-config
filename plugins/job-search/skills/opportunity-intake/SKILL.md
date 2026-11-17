@@ -5,6 +5,20 @@ description: "The front door of the job-search pipeline. Opens an opportunity: c
 
 # Opportunity Intake
 
+## Step map
+
+Run in this order. Nothing is written for an opportunity before Step 3 has run.
+
+| Step | What it does | What it produces | Stops the run when |
+|---|---|---|---|
+| Precondition | Checks the Job Applications folder is connected | nothing | the folder cannot be reached |
+| 1 | Confirms the opportunity name | the rename reminder | the name is unknown: ask |
+| 2 | Resolves the slug against existing folders; applies the re-run rule | `applications/<slug>/`, or a suffix for a comparison run | two existing folders could both fit: ask |
+| 3 | Creates the folder and `notes.md` | `notes.md` | never |
+| 3b | Captures the posting (routes A, A2, B, C), verifies the copy | `<Company>_JobPost_<Role>.pdf`, `job_description.md` | the checksum does not match, or the `.md` stops before the posting's last line |
+| 4 | Routes to the skill that does the work, in the same turn | the hand-off | never |
+| 5 | Pins the folder for the session | nothing | never |
+
 ## What this skill does
 
 Opens an opportunity and gives it a home before any work happens:
@@ -249,7 +263,7 @@ copy, render the PDF, extract the `.md`. The page differs in three ways, all che
   posting; it breaks the verbatim rule.
 - **The application questions are not in the visible page.** They appear only behind
   *Postuler*, but they sit in the page data with the posting. They are required fields, and
-  `resume-tailor` Step 1 reads them from `job_description.md`, so the capture must carry them.
+  `application-brief` Step 2 reads them from `job_description.md`, so the capture must carry them.
 
 **a. Load the page.** With Claude in Chrome, open a new tab on the Collective URL. No scroll
 is needed: the whole posting is in the Next.js page data (`#__NEXT_DATA__` →
@@ -379,7 +393,7 @@ Matt what he wants next when the request already says.
 |---|---|
 | A name or a contact, no posting yet | `company-overview`, then come back |
 | "Should I apply?", a posting to triage | Step 3b (posting → `job_description.md`), then `company-overview`, then `job-fit-analyzer` |
-| A resume for this role | Step 3b (posting → `job_description.md`), then `resume-tailor` then `resume-redteam` (mandatory gate) |
+| A resume for this role | Step 3b (posting → `job_description.md`), then `application-brief` (plan: evidence, questions to Matt, decisions, base file), then `resume-tailor` (draft and check), then `resume-redteam` (mandatory gate). Each of the three ends on a gate (`gate.py brief`, `draft`, `redteam`) and the next one starts by running it |
 | A cover letter for this role | `cover-letter` then `cover-letter-redteam` (mandatory gate). It needs the final CV attached; if no tailored CV exists yet, run the resume row first |
 | A final CV or cover letter attached back after his edits | `asset-updater` (returned-file mode), then `cover-letter` if the file is a CV and a letter is wanted |
 | A call, screen or interview to prepare | `interview-prep` |

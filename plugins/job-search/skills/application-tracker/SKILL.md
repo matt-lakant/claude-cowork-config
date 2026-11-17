@@ -5,6 +5,19 @@ description: Maintains the live tracker file of Matt Cornet's job applications i
 
 # Application Tracker
 
+## Mode map
+
+Pick the operation first. The file structure and the schema below hold for all of them.
+
+| Operation | Trigger | What it does | What it produces |
+|---|---|---|---|
+| Add | A new application or draft | Checks for an existing row, adds one | one new row |
+| Update | A status change, a reply, an interview, a rejection | Edits the row, fills the outcome fields | the updated row |
+| What's open | Weekly review | Lists open rows and due follow-ups | a short list in chat |
+| Outcome review | "Why am I not getting interviews?" | Counts outcomes by role family, source and tag | a table, with the sample size stated |
+| Did I apply to X? | A lookup | Searches rows and folders | yes or no, with the row |
+| Pruning | Quarterly | Proposes rows to archive | a list for Matt; nothing removed without it |
+
 ## Before anything else — open the opportunity
 
 **Run the `opportunity-intake` skill first.** It confirms the opportunity name, resolves
@@ -175,11 +188,7 @@ declines, leave everything in place and do not ask again that quarter.
 
 ## Hard rules
 
-- **No opportunity-scoped file is ever written to the project root.** Everything for an
-  opportunity lives in `applications/<slug>/`. Only `applications_tracker.md`, `README.md`,
-  `_assets/` and `_research/` belong at the root. The standing "project folders are kept
-  flat, no subfolders" preference does **not** apply to Job Applications — see the
-  `opportunity-intake` skill, which wins on any conflict.
+- **Files for an opportunity live in `applications/<slug>/`, never at the project root.** The rule and its exceptions are in `opportunity-intake` (Hard rules), which wins on any conflict.
 - **Notes are append-only.** Add a date-stamped line; never rewrite or delete an existing one. A later line may supersede an earlier one, and that history is what makes the record trustworthy.
 - **Both places or neither.** Status, Last touch, Next action, Next action due and the six outcome fields exist in the summary table *and* in the detail section. Updating one without the other corrupts the tracker silently.
 - **Never invent a fit score or a reply date.** `—` and `≤N` exist so a missing value stays visible.

@@ -5,6 +5,18 @@ description: "Prepares Matt Cornet for a specific interview — generates likely
 
 # Interview Prep
 
+## Step map
+
+| Step | What it does | What it produces | Stops the run when |
+|---|---|---|---|
+| Open | Opens the opportunity; loads the voice note and the ceilings | `applications/<slug>/interview_prep/` | the vault cannot be read |
+| 0 | Reads or creates the company overview | `company_overview.md` | never |
+| 1 | Predicts the questions from the posting, the brief, the fit report and the red-team notes | the question list | never |
+| 2 | Drafts model answers with figures from the Current values table | `questions_and_answers.md` | never |
+| 3 | Builds the cheat sheet | `cheat_sheet.md` | never |
+| 4 | Saves and sends the files | file cards | never |
+| 5 | Feeds the voice corpus with what Matt rewrites | via `asset-updater` | never |
+
 ## Before anything else — open the opportunity
 
 **Run the `opportunity-intake` skill first.** It confirms the opportunity name, resolves
@@ -32,6 +44,7 @@ The grounding is what makes this useful — generic STAR prompts produce generic
 2. *(vault)* `Notes/Matt Cornet.md` — durable identity and the "Technology and scope ceilings" list. In an interview a breached ceiling is not a bad line, it is a claim he will be asked to defend and cannot. Read it before drafting any answer about a tool, a certification, a sector or a scope.
 3. *(project)* `_assets/candidate_profile.md` — real engagements, metrics, and the append-only Q&A log
    **Figures come from the "Current values" table at the top of that file**, worded as it words them. Matt will say these numbers aloud to someone holding his CV: a figure that differs from the CV, or one he corrected since, is the worst place for an error. For a figure with no row, take the latest dated log entry.
+3a. Optional: `applications/<company>-<role>/application_brief.md` — the requirement and evidence table, what is not claimable, and Matt's answers for this posting. The rows with thin evidence are where the hard questions will come from.
 3b. Optional: `applications/<company>-<role>/fit_report.md` — the requirement coverage matrix and the gaps, if `job-fit-analyzer` ran. The 🟡 and 🚫 rows are where the hard questions will come from.
 4. The job posting (Matt should provide; if missing, ask)
 5. Optional: the tailored resume from `applications/<company>-<role>/` — read it if it exists, since the interviewer probably read it too
@@ -111,11 +124,7 @@ If Matt rewrites a model answer, or reports back after the interview how he actu
 
 ## Hard rules
 
-- **No opportunity-scoped file is ever written to the project root.** Everything for an
-  opportunity lives in `applications/<slug>/`. Only `applications_tracker.md`, `README.md`,
-  `_assets/` and `_research/` belong at the root. The standing "project folders are kept
-  flat, no subfolders" preference does **not** apply to Job Applications — see the
-  `opportunity-intake` skill, which wins on any conflict.
+- **Files for an opportunity live in `applications/<slug>/`, never at the project root.** The rule and its exceptions are in `opportunity-intake` (Hard rules), which wins on any conflict.
 - **Never invent stories.** Every STAR answer must be traceable to a real engagement in `candidate_profile.md`. If a question requires experience he doesn't have (e.g., "tell me about scaling a 200-person team"), draft a thoughtful answer that reframes around what he *has* done — and flag this as a gap.
 - **Respect the vault ceilings.** An answer that claims past a ceiling sets him up to be caught live. See `Notes/Matt Cornet.md`.
 - **Match register to interviewer level.** Exec-round answers are more strategic and concise; hiring-manager answers are more operational. Adapt accordingly.

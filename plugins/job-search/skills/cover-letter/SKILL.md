@@ -5,6 +5,20 @@ description: "Writes Matt Cornet's cover letter for a specific role, in his voic
 
 # Cover Letter
 
+## Step map
+
+| Step | What it does | What it produces | Stops the run when |
+|---|---|---|---|
+| Open | Opens the opportunity; checks the final CV is attached | `applications/<slug>/` | no final CV from Matt: run the resume skills first |
+| 1 | Learns from the CV he sent back (`asset-updater`, returned-file mode) | his edits filed | never |
+| 2 | Asks Matt for the hook, one round | his answers, logged | he is not there: draft without, say so first |
+| 3 | Plans the letter against §5.4 of the voice note and the role tag | the plan | the voice note cannot be read |
+| 4 | Drafts on the letter template | `CORNET_<Company>_Cover_Letter_<date>.docx` or `..._Lettre_<date>.docx` | never |
+| 5 | Self-check: review test, `cv_check.py --kind letter` | `RESULT: 0 FAIL` | any `FAIL` |
+| 6 | Mandatory gate: `cover-letter-redteam` | the redlined letter | never |
+| 7 | Presents to Matt | file cards | never |
+| 8 | Learns from the letter he sends back | via `asset-updater` | never |
+
 ## Before anything else: open the opportunity
 
 **Run the `opportunity-intake` skill first.** It confirms the opportunity name, resolves
@@ -61,6 +75,7 @@ CV that is about to change is drafted twice.
    "why this company" sentence cannot come from anywhere else.
 6. `applications/<slug>/tailoring_notes.md`: the recommended cover letter angle. A starting
    point, not a script.
+6b. `applications/<slug>/application_brief.md`, when it exists: the role tag (it frames the letter as it framed the CV), the first-hand facts, Matt's answers to the questions and the decisions. A decision recorded there holds for the letter too.
 7. *(project)* `_assets/candidate_profile.md`: ground truth, including the append-only Q&A log.
    Its **"Current values" table** (top of the file) gives the current wording of every figure. A figure in the letter is written as worded there, even when the final CV words it differently: the CV may predate a correction. If the two disagree, say so to Matt instead of choosing silently.
 7b. *(project)* `_assets/cv_rules.md`: the standing rules. The ones that apply to a letter are R4 (wording for a non-finance employer), R6 (the 90% wording, which Matt set for letters and emails too), R11 to R15. R10 works the other way here: the gap between the profile and the posting is handled in the letter.
@@ -182,7 +197,7 @@ asked whether this letter should replace the §5.4 reference letter for its lang
 
 ## Edge cases
 
-- **The posting asks form questions that duplicate the letter** ("Why do you want to join?"): the form field answers the question in its own words (resume-tailor Step 4b). Read both side by side for twin sentences.
+- **The posting asks form questions that duplicate the letter** ("Why do you want to join?"): the form field answers the question in its own words (resume-tailor Step 6). Read both side by side for twin sentences.
 - **No recipient named:** EN "Dear Hiring Team,", FR "Bonjour,". Never "To whom it may concern" or "Madame, Monsieur".
 - **Spontaneous application (no posting):** Q1 becomes what he would do there; Q2 and Q3 rest on `company_overview.md`; no gap paragraph.
 - **Matt wants a letter without a tailored CV** (e.g. the posting takes the master CV): use `_assets/master_resume.docx` as the CV of record and say so.

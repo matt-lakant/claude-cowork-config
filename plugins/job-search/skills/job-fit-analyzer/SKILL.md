@@ -5,6 +5,22 @@ description: Analyzes how well Matt Cornet fits a specific job posting before he
 
 # Job Fit Analyzer
 
+## Step map
+
+| Step | What it does | What it produces | Stops the run when |
+|---|---|---|---|
+| Open | Opens the opportunity; checks the vault is connected | `applications/<slug>/` | the vault cannot be read: no fit analysis without it |
+| 0 | Reads or creates the company overview | `company_overview.md` | never |
+| 0b | Gets the posting into `job_description.md` | `job_description.md` | the posting cannot be captured |
+| 1 | Extracts requirements and keywords in the posting's own words | the requirement list | never |
+| 2 | Scores five dimensions against the vault note | a score out of 50 | never |
+| 2.5 | Builds the coverage matrix, one row per requirement, after searching the log | the matrix and its totals | never |
+| 3 | Classifies gaps, rates the risk | gap table | never |
+| 4 | Checks ATS keywords and their claimability | keyword table with the do-not-weave list | never |
+| 5 | Reports in chat and saves the report with the role tag | `fit_report.md` | never |
+
+Next skill when the verdict is to apply: `application-brief`, then `resume-tailor`, then `resume-redteam`.
+
 ## Before anything else — open the opportunity
 
 **Run the `opportunity-intake` skill first.** It confirms the opportunity name, resolves
@@ -21,7 +37,7 @@ the project root, to another connected folder, or to chat-only delivery.
 Triage a job posting against Matt's profile in 2 to 3 minutes of reading time. The output
 answers: *should he apply, and if yes, with what angle?*
 
-This skill is upstream of `resume-tailor`. Running it first prevents wasted effort tailoring
+This skill is upstream of `application-brief` and `resume-tailor`. Running it first prevents wasted effort tailoring
 resumes for poor-fit roles.
 
 ## Source materials (read these every run)
@@ -157,12 +173,12 @@ Rules:
   does with true material, and a guardrail says the material is not there.
 - 🟡 covers the "Claim only within these bounds" case where the JD's ask sits *inside* the
   bound. It becomes 🚫 when the ask sits outside it. State which bound and why.
-- **Search before marking a row ❓ or ❌.** Run `python3 <resume-tailor skill dir>/scripts/profile_search.py <project>/_assets/candidate_profile.md "<term>;<French term>;<synonym>"` for that requirement. The log holds far more than the master resume, and a row marked unknown is often on record under a French word. Cite the entry date when it is.
+- **Search before marking a row ❓ or ❌.** Run `python3 <application-brief skill dir>/scripts/profile_search.py <project>/_assets/candidate_profile.md "<term>;<French term>;<synonym>"` for that requirement. The log holds far more than the master resume, and a row marked unknown is often on record under a French word. Cite the entry date when it is.
 - Lean toward ❓ rather than ❌ only on rows no ceiling and no guardrail touches.
 - Total the coverage, for example "6 Strong / 3 Partial / 2 Blocked / 1 Absent / 2 Unknown", and
   use it to sanity-check the five-dimension score.
 
-**Hand-off:** flag every 🟡 and ❓ row as a question for `resume-tailor`'s mining step (Step 2b).
+**Hand-off:** flag every 🟡 and ❓ row as a question for `application-brief` (Step 5, questions put to Matt before drafting).
 Never hand off a 🚫 row: it is settled. State explicitly that the fit score reflects only what is
 documented today, and that resolving the 🟡 and ❓ rows through questioning could raise it.
 
@@ -256,7 +272,7 @@ link it for Matt. Structure:
 [top 15 keywords, presence flag, claimability flag]
 
 ## Recommended next step
-[either "run resume-tailor with angle X", or "skip this one because Y"]
+[either "run application-brief, then resume-tailor, with angle X", or "skip this one because Y"]
 ```
 
 ## Comparing several postings
@@ -275,11 +291,7 @@ with no ceiling gaps beats a 43 with two.
 - **The posting is read from `job_description.md`.** No fit analysis runs on a posting that
   has not been saved there first (Step 0b).
 
-- **No opportunity-scoped file is ever written to the project root.** Everything for an
-  opportunity lives in `applications/<slug>/`. Only `applications_tracker.md`, `README.md`,
-  `_assets/` and `_research/` belong at the root. The standing "project folders are kept
-  flat, no subfolders" preference does **not** apply to Job Applications — see the
-  `opportunity-intake` skill, which wins on any conflict.
+- **Files for an opportunity live in `applications/<slug>/`, never at the project root.** The rule and its exceptions are in `opportunity-intake` (Hard rules), which wins on any conflict.
 - **Be honest about gaps.** A score of 25/50 is reported as 25/50. Matt's time is better spent
   on better fits.
 - **Don't pad domain fit.** An adjacent sector is not one of the sectors in `## Background` or

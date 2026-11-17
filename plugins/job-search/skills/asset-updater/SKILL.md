@@ -5,6 +5,18 @@ description: "Closes the learning loop after each application cycle by diffing M
 
 # Asset Updater
 
+## Mode map
+
+This skill has three modes. Pick one first; each has its own steps.
+
+| Mode | Trigger | Steps | What it produces |
+|---|---|---|---|
+| Standard | Matt edited a deliverable or states a correction, a fact or a preference | 1 diff, 2 classify, 2b voice edits, 3 show the plan, 4 apply, 5 flag stale CVs, 6 confirm | updated profile, Current values table, vault notes, bases |
+| Returned file | Matt attaches a CV or letter he finalized in Word | R1 file it, R2 sentence-level diff, R3 propagate in the application, R4 template and reference letter, R5 report | `..._final.docx` filed, voice note §2, "Rejected by Matt" in the red-team notes |
+| Quarterly sweep | Matt asks for a clean-up | see "Quarterly sweep mode" | a list of stale items; nothing deleted without his list |
+
+In every mode: Step 3 (the propagation plan) is shown before anything is written to the vault or the bases, and a figure that changes updates the Current values table in the same run.
+
 ## Before anything else — open the opportunity
 
 **Run the `opportunity-intake` skill first.** It confirms the opportunity name, resolves
@@ -217,11 +229,7 @@ Output is a single markdown report (`asset_sweep_<YYYY-MM-DD>.md` at the project
 
 ## Hard rules
 
-- **No opportunity-scoped file is ever written to the project root.** Everything for an
-  opportunity lives in `applications/<slug>/`. Only `applications_tracker.md`, `README.md`,
-  `_assets/` and `_research/` belong at the root. The standing "project folders are kept
-  flat, no subfolders" preference does **not** apply to Job Applications — see the
-  `opportunity-intake` skill, which wins on any conflict.
+- **Files for an opportunity live in `applications/<slug>/`, never at the project root.** The rule and its exceptions are in `opportunity-intake` (Hard rules), which wins on any conflict.
 - **Never silently edit `master_resume.docx`.** Matt sign-off required, every time. Save a timestamped backup before overwriting.
 - **Every Matt rewrite feeds the corpus.** §2 of the vault note grows on every run where he changed a sentence. Skipping it is the failure mode this skill exists to prevent.
 - **Never write voice content into `_assets/voice_matt.md` or into `candidate_profile.md`.** Both are pointers as of 2026-09-10. Writing there splits the source of truth again, and the split will not be noticed for weeks.

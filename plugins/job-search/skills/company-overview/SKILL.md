@@ -5,6 +5,16 @@ description: Researches the company behind a job posting and produces a one-page
 
 # Company Overview
 
+## Step map
+
+| Step | What it does | What it produces | Stops the run when |
+|---|---|---|---|
+| 0 | Opens the opportunity (`opportunity-intake`) | `applications/<slug>/` | the slug is unknown |
+| 1 | Identifies the real employer (intermediary or end client) | the entity researched | never: an unnamed end client is stated as unnamed |
+| 2 | Researches the company from current sources | dated, sourced facts | never: a fact not found is written as not found |
+| 3 | Writes the overview, positioning section last | `company_overview.md` | never |
+| 4 | Sends the file card | the card | never |
+
 ## Before anything else — open the opportunity
 
 **Run the `opportunity-intake` skill first.** It confirms the opportunity name, resolves
@@ -87,11 +97,7 @@ Save the file, present it to Matt with a link, and return a 2-line summary. Othe
 
 ## Hard rules
 
-- **No opportunity-scoped file is ever written to the project root.** Everything for an
-  opportunity lives in `applications/<slug>/`. Only `applications_tracker.md`, `README.md`,
-  `_assets/` and `_research/` belong at the root. The standing "project folders are kept
-  flat, no subfolders" preference does **not** apply to Job Applications — see the
-  `opportunity-intake` skill, which wins on any conflict.
+- **Files for an opportunity live in `applications/<slug>/`, never at the project root.** The rule and its exceptions are in `opportunity-intake` (Hard rules), which wins on any conflict.
 - **Search before writing — never fabricate.** Every factual claim must come from a source; cite URLs. If something can't be verified, mark it "unconfirmed" rather than guessing.
 - **Flag intermediaries / anonymity.** Be explicit when the posting is via a recruiter/agency or the end client is undisclosed.
 - **Website first.** The company's official website URL is always the first line of `company_overview.md`, above everything else.

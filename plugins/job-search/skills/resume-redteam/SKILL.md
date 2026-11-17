@@ -5,7 +5,22 @@ description: "Adversarial recruiter review of a resume produced by `resume-tailo
 
 # Resume Red-Team (Adversarial Recruiter)
 
-## Before anything else — open the opportunity
+## Step map
+
+Run the steps in this order. Steps 0 and 6 are gates.
+
+| Step | What it does | What it produces | Stops the run when |
+|---|---|---|---|
+| 0 | Opens the opportunity, runs the draft gate, reads past rejections | `GATE draft: PASS` | the gate lists a missing item: go back to `resume-tailor` (standalone run on an older CV: see Step 0) |
+| 1 | Assembles the reviewer's packet from primary sources | the brief for the subagent | the vault or the project folder cannot be read |
+| 2 | Spawns the fresh-context reviewer | its report: 7 categories, figure audit, redline plan, questions | the report praises, or skips a category: re-run |
+| 2b | Verifies the entries the reviewer cites | confirmed edits | never |
+| 3 | Sorts edits into corrections and choices, applies them, checks the result | `CORNET_..._redline.docx`, `RESULT: 0 FAIL` | `redline.py` names an unapplied edit, or `cv_check.py` fails |
+| 4 | Puts every reviewer question to Matt, or records why not | answers logged, edits added | never (unattended: questions listed as open) |
+| 5 | Writes the memo, feeds the lessons file | `redteam_notes.md`, lines in `redteam_lessons.md` | never |
+| 6 | Runs the red-team gate, presents to Matt | `GATE redteam: PASS`, file cards | the gate lists a missing item |
+
+## Step 0: Open the opportunity and run the draft gate
 
 **Run the `opportunity-intake` skill first.** It confirms the opportunity name, resolves
 the kebab-case slug, creates `applications/<slug>/` if it does not already exist, and
@@ -15,6 +30,20 @@ folder.
 Do not write anything before the folder exists. If the slug is unknown, ask. If the
 Job Applications project folder is not connected, stop and say so — never fall back to
 the project root, to another connected folder, or to chat-only delivery.
+
+Then check that the drafting stage left what this skill needs:
+
+```text
+python3 <application-brief skill dir>/scripts/gate.py draft <project>/applications/<slug>
+```
+
+- `GATE draft: PASS`: continue.
+- Items missing on a CV drafted in this pipeline: go back to `resume-tailor` and complete them. A red-team run on a draft whose evidence and decisions were never matched to CV lines produces the heavy redline this pipeline exists to avoid.
+- **Standalone run on a CV that predates the brief** (no `application_brief.md` in the folder): say so in one line, continue without the gate, decide the role tag yourself from the posting (what the role requires: `hands_on` or `leadership`), and write it at the top of the memo.
+
+Read the role tag, the cv_check tags, the top-third keywords and the first-hand facts from `application_brief.md`: Step 3 passes them to `cv_check.py`, and brief item 7 needs the tag. **Nothing else from that file goes anywhere near the reviewer.**
+
+Read the "Rejected by Matt" section of the last three `redteam_notes.md` files in `applications/`, if any. Edits he keeps rejecting are a calibration signal: do not propose the same kind of edit again without a new reason.
 
 > Paths marked *(project)* are relative to the **Job Applications project root** — the folder that holds `applications/`, `_assets/` and `applications_tracker.md`. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications"). Paths marked *(vault)* are relative to the connected `obsidian-vault` folder.
 
@@ -50,7 +79,7 @@ Claude (not the subagent) also reads *(vault)* `Notes/Writing voice.md` before w
 - **Resume text:** `python3 <this skill's dir>/scripts/docx_dump.py <cv.docx>` prints the body in document order, tables included (the skills matrix and the role titles live in tables, and `python-docx`'s `paragraph.text` misses both them and any tracked insertion). Paste that output.
 - **Pasted in full:** the JD, `company_overview.md` minus its positioning section, the "Framing guardrails" and "Technology and scope ceilings" sections of `Notes/Matt Cornet.md`, the Current values table, and Part 1 of `_assets/cv_rules.md`.
 - **Given as a path, not pasted:** `_assets/candidate_profile.md`. It is several hundred kilobytes and no longer fits in a brief. Tell the reviewer to read the top of the file through the Experience section in full, then to grep the append-only log for each claim it checks, citing the date and line of each entry, and to take the latest entry when two disagree. Tell it which tool reaches the file (`device_bash` when the project folder is on Matt's computer) and that it must not write anything.
-- **Named as off-limits:** `tailoring_notes.md`, `fit_report.md`, `redteam_notes.md`, any other CV or redline in the folder, and any other application folder. Say so explicitly in the brief: a reviewer that can read the folder will otherwise open them.
+- **Named as off-limits:** `application_brief.md`, `tailoring_notes.md`, `fit_report.md`, `redteam_notes.md`, any other CV or redline in the folder, and any other application folder. Say so explicitly in the brief: a reviewer that can read the folder will otherwise open them.
 
 Do **not** include the fit score, the tailoring memo, or any "this is why it fits" narrative. If the JD file carries an internal coverage or fit matrix, tell the subagent explicitly to ignore that section — it is your own note, not a primary source, and it leaks the drafting rationale into the adversary's packet.
 
@@ -93,11 +122,11 @@ Give each edit a cause code for the memo (Step 5):
 
 | Code | Cause | Where it should have been caught |
 |---|---|---|
-| A | A fact already on record was not used | `resume-tailor` Step 2a, evidence sheet |
-| B | A fact Matt gave only after the draft (late question) | `resume-tailor` Step 2b, reviewer's questions asked first |
-| C | Figure, wording or rule error against the Current values table, `cv_rules.md` or a ceiling | `cv_check.py`, Step 4a |
-| D | Level: reads too senior or not hands-on (or the reverse for a leadership role) | level framing, Step 3 |
-| E | A decision of the decisions table was not applied | Step 2c and 4a |
+| A | A fact already on record was not used | `application-brief` Step 3, then `resume-tailor` Step 5.2 |
+| B | A fact Matt gave only after the draft (late question) | `application-brief` Step 5, reviewer's questions asked first |
+| C | Figure, wording or rule error against the Current values table, `cv_rules.md` or a ceiling | `cv_check.py`, `resume-tailor` Step 5.1 |
+| D | Level: reads too senior or not hands-on (or the reverse for a leadership role) | `resume-tailor` Step 3.1, level framing |
+| E | A decision of the decisions table was not applied | `application-brief` Step 6, then `resume-tailor` Step 5.3 |
 | F | Cut or tightening | drafting |
 | G | Wording preference with no rule behind it | not an error: should be rare |
 
@@ -125,7 +154,7 @@ Save a redline copy — never overwrite the tailored file: `applications/<slug>/
 
 **Decisions Matt has already made are corrections, not proposals.** If he has settled a point — in this session, in `cv_rules.md` or in a logged preference — it goes in with `"track": false` and is listed in the memo. Every settled item left as a tracked change is one more click of noise.
 
-**Run `cv_check.py` on the redline before presenting it** (`resume-tailor` Step 4a: same script, same tags including the role tag (`hands_on` or `leadership`), same `--top-keywords` and `--hands-on`; the redline keeps the page size of the draft, which must be A4). It reads the file with every tracked change accepted, so it tests the CV Matt gets if he accepts everything. A `NEW` string can break a rule the draft respected: `0 FAIL` is required here too.
+**Run `cv_check.py` on the redline before presenting it** (`resume-tailor` Step 5.1: same script, same tags including the role tag (`hands_on` or `leadership`), same `--top-keywords` and `--hands-on`, all read from the brief; the redline keeps the page size of the draft, which must be A4). It reads the file with every tracked change accepted, so it tests the CV Matt gets if he accepts everything. A `NEW` string can break a rule the draft respected: `0 FAIL` is required here too.
 
 ### Step 4 — Question Matt, then strengthen
 **Account for every question the reviewer raised.** Number them in `redteam_notes.md` under "Questions". Each one ends in exactly one state:
@@ -144,27 +173,56 @@ For every answer:
 - **If Matt rewrites one of the redline strings**, add his version verbatim to §2 of *(vault)* `Notes/Writing voice.md` in the same turn.
 
 ### Step 5 — Present to Matt
-Save the critique memo `applications/<slug>/redteam_notes.md`:
+Save the critique memo `applications/<slug>/redteam_notes.md`. **The six headings below are read by the gate: keep them exactly, in English.** The content follows the posting's language.
 
-- the verdict and the biggest blocker;
-- **"Corrections applied directly"**: a table `was → now | reason | source` for every untracked edit. Matt does not see these in Word, so this table is how he checks them, and it must be complete. He can reverse any of them by saying so;
-- **"Choices for Matt"**: the tracked changes, each with its severity and one line on the trade-off;
-- the problems the reviewer raised that were not applied, and why;
-- **"Questions"**: every reviewer question with its state (Step 4);
-- **"First-pass count"**: the number of corrections and of choices, by cause code (A to G). When there are more than 10 choices, or any cause A, B, C or E, say in one line which step of `resume-tailor` should have caught it;
-- an empty "Rejected by Matt" section.
+```markdown
+# Red-team notes: <Company>, <Role>
 
-**Feed the lessons file.** Append to *(project)* `_assets/redteam_lessons.md` one line per finding of cause A, B, D or E (create the file with its heading if missing): `- <YYYY-MM-DD> | <role family> | <cause code> | <what the first pass missed, in one sentence that the next drafting run can act on>`. Do not append causes C, F or G: the check script covers C, and F and G teach nothing. `resume-tailor` Step 2a reads this file; it is how a finding stops recurring.
+Role tag: <hands_on | leadership>
 
-Present the **redlined `.docx`** and the memo. Open the summary with the count ("6 corrections applied, 4 choices for you"), then the most important attacks in 3 lines. Do not paste the full resume into chat.
+## Verdict
+<shortlist / borderline / reject, and the biggest blocker>
+
+## Corrections applied directly
+| Was | Now | Reason | Source | Cause |
+|---|---|---|---|---|
+<every untracked edit. Matt does not see these in Word: this table is how he checks them, so it must be complete. He can reverse any of them by saying so. "None" if there is none.>
+
+## Choices for Matt
+| # | Tracked change | Severity | Trade-off, in one line | Cause |
+|---|---|---|---|---|
+
+## Not applied
+<the problems the reviewer raised that were not applied, and why>
+
+## Questions
+| # | Question | State | Answer or reason |
+|---|---|---|---|
+<State is `asked`, `dropped: <reason>` or `open`. "None" if the reviewer raised none.>
+
+## First-pass count
+<N corrections, M choices; then the count by cause code A to G>
+<when there are more than 10 choices, or any cause A, B, C or E: one line naming the step of application-brief or resume-tailor that should have caught it>
+
+## Rejected by Matt
+<left empty; asset-updater fills it when Matt returns the file>
+```
+
+**Feed the lessons file.** Append to *(project)* `_assets/redteam_lessons.md` one line per finding of cause A, B, D or E (create the file with its heading if missing): `- <YYYY-MM-DD> | <role family> | <cause code> | <what the first pass missed, in one sentence that the next drafting run can act on>`. Do not append causes C, F or G: the check script covers C, and F and G teach nothing. `application-brief` Step 4 reads this file; it is how a finding stops recurring.
+
+### Step 6 — Gate, then present
+
+```text
+python3 <application-brief skill dir>/scripts/gate.py redteam <project>/applications/<slug>
+```
+
+Complete whatever it lists until it prints `GATE redteam: PASS`.
+
+Present the **redlined `.docx`** and the memo, each as a file card. Open the summary with the count ("6 corrections applied, 4 choices for you"), then the most important attacks in 3 lines. Do not paste the full resume into chat.
 
 ## Hard rules
 
-- **No opportunity-scoped file is ever written to the project root.** Everything for an
-  opportunity lives in `applications/<slug>/`. Only `applications_tracker.md`, `README.md`,
-  `_assets/` and `_research/` belong at the root. The standing "project folders are kept
-  flat, no subfolders" preference does **not** apply to Job Applications — see the
-  `opportunity-intake` skill, which wins on any conflict.
+- **Files for an opportunity live in `applications/<slug>/`, never at the project root.** The rule and its exceptions are in `opportunity-intake` (Hard rules), which wins on any conflict.
 - **Find problems — never rubber-stamp, and never pad.** Each category has findings or a specific statement of what was checked. No minimum number of problems or edits.
 - **Corrections are written directly, choices are tracked.** Every correction is listed in the memo; the redline holds only what Matt has to decide.
 - **Every edit carries a cause code**, and causes A, B, D and E go to `_assets/redteam_lessons.md`.
@@ -176,13 +234,13 @@ Present the **redlined `.docx`** and the memo. Open the summary with the count (
 - **Never read voice rules from `_assets/voice_matt.md` or from `candidate_profile.md`.** Both are stubs as of 2026-09-10.
 - **Tracked changes are applied with `scripts/redline.py`** and the result is read with `scripts/docx_dump.py`. No hand-written tracked-changes code.
 - **Every reviewer question is asked or listed as dropped with its reason.**
+- **`GATE draft: PASS` before the reviewer is spawned, `GATE redteam: PASS` before anything is presented.**
+- **The reviewer never sees `application_brief.md`, `tailoring_notes.md` or `fit_report.md`.**
 - **Redline, don't overwrite.** Tracked changes authored "Recruiter"; save a new `_redline` / `_vN` file; `CORNET_` filename prefix.
 - **No PDF, ever.** The redlined `.docx` is the deliverable; tracked changes are meaningless in a PDF anyway. See Step 3.
 - **Match the application language** (EN posting → EN edits; FR posting → FR edits).
 
 ## Pipeline position
-Runs as the **final gate of `resume-tailor`** (after its mechanical check, before the file is presented to Matt) and is also invokable standalone on any existing tailored resume.
+Third of three skills: `application-brief` plans, `resume-tailor` drafts, this skill attacks. Runs as the **final gate of `resume-tailor`** (after its draft gate, before the file is presented to Matt) and is also invokable standalone on any existing tailored resume.
 
 What follows it (2026-09-24): Matt downloads the redlined `.docx`, accepts or rejects the Recruiter changes and edits in Word, then attaches the final file back to the chat. That triggers `asset-updater` in returned-file mode (his rewrites go to `Writing voice.md` §2, and the Recruiter edits he rejected are logged under "Rejected by Matt" in `redteam_notes.md` so this skill can see where it over-reaches), then `cover-letter`, which drafts from that final CV.
-
-**Before spawning the adversary, read the "Rejected by Matt" section of the last three `redteam_notes.md` files in `applications/`**, if any. Edits he keeps rejecting are a calibration signal: do not propose the same kind of edit again without a new reason.

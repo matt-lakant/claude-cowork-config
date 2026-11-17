@@ -5,6 +5,20 @@ description: "Drafts follow-up messages from Matt Cornet to recruiters and hirin
 
 # Recruiter Follow-up
 
+## Step map
+
+| Step | What it does | What it produces | Stops the run when |
+|---|---|---|---|
+| Open | Opens the opportunity; loads the voice note | `applications/<slug>/correspondence/` | the vault cannot be read |
+| 0 | Reads or creates the company overview | `company_overview.md` | never |
+| 1 | Picks the template for the situation | the template | never |
+| 2 | Applies the drafting principles | nothing | never |
+| 3 | Drafts from the template | the message | never |
+| 4 | Runs the voice review test, delivers as a file card | `<date>_<contact>.md` | a point of the review test fails: rewrite |
+| 5 | Feeds the corpus with Matt's edits | via `asset-updater` | never |
+
+Nothing is sent on Matt's behalf: the deliverable is the draft.
+
 ## Before anything else — open the opportunity
 
 **Run the `opportunity-intake` skill first.** It confirms the opportunity name, resolves
@@ -103,11 +117,7 @@ If Matt rewrites any part of the message, **add his version verbatim to §2 of *
 
 ## Hard rules
 
-- **No opportunity-scoped file is ever written to the project root.** Everything for an
-  opportunity lives in `applications/<slug>/`. Only `applications_tracker.md`, `README.md`,
-  `_assets/` and `_research/` belong at the root. The standing "project folders are kept
-  flat, no subfolders" preference does **not** apply to Job Applications — see the
-  `opportunity-intake` skill, which wins on any conflict.
+- **Files for an opportunity live in `applications/<slug>/`, never at the project root.** The rule and its exceptions are in `opportunity-intake` (Hard rules), which wins on any conflict.
 - **No figures of speech.** If a word does not mean literally what it says, cut it. This is the single most frequent correction Matt makes.
 - **Never read voice rules from `_assets/voice_matt.md` or from `candidate_profile.md`.** Both are stubs as of 2026-09-10. Nor from the short voice block in Matt's preferences: load the note through `general:writing-voice`.
 - **Never claim "I have a competing offer" if he doesn't.** Reputational damage is permanent.

@@ -52,7 +52,8 @@ The pipeline, roughly in the order it runs:
 | `opportunity-intake` | Front door: confirms the opportunity, creates `applications/<slug>/` and its `notes.md`, routes to the right skill |
 | `job-fit-analyzer` | Triage a posting before investing: fit score, gap analysis, go/no-go |
 | `company-overview` | Research the company into `company_overview.md` (prerequisite for several skills) |
-| `resume-tailor` | Tailor the master resume to the posting; ATS keywords, requirement mining |
+| `application-brief` | Plan before drafting: role tag, evidence per requirement, questions to Matt, decisions, base file. Ends on a gate |
+| `resume-tailor` | Draft the CV from the brief, run the mechanical check, match evidence and decisions to CV lines. Ends on a gate |
 | `resume-redteam` | Mandatory adversarial gate: a hostile recruiter tries to reject the resume |
 | `cover-letter` | Writes the cover letter after Matt returns the final CV: his hook answers, §5.4 structure, AI-tell self-check |
 | `cover-letter-redteam` | Mandatory gate: a recruiter who has read too many generated letters attacks AI tells, genericness, CV alignment, over-claims |

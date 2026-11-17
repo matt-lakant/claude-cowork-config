@@ -5,6 +5,19 @@ description: "Helps Matt Cornet negotiate a job offer — drafts counter-offer e
 
 # Offer Negotiator
 
+## Step map
+
+| Step | What it does | What it produces | Stops the run when |
+|---|---|---|---|
+| Open | Opens the opportunity; checks the vault is connected | `applications/<slug>/negotiation/` | the vault cannot be read |
+| 0 | Reads or creates the company overview | `company_overview.md` | never |
+| 1 | Sanity-checks the offer against what Matt stated | the offer, restated | a term is missing: ask |
+| 2 | Identifies leverage from facts on record | the leverage list | never |
+| 3 | Drafts the counter | the counter message | never |
+| 4 | Lays out the decision framework | accept / counter / walk table | never |
+| 5 | Runs the voice review test, delivers | file cards | a point of the review test fails: rewrite |
+| Hand-off | Updates the tracker | the row, via `application-tracker` | never |
+
 ## Before anything else — open the opportunity
 
 **Run the `opportunity-intake` skill first.** It confirms the opportunity name, resolves
@@ -215,11 +228,7 @@ and ask Matt for the dates instead of guessing them.
 
 ## Hard rules
 
-- **No opportunity-scoped file is ever written to the project root.** Everything for an
-  opportunity lives in `applications/<slug>/`. Only `applications_tracker.md`, `README.md`,
-  `_assets/` and `_research/` belong at the root. The standing "project folders are kept
-  flat, no subfolders" preference does **not** apply to Job Applications — see the
-  `opportunity-intake` skill, which wins on any conflict.
+- **Files for an opportunity live in `applications/<slug>/`, never at the project root.** The rule and its exceptions are in `opportunity-intake` (Hard rules), which wins on any conflict.
 - **Always log the outcome.** Hand off to `application-tracker` after delivering, per
   the section above. An offer that never reaches the tracker is invisible to the
   weekly review.
