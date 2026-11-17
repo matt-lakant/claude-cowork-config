@@ -45,7 +45,7 @@ python3 <application-brief skill dir>/scripts/gate.py draft <project>/applicatio
 
 Read the role tag, the cv_check tags, the top-third keywords and the first-hand facts from `application_brief.md`: Step 3 passes them to `cv_check.py`, and brief item 7 needs the tag. **Nothing else from that file goes anywhere near the reviewer.**
 
-Read the "Rejected by Matt" section of the last three `redteam_notes.md` files in `applications/`, if any. Edits he keeps rejecting are a calibration signal: do not propose the same kind of edit again without a new reason.
+Read the "Rejected by Matt" section of the last three `redteam_notes.md` files in `applications/`, if any (on a re-run of the same posting, take them from other application folders: this folder's earlier outputs stay unread). Edits he keeps rejecting are a calibration signal: do not propose the same kind of edit again without a new reason.
 
 > Paths marked *(project)* are relative to the **Job Applications project root** — the folder that holds `applications/`, `_assets/` and `applications_tracker.md`. Resolve them against whichever folder Matt has connected for the current session (typically the one named "Job Applications"). Paths marked *(vault)* are relative to the connected `obsidian-vault` folder.
 
@@ -79,7 +79,7 @@ Claude (not the subagent) also reads *(vault)* `Notes/Writing voice.md` before w
 **Build the packet from text, not from memory of the drafting.**
 
 - **Resume text:** `python3 <this skill's dir>/scripts/docx_dump.py <cv.docx>` prints the body in document order, tables included (the skills matrix and the role titles live in tables, and `python-docx`'s `paragraph.text` misses both them and any tracked insertion). Paste that output.
-- **Pasted in full:** the JD, `company_overview.md` minus its positioning section, the "Framing guardrails" and "Technology and scope ceilings" sections of `Notes/Matt Cornet.md`, the Current values table, and Part 1 of `_assets/cv_rules.md`.
+- **Pasted in full, or gathered verbatim in one packet file** that the reviewer is told to read from first line to last (the packet goes in the session's scratch folder, never in `applications/`, which is off-limits to the reviewer): the JD, `company_overview.md` minus its positioning section, the "Framing guardrails" and "Technology and scope ceilings" sections of `Notes/Matt Cornet.md`, the Current values table, and Part 1 of `_assets/cv_rules.md`.
 - **Given as paths, not pasted:** `_assets/candidate_profile.md` (short: the reviewer reads it in full), `_assets/profile_log.md` (the dated log, several hundred kilobytes) and `_assets/facts/` (sheets by theme, list in `facts/INDEX.md`). Tell the reviewer to read the profile in full, then, for each claim it checks, to read the matching sheet or grep the log, citing the date and line of each entry, and to take the latest entry when two disagree. Tell it which tool reaches the file (`device_bash` when the project folder is on Matt's computer) and that it must not write anything.
 - **Named as off-limits:** `application_brief.md`, `tailoring_notes.md`, `fit_report.md`, `redteam_notes.md`, any other CV or redline in the folder, and any other application folder. Say so explicitly in the brief: a reviewer that can read the folder will otherwise open them.
 

@@ -74,6 +74,10 @@ python3 <this skill's dir>/scripts/profile_search.py <project>/_assets/candidate
 - Read the entries returned, most recent first. An entry flagged "may supersede" replaces something: check the dates. For any figure, the Current values table wins.
 - Check the ceilings before counting a fact: a tool under "Never claim at all" is `blocked`, whatever the log says.
 
+**Second pass, on the facts you keep.** The first search finds that a fact exists; the reviewer then finds what makes it specific. For each fact you plan to use, search once more for what surrounds it: its volume (how many, how often, a year), its adoption or result figure, the named clients in the posting's region, and the first-hand verb ("on site alongside them", "written personally"). On the first Opus run of this pipeline (2026-11-17), five of thirteen redline choices were such details, all on record: "on site alongside them", "30+ existing clients moved onto it", "golden records", "100+ data owners trained", and a recovery kept below the matrix.
+
+**Coverage words.** The brief uses four: `strong`, `partial`, `gap`, `blocked`. When `fit_report.md` exists, its symbols map as follows: ✅ strong, 🟡 partial, 🚫 blocked, ❌ gap, ❓ gap with a question in Step 5.
+
 Write one row per requirement (table format under "The brief"). Up to three facts per row, the most specific first: a number, a named client, something he did himself. Mark a fact `first-hand` when it is work he did personally.
 
 - A requirement with a fact on record: the fact must appear in the CV. `resume-tailor` fills where.
@@ -92,7 +96,9 @@ Write down the attacks a skeptical reviewer will make on this application, then 
 The recurring ones:
 
 - **The number behind each KPI the posting names** (utilization, margin, forecast, time to value, NPS, on-time rate): the figure, what it was measured on, the period. If the record has only an estimate, ask whether it can be printed and how he would defend it.
-- **First-hand proof** for the two or three central requirements: what he did himself, not what his organization delivered.
+- **First-hand proof** for the two or three central requirements: what he did himself, not what his organization delivered, **and its volume**: how many a year, how often, on how many clients ("wrote or reviewed 20+ estimates and SOWs a year").
+- **Named examples in the posting's region or segment**, when the posting names one (EMEA, mid-market, a sector): which clients can be named.
+- **A KPI the record answers with "no figure"**, when the posting names that KPI: ask once whether an estimate he would defend exists, and how it is worded. An earlier "no figure" is not final for a posting that asks for it.
 - **A recovery or a failure**, when the posting mentions escalations, projects off track or turnarounds.
 - **The split that matches the posting:** how much of his scope was in the posting's region, sector, team profile or client type.
 - **Third parties**, when the posting names partners, subcontractors or vendors: who, how many, what he controlled.
@@ -101,7 +107,7 @@ The recurring ones:
 
 Ask with `AskUserQuestion`, in rounds of up to 4, **until every question has been put to him**. Options are concrete and grounded in his record, so he can answer in one click; multi-select where natural. Skip only what the record already answers or a ceiling blocks. If the answers for this posting are already in the log (a re-run), use them and ask only what they leave open.
 
-**Log every answer** in the log of `candidate_profile.md` (last section of the file, appended at the end, dated, one fact per entry where possible). An answer that sets or changes a figure also updates the Current values table; one that moves a ceiling goes to the vault note. Hand both to `asset-updater`.
+**Log every answer** in `_assets/profile_log.md` (appended at the end, dated, one fact per entry), then rebuild the fact sheets. An answer that sets or changes a figure also updates the Current values table; one that moves a ceiling goes to the vault note. Hand both to `asset-updater`.
 
 If Matt is not there to answer, do not invent: list the questions as open in the brief and say so in your closing message.
 
@@ -118,7 +124,7 @@ Some answers are decisions about the documents, not facts: what to lead with, wh
 
 The base is the `.docx` that `resume-tailor` will edit in place.
 
-1. **Candidates:** read *(project)* `_assets/cv_bases.md`. Its table lists every CV Matt returned himself, with its language and its FAIL count against today's rules read as a leadership CV and as a hands-on CV; its Notes section says which file to prefer for each role family. Take the most recent file in the posting's language, for the nearest role family, with the fewest FAIL lines for this posting's role tag. If the table is older than the last CV Matt returned, refresh it first: `python3 <this skill's dir>/scripts/base_audit.py <project> --write`. A draft or a redline he never returned is not a candidate.
+1. **Candidates:** read *(project)* `_assets/cv_bases.md`. Its table lists every CV Matt returned himself, with its language and its FAIL count against today's rules read as a leadership CV and as a hands-on CV; its Notes section says which file to prefer for each role family. Choose in this order: the posting's language; then the nearest role family (the Notes section names the file per family); then, among the files of that family only, the most recent with the fewest FAIL lines for this posting's role tag. A file of the right family wins over the master even when the master shows fewer FAIL lines: the master is the fallback for a posting no family fits, nothing else. If the table is older than the last CV Matt returned, refresh it first: `python3 <this skill's dir>/scripts/base_audit.py <project> --write`. A draft or a redline he never returned is not a candidate.
 2. **Fallback:** *(project)* `_assets/master_resume.docx`, when no family fits. `master_resume_v2` and `_v3` are retired.
 3. **Audit it:** `python3 <resume-tailor skill dir>/scripts/cv_check.py <base.docx> --rules <project>/_assets/cv_rules.md --profile <project>/_assets/candidate_profile.md --tags <tags of this posting>`. Each `FAIL` is a line `resume-tailor` must rewrite: a superseded figure, a title or a wording that was right for the earlier posting and is not for this one. Paste the result lines in the brief.
 4. **The base is layout and phrasing Matt validated, not evidence.** A figure is printed because the Current values table or the log supports it, never because the base had it.

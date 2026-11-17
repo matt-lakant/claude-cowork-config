@@ -56,7 +56,7 @@ Read `cv_rules.md` Part 1, the Current values table, the ceilings, the voice not
 Work in this order. The role tag in the brief decides the framing before a single line is written.
 
 **3.1 Level framing (R18 to R20).** Details and examples in `references/level-framing.md`.
-- **`hands_on` role** (most postings, most freelance missions): no scale marker in the header, the profile or the areas of expertise (no 80+ or 110 people, no ~USD 40M P&L, no board, C-level, SVP, no "through regional directors"). At least two first-hand facts above the skills matrix: the ones listed in the brief. The first bullet of each role says what he did himself or with his direct team of 5 to 10. Scale appears once, in the Context line of the role. Verbs of distance ("oversaw", "sponsored", "governed") become what he did, when the record supports it.
+- **`hands_on` role** (most postings, most freelance missions): no scale marker in the header, the profile or the areas of expertise (no 80+ or 110 people, no ~USD 40M P&L, no board, C-level, SVP, no "through regional directors"). At least two first-hand facts above the skills matrix: the ones listed in the brief. The first bullet of each role says what he did himself or with his direct team of 5 to 10, and carries no headcount, including a build figure ("from zero to 50+" reads "from zero", with "grown to 50+ people" in the Context line). Scale appears once, in the Context line of the role. Verbs of distance ("oversaw", "sponsored", "governed") become what he did, when the record supports it.
 - **`leadership` role:** scale and seniority lead and are not deflated. Keep one or two first-hand facts in the bullets.
 - **Job titles are facts and are never altered**, whatever the tag. The tag follows what the role requires, never the title or the contract type.
 
@@ -107,7 +107,7 @@ The scripts ship with the plugin: stage the `.docx`, `cv_rules.md` and `candidat
 - A `WARN` is a judgment: keep it only with a reason, written in the memo.
 - The script tests words and positions. Rules such as "no sales mandate" or "wording that echoes the employer" still need your reading of the whole CV against `cv_rules.md` Part 1.
 
-**5.2 Evidence.** For each row of the brief's evidence table that has a fact on record, quote the CV line that carries it, or write `not used:` and the reason. A hard requirement with a fact and no line is the commonest cause of a heavy redline: fix the CV.
+**5.2 Evidence.** For each row of the brief's evidence table that has a fact on record, quote the CV line that carries it, or write `not used:` and the reason. A requirement stated in the posting's title or opening lines has its proof **above the skills matrix**, not only in a bullet below it. A hard requirement with a fact and no line is the commonest cause of a heavy redline: fix the CV.
 
 **5.3 Decisions.** For each row of the brief's decisions table, quote the CV line that applies it. No line to quote means the decision was not applied: fix the CV.
 
@@ -161,7 +161,7 @@ Write `applications/<slug>/tailoring_notes.md`. **The three headings marked "key
 <two sentences: the two or three CV facts that best answer the posting, and the fact about the employer to tie them to>
 ```
 
-Then add or update the row in `applications_tracker.md` through `application-tracker` (status `drafted`).
+Then add or update the row in `applications_tracker.md` through `application-tracker` (status `drafted`). On a re-run of a posting already tracked (a comparison run with a suffix), leave the summary row as it is: add a dated note to the application's section in `applications_tracker_details.md` and a line to the history file.
 
 ## Step 8: Gate, then red-team
 

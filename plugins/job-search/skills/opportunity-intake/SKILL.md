@@ -104,7 +104,7 @@ Matt sometimes asks for the same step twice on the same posting: to compare two 
 - **Say what is there first**, in one line, with file names and dates, and what you will reuse. Do not ask whether to proceed: the request stands.
 - **Never overwrite.** A new `.docx` takes the next version suffix (`_v2`, `_v3`). When Matt asked for a comparison run, use a run label instead, the same on every file of the run (`_<label>` before the extension, e.g. `_fable`), for the `.docx` and for the memos (`tailoring_notes_<label>.md`, `redteam_notes_<label>.md`).
 - **Reuse the inputs, not the outputs.** `job_description.md`, the posting PDF and `company_overview.md` are inputs: reuse them unless the overview is stale. The earlier run's memo, CV and red-team notes are outputs: for a comparison run, do not read them before producing your own, or the comparison measures nothing.
-- **Do not re-ask what Matt already answered.** Answers given for this posting are in the Q&A log of `candidate_profile.md` (search the company name). Use them; ask only the requirements they leave open. Say in the memo that the mining round was reused, since the fit score is then "after mining".
+- **Do not re-ask what Matt already answered.** Answers given for this posting are in `_assets/profile_log.md` (search the company name). Use them; ask only the requirements they leave open. Say in the memo that the mining round was reused, since the fit score is then "after mining".
 - **One tracker row per application.** Add a dated note to the existing detail section; do not add a row, and do not change the row's score or status unless Matt applies with the new version.
 - **`notes.md` Timeline** gets one line naming the run and its files.
 
@@ -134,7 +134,7 @@ Leave a field blank rather than inventing it.
 ## Open questions
 
 ## Timeline
-- <YYYY-MM-DD> — opened
+- <YYYY-MM-DD>: opened
 ```
 
 State the resolved path once, in one line, then get on with the real work. No ceremony.
@@ -376,7 +376,7 @@ Write `job_description.md` directly into the folder with `device_bash` (no tool 
    card had not loaded in route A: scroll and extract again (in route A2, check the questions
    section is there when the posting has questions). Do not ship it.
 5. **Verbatim, original language:** no summary, no reordering, no translation.
-6. Add a Timeline line to `notes.md`: `<YYYY-MM-DD> — posting captured (<PDF filename>)`.
+6. Add a Timeline line to `notes.md`: `<YYYY-MM-DD>: posting captured (<PDF filename>)`.
 
 **Re-capture of a changed posting:** never overwrite. Save
 `<Company>_JobPost_<Role>_<YYYY-MM-DD>.pdf` and `job_description_<YYYY-MM-DD>.md`, and note the

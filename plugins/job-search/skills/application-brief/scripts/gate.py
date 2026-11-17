@@ -14,7 +14,8 @@ the previous gate as its first step. Exit code 1 lists what is missing; fix it a
   redteam  redteam_notes.md and the *_redline*.docx   written by resume-redteam
 
 Section headings are keys and stay in English whatever the language of the posting. --suffix reads
-the files of a comparison run (application_brief_label.md and so on).
+the files of a comparison run (application_brief_label.md and so on); the CV and the redline
+must then carry the label in their file name too.
 """
 import glob, os, re, sys
 
@@ -143,9 +144,9 @@ def gate_draft(folder, suf, miss):
         if not rows(da):
             miss.append("Decisions applied: no row")
     cvs = [f for f in glob.glob(os.path.join(folder, "CORNET_*.docx"))
-           if not re.search(r"redline|Lettre|Letter|Cover", os.path.basename(f), re.I)]
+           if not re.search(r"redline|Lettre|Letter|Cover", os.path.basename(f), re.I) and suf in os.path.basename(f)]
     if not cvs:
-        miss.append("no CORNET_*.docx CV in the folder")
+        miss.append("no CORNET_*%s*.docx CV in the folder" % suf)
 
 
 def gate_redteam(folder, suf, miss):
@@ -166,8 +167,8 @@ def gate_redteam(folder, suf, miss):
     for r in rows(find(s, "Questions")):
         if len(r) < 3 or not re.search(r"asked|dropped|open", r[2], re.I):
             miss.append("question '%s': state is not 'asked', 'dropped: reason' or 'open'" % (r[1][:50] if len(r) > 1 else "?"))
-    if not glob.glob(os.path.join(folder, "CORNET_*redline*.docx")):
-        miss.append("no CORNET_*redline*.docx in the folder")
+    if not [f for f in glob.glob(os.path.join(folder, "CORNET_*redline*.docx")) if suf in os.path.basename(f)]:
+        miss.append("no CORNET_*%s*redline*.docx in the folder" % suf)
 
 
 def main():

@@ -14,7 +14,7 @@ docx_dump.py views; to_a4.py; profile_search.py (with the sibling log); build_fa
 gate.py (brief, draft, redteam, and that the
 templates printed in the three SKILL.md files still carry every heading the gate reads).
 """
-import argparse, json, os, subprocess, sys, tempfile
+import argparse, json, os, shutil, subprocess, sys, tempfile
 import docx
 from docx.shared import Emu
 
@@ -288,6 +288,12 @@ None.
     build_cv(gp("CORNET_Acme_PS-Manager_2026-11-17_redline.docx"))
     rc, out = run(GATE, "redteam", g)
     check("gate redteam: complete memo and redline pass", rc == 0 and "GATE redteam: PASS" in out, out)
+    for n in ("application_brief", "tailoring_notes", "redteam_notes"):
+        shutil.copy(gp(n + ".md"), gp(n + "_run2.md"))
+    rc, out = run(GATE, "redteam", g, "--suffix", "_run2")
+    rc2, out2 = run(GATE, "draft", g, "--suffix", "_run2")
+    check("gate --suffix: the CV and redline of another run do not satisfy a comparison run",
+          rc == 1 and "_run2" in out and rc2 == 1 and "no CORNET_*_run2*.docx" in out2, out + out2)
 
     # --- record split in three files: profile_search reads the sibling log, build_facts builds the sheets
     fa = os.path.join(tmp, "assets")
@@ -328,7 +334,7 @@ None.
     pr = os.path.join(tmp, "project")
     os.makedirs(os.path.join(pr, "_assets"))
     os.makedirs(os.path.join(pr, "applications", "acme-ps-manager"))
-    import shutil
+
     shutil.copy(a.rules, os.path.join(pr, "_assets", "cv_rules.md"))
     open(os.path.join(pr, "_assets", "candidate_profile.md"), "w", encoding="utf-8").write("# Jane Doe\n")
     build_cv(os.path.join(pr, "applications", "acme-ps-manager", "CORNET_Acme_PS-Manager_2026-11-01_v2_final.docx"))
