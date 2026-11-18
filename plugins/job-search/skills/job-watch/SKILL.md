@@ -135,7 +135,7 @@ Short message to Matt in English via SendUserMessage, no em dash:
 - "New openings": table ID | company | title | location | posting date if known | link | one line on why it fits. Openings posted in the last 24 h first.
 - "Startups to approach": 0 to 3 lines, funding round + hiring signal + founder or CEO name. No ID: they have no posting to analyze.
 - If any source failed today: one line "Sources with issues: [names]. Details in _research/job_sources.md."
-- Last lines, only if there is at least one new opening: "To run the analysis, reply with the IDs (e.g. J054 J056) or 'all', today or any later day. Or tick openings on the dashboard: https://claude.ai/artifact/Ptc87342pDwaCH3nWFFGyc"
+- Last lines, only if there is at least one new opening: "To analyze openings, today or any later day, paste their IDs (e.g. J054 J056), or the request copied from the dashboard, into a new chat in the Job Applications project. Dashboard: https://claude.ai/artifact/Ptc87342pDwaCH3nWFFGyc" Keep the watch conversation for the watch: if Matt replies there with IDs anyway, run the analysis, since he asked for it.
 - If nothing is new: "Nothing new today." (plus the sources line if any failed, and the dashboard link).
 
 **Attach both files.** After the report, and after the summary of an analysis, attach the current `_research/job_watch_log.md` and `_research/job_sources.md` to the conversation: stage them with `device_stage_files` (paths `C:\Users\mattc\OneDrive\Documents\Claude\Projects\Job Applications\_research\job_watch_log.md` and `...\job_sources.md`), then send the staged copies with SendUserFile in one call. Stage them only once every edit of the run is written, since a card is a fixed copy. Do it on days with nothing new too.
