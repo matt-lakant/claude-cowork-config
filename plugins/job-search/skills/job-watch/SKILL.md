@@ -1,6 +1,6 @@
 ---
 name: job-watch
-description: Daily watch for senior job openings for Matt, at the source (target companies' applicant tracking systems, Welcome to the Jungle, Indeed, recent funding rounds). Registers every matching opening under a permanent ID (J001...) in _research/job_watch_log.md, reports only the new ones, keeps each source's access instructions and issues in _research/job_sources.md, and refreshes the Job openings dashboard. Runs "check fit and prep resume if good" on the openings Matt picks, any day after they were found - by ID, by "all", or ticked on the dashboard. Use for the scheduled Daily job watch and Analyze job openings tasks, for any reply with opening IDs, and whenever Matt asks to analyze the openings ticked on the dashboard.
+description: Daily watch for senior job openings for Matt, at the source (target companies' applicant tracking systems, Welcome to the Jungle, Indeed, recent funding rounds). Registers every matching opening under a permanent ID (J001...) in _research/job_watch_log.md, reports only the new ones, keeps each source's access instructions and issues in _research/job_sources.md, and refreshes the Job openings dashboard. Runs "check fit and prep resume if good" on the openings Matt picks, any day after they were found - by ID, by "all", or ticked on the dashboard. Use for the scheduled Daily job watch task, for any message with opening IDs (including the request copied from the dashboard), and whenever Matt asks to analyze the openings ticked on the dashboard.
 ---
 
 # Job watch
@@ -91,7 +91,6 @@ Written with the artifact tools (`db_write`, `db_list`, `db_query`, `db_get`) on
 | `openings/[ID]` | `key`, `company`, `title`, `location`, `url`, `source`, `firstSeen`, `lastSeen`, `status`, `intake`: the log row, same values |
 | `ticks/[ID]` | `id`, `at`: present while Matt has the opening ticked |
 | `meta/watch` | `lastRun` (date), `latestReport` (list of the IDs in the latest report) |
-| `meta/request` | `ids`, `at`: what the dashboard button last asked for |
 
 `db_write` takes at most 50 ops per call, and an op on a document that already exists needs its `ifVersion` (from `db_list` or `db_query`). Send one call at a time and wait 2 seconds between calls.
 
@@ -145,10 +144,10 @@ Never invent an opening, a date or a link: write only what was seen on the page.
 
 ## Analyze selected openings
 
-Runs when Matt replies to a report, when he asks in any session to analyze openings, and in every run of the "Analyze job openings" scheduled task (which the dashboard button starts). Run the precondition first.
+Runs when Matt replies to a report with IDs, when he pastes the request the dashboard copies ("Run job-search:job-watch, Analyze selected openings: J048 J056"), or when he asks in any session to analyze openings. It runs in that conversation, in front of him. Run the precondition first.
 
 1. **Work out the selection**, in this order:
-   - IDs written in the message (in a reply, or appended to the Analyze job openings task's prompt): those IDs, and only those.
+   - IDs written in the message (a reply, or the request copied from the dashboard): those IDs, and only those.
    - "all" (or "tout"): every ID in the Latest report section of the log.
    - Plain numbers (1, 2, 3) from a report sent before IDs existed: the opening at that position in the Latest report section.
    - Otherwise, or when the message says "ticked": `db_list` `ticks` on the dashboard and take those IDs. If the artifact tools are not available, say so and ask Matt for the IDs.

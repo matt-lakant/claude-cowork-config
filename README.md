@@ -49,7 +49,7 @@ The pipeline, roughly in the order it runs:
 
 | Skill | Role in the pipeline |
 |---|---|
-| `job-watch` | Daily watch for senior openings at the source (target ATS, Welcome to the Jungle, Indeed, funding rounds); registers every opening in `_research/job_watch_log.md` and each source's access and issues in `_research/job_sources.md`; report of new openings by permanent ID (J001...) and a Job openings dashboard where Matt ticks openings; fit check and resume prep on the picked ones, any day, also from the Analyze job openings task |
+| `job-watch` | Daily watch for senior openings at the source (target ATS, Welcome to the Jungle, Indeed, funding rounds); registers every opening in `_research/job_watch_log.md` and each source's access and issues in `_research/job_sources.md`; report of new openings by permanent ID (J001...) and a Job openings dashboard where Matt ticks openings, then copies a request Matt pastes into a chat linked to his computer; fit check and resume prep on the picked ones, any day |
 | `opportunity-intake` | Front door: confirms the opportunity, creates `applications/<slug>/` and its `notes.md`, routes to the right skill |
 | `job-fit-analyzer` | Triage a posting before investing: fit score, gap analysis, go/no-go |
 | `company-overview` | Research the company into `company_overview.md` (prerequisite for several skills) |
