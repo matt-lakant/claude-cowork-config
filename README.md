@@ -43,12 +43,13 @@ rather than nested folders.
 
 ## Plugins
 
-### `job-search` (12 skills)
+### `job-search` (14 skills)
 
 The pipeline, roughly in the order it runs:
 
 | Skill | Role in the pipeline |
 |---|---|
+| `job-watch` | Daily watch for senior openings at the source (target ATS, Welcome to the Jungle, Indeed, funding rounds); numbered report, then fit check and resume prep per opening Matt picks |
 | `opportunity-intake` | Front door: confirms the opportunity, creates `applications/<slug>/` and its `notes.md`, routes to the right skill |
 | `job-fit-analyzer` | Triage a posting before investing: fit score, gap analysis, go/no-go |
 | `company-overview` | Research the company into `company_overview.md` (prerequisite for several skills) |
