@@ -16,6 +16,7 @@ Run in this order. Nothing is written for an opportunity before Step 3 has run.
 | 2 | Resolves the slug against existing folders; applies the re-run rule | `applications/<slug>/`, or a suffix for a comparison run | two existing folders could both fit: ask |
 | 3 | Creates the folder and `notes.md` | `notes.md` | never |
 | 3b | Captures the posting (routes A, A2, B, C), verifies the copy | `<Company>_JobPost_<Role>.pdf`, `job_description.md` | the checksum does not match, or the `.md` stops before the posting's last line |
+| 3c | Marks the opening in the job watch log, if it is there | the Intake cell in `_research/job_watch_log.md` | never |
 | 4 | Routes to the skill that does the work, in the same turn | the hand-off | never |
 | 5 | Pins the folder for the session | nothing | never |
 
@@ -386,6 +387,23 @@ posting is information.
 **Older folders:** a `job_description.md` with no PDF is complete; a posting PDF with no
 `.md` gets route B the first time a skill needs it.
 
+## Step 3c — Mark the opening in the job watch log
+
+`_research/job_watch_log.md` registers every opening the daily `job-watch` found. Once the
+folder exists, mark the opening there so the watch knows it has been taken in.
+
+1. If the file does not exist, skip this step.
+2. Find the opening's row: same key (the posting URL normalized: lowercase host, no `www.`,
+   no query string or fragment, no trailing slash), or else same company and same title
+   ignoring case, accents and punctuation.
+3. Found: write `YYYY-MM-DD applications/<slug>/` in its Intake cell (today's date). If the
+   cell already holds a folder, leave it and say so: the opening was already taken in.
+4. Not found (a posting from LinkedIn, a recruiter, a referral): leave the log alone. The
+   log is the watch's register; the tracker is the record of applications.
+
+Edit in place with a short python read-modify-write through `device_bash`, then `grep` the
+row to check the cell landed.
+
 ## Step 4 — Route
 
 Hand off to the skill that does the work. Run it in the same turn — do not stop and ask
@@ -426,6 +444,10 @@ _research/<topic>_<YYYY-MM-DD>.md
 
 Create `_research/` if it does not exist. These do not open an opportunity and they do
 not belong in the project root either.
+
+Two files in `_research/` keep fixed names and belong to `job-watch`: `job_watch_log.md`
+(the register of openings found) and `job_sources.md` (how each source is reached, and its
+issues). Do not create dated copies of them.
 
 ## Hard rules
 
