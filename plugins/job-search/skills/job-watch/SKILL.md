@@ -119,6 +119,8 @@ Short message to Matt in English via SendUserMessage, no em dash:
 - Last line, only if there is at least one opening: "To run the analysis, reply with the numbers (e.g. 2 5) or 'all'."
 - If nothing is new: "Nothing new today." (plus the sources line if any failed).
 
+**Attach both files.** After the report, and after the summary of a numbered reply, attach the current `_research/job_watch_log.md` and `_research/job_sources.md` to the conversation: stage them with `device_stage_files` (paths `C:\Users\mattc\OneDrive\Documents\Claude\Projects\Job Applications\_research\job_watch_log.md` and `...\job_sources.md`), then send the staged copies with SendUserFile in one call. Stage them only once every edit of the run is written, since a card is a fixed copy. Do it on days with nothing new too.
+
 Never invent an opening, a date or a link: write only what was seen on the page. Flag an uncertain posting date as uncertain. Do not apply and do not contact anyone.
 
 ## When Matt replies with numbers
