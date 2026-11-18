@@ -393,7 +393,7 @@ posting is information.
 folder exists, mark the opening there so the watch knows it has been taken in.
 
 1. If the file does not exist, skip this step.
-2. Find the opening's row: same key (the posting URL normalized: lowercase host, no `www.`,
+2. Find the opening's row: same ID if one was given (J001...), else same key (the posting URL normalized: lowercase host, no `www.`,
    no query string or fragment, no trailing slash), or else same company and same title
    ignoring case, accents and punctuation.
 3. Found: write `YYYY-MM-DD applications/<slug>/` in its Intake cell (today's date). If the
@@ -403,6 +403,12 @@ folder exists, mark the opening there so the watch knows it has been taken in.
 
 Edit in place with a short python read-modify-write through `device_bash`, then `grep` the
 row to check the cell landed.
+
+5. Found, and the artifact tools are available: mirror it on the Job openings dashboard
+   (artifact `b95da0b6-cef1-439f-ab20-d4245191da5f`): `db_get` `openings/<ID>`, `merge` the
+   same `intake` value into it with its `ifVersion`, then `delete` `ticks/<ID>`. If the tools
+   are missing or the write fails, carry on: the next job-watch run copies the log to the
+   dashboard.
 
 ## Step 4 — Route
 
