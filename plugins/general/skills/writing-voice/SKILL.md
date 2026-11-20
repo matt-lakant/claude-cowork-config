@@ -24,7 +24,9 @@ note every time the vault is readable.
 
 If a job-search skill owns the deliverable (`cover-letter`, `recruiter-followup`,
 `interview-prep`, `offer-negotiator`, `resume-tailor`), that skill runs and this one loads the
-voice for it. Otherwise this skill does the whole job: personal emails and messages, WhatsApp,
+voice for it. Anything signed for the MNTRL association goes to `writing-voice-mntrl`, which
+files into `Notes/Writing voice MNTRL.md`; never file MNTRL text in `Notes/Writing voice.md`.
+Otherwise this skill does the whole job: personal emails and messages, WhatsApp,
 administrative letters, syndic and copropriété correspondence, LinkedIn posts, anything signed
 by Matt.
 
