@@ -110,7 +110,7 @@ Under 300 characters. State the concrete reason for reaching out, ask one answer
 
 Before output, run the §4 review test in *(vault)* `Notes/Writing voice.md` (`general:writing-voice` Step 4, surface §5.1): strike every image, every "I am not the kind of person who…", every sentence that announces the next one, every verb of certainty that should be an observation. Count characters if there is a cap.
 
-Deliver the message to the outputs panel with `SendUserFile` so Matt can open and copy it (see the `feedback_show_short_texts_in_chat` guidance), and keep a copy under `applications/<company>-<role>/correspondence/<YYYY-MM-DD>_<recipient>.md`. Never produce a PDF.
+Deliver an email as two separate copyable code blocks in chat, subject first and body second, nothing else inside either block; a LinkedIn message or note (no subject) goes in one copyable block. Also send the `.md` file to the outputs panel with `SendUserFile`, and keep a copy under `applications/<company>-<role>/correspondence/<YYYY-MM-DD>_<recipient>.md`. Never produce a PDF.
 
 **Mechanical check before delivery.** Save the message as its `.md` file, then run `python3 <resume-tailor skill dir>/scripts/cv_check.py <file> --rules <project>/_assets/cv_rules.md --profile <project>/_assets/candidate_profile.md --kind text --tags <tags>`. Fix every `FAIL` (a superseded figure, the 90% figure without its reference, an em dash). A message with no figure and no tool name passes in one second; the check is for the ones that carry a number.
 

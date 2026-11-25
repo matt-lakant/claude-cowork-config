@@ -101,8 +101,12 @@ answering.
 
 ## Step 5: Deliver
 
-- A message or email: the text in a copyable block in chat, nothing around it but the
+- An email: the subject and the body in two separate copyable code blocks in chat (subject
+  first, body second, nothing else inside either block), plus the full email saved as a file
+  in the project folder and surfaced as a file card. Nothing else around them but the
   fallback line if it applies.
+- A message with no subject (WhatsApp, LinkedIn, SMS): the text in one copyable block in
+  chat, nothing around it but the fallback line if it applies.
 - A file (letter, document): per Matt's standing rule, into
   `C:\Users\mattc\OneDrive\Documents\Claude\Projects\<Project Name>\`, flat, and surfaced as a
   file card.

@@ -65,8 +65,10 @@ decision, 2026-11-20). Never copy a rule or a corpus line into this file or anyw
 
 1. Run the §4 review test of `Writing voice.md`: points 1 to 7, plus point 8 (list 4.1). Points
    9 and 10 are for job applications and do not apply.
-2. Deliver an email or message as a copyable draft in chat (the message-compose card when
-   available), with at most a few lines of flags under it.
+2. Deliver an email as two separate copyable code blocks in chat, subject first and body
+   second, nothing else inside either block, plus the full email saved as a file in the
+   project folder and surfaced as a file card. A message with no subject goes in one
+   copyable block. At most a few lines of flags under the blocks.
 3. In fallback mode, add under the draft: `Rédigé avec les règles de voix de tes préférences ;
    le corpus MNTRL (Notes/Writing voice MNTRL.md) n'a pas été consulté.`
 4. Never send, post or schedule anything. A Gmail or Outlook draft only when Matt asks for one.
