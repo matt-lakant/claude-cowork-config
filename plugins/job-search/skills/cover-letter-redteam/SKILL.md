@@ -1,6 +1,6 @@
 ---
 name: cover-letter-redteam
-description: "Adversarial recruiter review of a cover letter produced by `cover-letter`, run before the letter reaches Matt. Its job is to FIND PROBLEMS: lines a recruiter would read as AI-generated, generic or swappable company sentences, facts that contradict or are missing from the final CV, over-claims past the vault ceilings, unanswered questions (why this role, why this company, applicable experience, gap, situation), and voice breaches. Redlines the .docx with tracked changes and asks Matt questions where a fix needs a fact. Use as the mandatory gate at the end of `cover-letter`, or when Matt asks to red-team, stress-test, or check a cover letter or lettre de motivation for AI tells. Runs in a fresh-context subagent."
+description: "Adversarial recruiter review of a cover letter produced by `cover-letter`, run before the letter reaches Matt. Its job is to FIND PROBLEMS: lines a recruiter would read as AI-generated, generic or swappable company sentences, facts that contradict or are missing from the final CV, over-claims past the vault ceilings, unanswered questions (why this role, why this company, applicable experience, gap, situation), and voice breaches. Redlines the .docx with tracked changes and asks Matt questions where a fix needs a fact. Use as the mandatory gate at the end of `cover-letter`, or when Matt asks to red-team, stress-test, or check a cover letter or lettre de motivation for AI tells. Runs in a new subagent that reads only a script-built packet of primary sources."
 ---
 
 # Cover Letter Red-Team (Adversarial Recruiter)
@@ -9,9 +9,9 @@ description: "Adversarial recruiter review of a cover letter produced by `cover-
 
 | Step | What it does | What it produces | Stops the run when |
 |---|---|---|---|
-| Open | Opens the opportunity; builds the packet (listed below) | the reviewer's brief | the voice note or the final CV is missing |
-| 1 | Spawns the fresh-context reviewer | its report, with the figure audit (item 10) and the level test (item 11) | the report praises or skips an item: re-run |
-| 2 | Verifies the entries the reviewer cites | confirmed edits | never |
+| Open | Opens the opportunity; builds the packet with `build_packet.py` | the packet folder and its manifest | the voice note or the final CV is missing, `PACKET: NOT BUILT`, or the session has no agent tool |
+| 1 | Spawns a new reviewer on the packet, brief sent as printed | its report, with the figure audit (item 10), the level test under its own role tag (item 11) and the files it opened | the report praises or skips an item: re-run |
+| 2 | Checks the files the reviewer opened and its role tag, then verifies the entries it cites | confirmed edits | a file opened outside the packet: new reviewer, new packet |
 | 3 | Applies corrections directly and choices as tracked changes; runs `cv_check.py --kind letter` | `..._redline.docx`, `RESULT: 0 FAIL` | an edit is not applied, or a `FAIL` |
 | 4 | Puts every reviewer question to Matt, or records why not | answers logged | never |
 | 5 | Writes the notes | `cl_redteam_notes.md` | never |
@@ -36,10 +36,20 @@ finds nothing has failed.
 ## Why a fresh-context subagent
 
 The context that wrote the letter cannot see its own tics, and will defend its own choices.
-**The critique MUST run in a fresh-context subagent** (the session's agent tool, `Agent` in current sessions and `Task` in older ones, type `general-purpose`) that
-receives only primary sources and the letter text: never `cover_letter_notes.md`, the
-tailoring memo, or any "why this fits" narrative. This spawn is a standing, sanctioned part
+**The critique MUST run in a new subagent** (the session's agent tool, `Agent` in current sessions and `Task` in older ones, type `general-purpose`) that
+reads only primary sources and the letter text: never `cover_letter_notes.md`, the letter's
+plan, the tailoring memo, or any "why this fits" narrative. This spawn is a standing, sanctioned part
 of Matt's setup.
+
+**A new subagent is not enough (changed 2026-11-26).** On that day Matt read in a run's own report that the reviewer "had read my plan before critiquing", for a CV and for a letter. Until then `cover-letter` Step 3 called the letter's plan "the checklist the red team tests against", and the reviewer was given paths into the project folder. The rules are the ones of `resume-redteam` ("Why this runs in a fresh-context subagent"):
+
+- the packet is built by `build_packet.py`, in a folder outside the project, and the reviewer is never given the project path;
+- the agent is a new `general-purpose` one, **never `fork`** (a fork carries this whole conversation, drafting included) and never one that has already worked on this application;
+- the prompt is the brief below as printed, three fields filled, with no summary, no angle, no plan, no role tag;
+- the reviewer decides the role tag itself and ends on the list of files it opened, which you check;
+- how the review was run is written in `cl_redteam_notes.md` under "Reviewer independence".
+
+What this does not do: the reviewer runs with the session's tools, so "read only the packet" is checked through what it declares, not enforced by a lock.
 
 **Known limit:** a model judging whether text sounds generated is imperfect. That is why the
 brief below makes it check concrete lists and tests rather than give an impression. Matt's
@@ -47,30 +57,41 @@ own final edit remains the last test, and `asset-updater` feeds it back.
 
 ## The adversary's packet
 
-1. `applications/<slug>/job_description.md` (most recent dated copy if several).
-2. `applications/<slug>/company_overview.md`, **without its "Positioning implications for Matt" section** (cut from that heading to the next heading or the end): it is drafting advice, and a reviewer who reads it knows the angle the letter was built on.
-3. **The final CV**: the file Matt sent back and `asset-updater` filed (`..._final.docx` or the most recent Matt-returned CV), as text.
-4. *(project)* `_assets/candidate_profile.md`: ground truth. Tell the subagent the Q&A log is append-only and a later entry can supersede an earlier one.
-4b. *(project)* the **"Current values" table** at the top of `candidate_profile.md` and Part 1 of `_assets/cv_rules.md`, pasted into the brief. The table is the current wording of each figure; the rules are constraints the reviewer must not propose against. Give the path of `candidate_profile.md` instead of pasting the file: it no longer fits in a brief, and the reviewer greps the log itself, citing the date of each entry.
-5. *(vault)* `Notes/Matt Cornet.md`, "Technology and scope ceilings" section only.
-6. *(vault)* `Notes/Writing voice.md`, **loaded through `general:writing-voice` in vault-required
-   mode** before spawning (no fallback: if the note cannot be read, stop), then pasted into the
-   brief as text; the subagent does not load the skill itself. §2 corpus, §3 table, §4 (all points and list 4.1), §5.1 and §5.4 **including the reference letters, labelled "voice samples, not templates"**.
-7. **Matt's own answers to the hook questions** (cover-letter Step 2), verbatim, labelled as the candidate's stated motivations. Without them the adversary flags his real reasons as unsupported.
-8. Any form answers already drafted for this application.
-9. The letter text.
+**The packet is built by the script, not by you (changed 2026-11-26).** Do not paste, trim or summarize a source yourself.
 
-Leave out `cover_letter_notes.md`, `application_brief.md`, `tailoring_notes.md`, `fit_report.md` and any fit matrix inside the JD file.
+First write three scratch files, outside the project folder, each copied word for word from its source:
+
+- `voice.md`: from *(vault)* `Notes/Writing voice.md`, **loaded through `general:writing-voice` in vault-required mode** (no fallback: if the note cannot be read, stop): §2 corpus, §3 table, §4 (all points and list 4.1), §5.1 and §5.4 **including the reference letters, under the line "voice samples, not templates"**. The reviewer does not load the skill itself.
+- `motivations.md`: **Matt's own answers to the hook questions** (cover-letter Step 2), verbatim, under the line "the candidate's stated motivations". Without them the adversary flags his real reasons as unsupported. His answers only: not the plan built from them.
+- `forms.md`: any form answers already drafted for this application (skip the file if there are none).
+
+Then:
+
+```text
+python3 <resume-redteam skill dir>/scripts/build_packet.py --kind letter \
+  --app <project>/applications/<slug> --assets <project>/_assets \
+  --identity "<vault>/Notes/Matt Cornet.md" \
+  --doc <the letter .docx> --cv <the final CV: the file Matt sent back and asset-updater filed> \
+  --extra voice=<voice.md> --extra motivations=<motivations.md> [--extra forms=<forms.md>] \
+  --out <a new folder in the session's scratch space, outside the project folder>
+```
+
+It adds, by rule: the latest job description without any fit or coverage section, `company_overview.md` **without its "Positioning implications for Matt" section** (drafting advice: a reviewer who reads it knows the angle the letter was built on), the final CV and the letter as text, the "Technology and scope ceilings" of `Notes/Matt Cornet.md`, the Current values table, Part 1 of `_assets/cv_rules.md`, and `record/` (copies of `candidate_profile.md`, `profile_log.md` and `facts/`, which the reviewer greps, citing the date of each entry). It prints `PACKET: BUILT` and a manifest, saved beside the packet folder. `PACKET: NOT BUILT` lists what is missing.
+
+- Read the notes under the manifest: if a job-description heading that was kept is your own note, run again in a new folder with `--strip "<that heading>"`.
+- Calibration (below) goes in as `--extra rejected_before=<file>`, lines copied word for word.
+- The script refuses `cover_letter_notes.md`, `application_brief.md`, `tailoring_notes.md`, `fit_report.md`, `cl_redteam_notes.md` and `notes.md`. After it has run, the packet is closed: add, edit and remove nothing.
+- **No agent tool in the session:** stop and tell Matt that the red-team cannot run independently here. Do not review the letter yourself under this skill's name. If he asks for a review anyway, run the brief yourself, open the verdict with `SELF-REVIEW` and write it on the `Deviations:` line of the notes.
 
 ## Workflow
 
 ### Step 1: Spawn the adversary
 
-Brief (fill the braces):
+A new `general-purpose` agent, never `fork`. **The prompt is the brief below, as printed, and nothing else.** Fill the three braces: role, company, packet folder (with the tool that reaches it, `device_bash` when the folder is on Matt's computer). No sentence of your own before or after.
 
 > You are a recruiter screening for **{role}** at **{company}**. You read two hundred cover letters a month and most are generated; you stop reading the moment a letter sounds like one, or like it could be sent to any company. Find every reason this letter would be skimmed or would hurt the candidate. Do not praise.
-> Inputs: [JD] / [company overview] / [final CV, the version actually sent] / [candidate_profile as ground truth] / [ceilings as the hard truth limit] / [Writing voice rules and the two reference letters, which are voice samples, not templates] / [candidate's stated motivations] / [form answers] / [the letter].
-> Also given: the Current values table (current wording of each figure) and the candidate's standing rules. Do not propose an edit that breaks a rule.
+> Everything you need is in the folder **{packet folder, and the tool that reaches it}**. Start with `00_READ_ME.md`, which says what each file is: the posting, the company research, the final CV as sent, the letter under review, the truth ceilings, the candidate's record. `extra_voice.md` holds the candidate's writing rules (the § numbers below refer to it) and two reference letters, which are voice samples, not templates; `extra_motivations.md` his stated motivations, in his own words; `extra_forms.md`, if present, form answers already written. Read nothing outside that folder and write nothing. You have been told nothing about how this letter was planned or why, on purpose.
+> `06_current_values.md` is the current wording of each figure and `07_cv_rules.md` holds the candidate's standing rules. Do not propose an edit that breaks a rule. If `extra_rejected_before.md` is there, it lists kinds of edit he has refused: do not propose them again without a new reason.
 > First, a 10-second read: after the first two sentences, would you keep reading? Why?
 > Then return, with severity High / Med / Low on each item and the exact sentence quoted:
 > 1. **Reads as generated.** Every item from list 4.1 and the structural forms under it (decorative triads, uniform rhythm, a moral at the end of every paragraph, three or more parallel openings, summary close, em dash). Then the three sentences you would bet were written by a model, and why.
@@ -83,12 +104,15 @@ Brief (fill the braces):
 > 8. **Form.** Length against §5.4, salutation and closing against the §5.4 frame, recipient and company names spelled as in the JD, language and register, US spelling in English, one page.
 > 9. **Copied text.** Any sentence reused from the reference letters, the CV or the form answers, apart from the logistics line.
 > 10. **Figure audit.** One row for EVERY figure, duration, count, percentage, amount and list of places or clients in the letter: letter wording | record wording | source (Current values row, or the latest dated log entry with its line number) | verdict `matches`, `superseded`, `differs` or `no record`. The log is append-only: take the latest entry. Also flag any figure worded differently in the letter and in the CV. Every row that is not `matches` is High and gets an edit.
-> 11. **Level.** The role is **{hands-on: the person does the work themselves | leadership: held through other people}**, judged on what the posting requires, not on the title or the contract type. Hands-on: does the letter read as someone who will do this job, or as an executive stepping down? Quote any scale figure (headcount, P&L, board, C-level) in the first two paragraphs (High), any sentence that manages downward, and say whether one fact in the letter is first-hand work. Does it say, once and plainly, why he wants a role of this size? If not, that is High: the recruiter will ask. Leadership: flag understated seniority instead.
+> 11. **Level.** First decide the role tag yourself, from the posting alone: **hands-on** (the person does the work themselves) or **leadership** (held through other people), judged on what the posting requires, not on the title or the contract type. State your tag and quote the posting lines behind it. Hands-on: does the letter read as someone who will do this job, or as an executive stepping down? Quote any scale figure (headcount, P&L, board, C-level) in the first two paragraphs (High), any sentence that manages downward, and say whether one fact in the letter is first-hand work. Does it say, once and plainly, why he wants a role of this size? If not, that is High: the recruiter will ask. Leadership: flag understated seniority instead.
 > Then produce (a) a prioritized redline plan as `OLD -> NEW` or `CUT`, OLD copied verbatim from the letter, every NEW grounded only in the CV, candidate_profile, the stated motivations and the company overview, within the ceilings; (b) questions for the candidate where a fix needs a fact you do not have; (c) a verdict: send / fix first / rewrite, and the single biggest problem.
+> Last section, **Files opened**: every path you read or listed, one per line, including any outside the packet folder.
 
 **No quota of problems (changed 2026-11-16).** For each category the reviewer returns findings, or one sentence saying what it checked and why it is clean. A congratulatory or thin critique is a failed adversary: push back and re-run. A rewording that fixes no rule, fact, figure or tic is a preference, not a finding.
 
 ### Step 2: Verify the critique before applying it
+
+**Check the reviewer's independence first (2026-11-26).** Every path of its "Files opened" list is inside the packet folder: if one is not, or the list is missing, do not use the report; build a new packet in a new folder and spawn a new reviewer. Then compare its role tag with the one the CV was built with (`tailoring_notes.md`): if they differ, overrule neither, keep the level findings as written, and put the disagreement to Matt as the first question of Step 4. **Only now open the plan of `cover_letter_notes.md` again**, to see which of its points the reviewer's findings touch.
 
 Count the figures in the letter yourself: the audit table of item 10 must have a row for each, or the reviewer goes back for the missing ones. A confirmed `superseded` figure is a factual error: fix it directly in the draft and the redline, and hand it to `asset-updater` for the Current values table.
 
@@ -135,21 +159,22 @@ the same run, via `asset-updater`.
 - **"Choices for Matt"**: the tracked changes, with the trade-off in one line each
 - what was cut, what is left open, and every reviewer question with its state
 - the count of corrections and choices by cause code
+- **"Reviewer independence"**, same six lines as in `resume-redteam` Step 5: the reviewer (new `general-purpose` agent, or SELF-REVIEW), the brief (sent as printed, or what else it carried), the packet manifest with its notes, the files the reviewer opened, the two role tags, and `Deviations:` (`None`, or what differed and why). If it is not `None`, the message to Matt opens with it
 - an empty section **"Rejected by Matt"**, which `asset-updater` fills when he sends the letter back
 
 Hand back to `cover-letter` Step 7 for delivery.
 
 ## Calibration
 
-Before spawning, read the "Rejected by Matt" sections of the last three `cl_redteam_notes.md`
-in `applications/`, if any. Edits he keeps rejecting are a signal: tell the adversary which
-kinds of edit he has rejected before, and do not propose them again without a new reason.
+Before building the packet, read the "Rejected by Matt" sections of the last three `cl_redteam_notes.md`
+in `applications/`, if any. Edits he keeps rejecting are a signal: copy those lines word for word
+into a scratch file and pass it to `build_packet.py` as `--extra rejected_before=<file>`.
 
 ## Hard rules
 
 - **Find problems, never rubber-stamp, never pad.** Findings or a specific justification per category; no minimum.
 - **Corrections are written directly and listed; only choices are tracked.**
-- **Independence is mandatory.** No drafting rationale in the packet.
+- **Independence is mandatory.** A new `general-purpose` agent, never a fork; a packet built by `build_packet.py` outside the project folder; the brief sent as printed; no plan, no notes, no role tag given to the reviewer; its list of files opened checked. Any departure is written on the `Deviations:` line and told to Matt first.
 - **Truth ceiling holds.** Edits may cut, sharpen and reorder; they never invent facts, motivations or company claims.
 - **Never redline Matt's own words for sounding generated.** Report it; he decides.
 - **Replacement text follows `Notes/Writing voice.md`, loaded through `general:writing-voice`.** A sharper line he would never write is not an improvement. The short voice block in Matt's preferences is not a substitute for the note.

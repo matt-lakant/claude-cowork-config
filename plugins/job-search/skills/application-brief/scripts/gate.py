@@ -157,7 +157,8 @@ def gate_redteam(folder, suf, miss):
         miss.append("redteam_notes%s.md does not exist: run resume-redteam" % suf)
         return
     s = sections(p)
-    for k in ["Verdict", "Corrections applied directly", "Choices for Matt", "Questions", "First-pass count", "Rejected by Matt"]:
+    for k in ["Verdict", "Corrections applied directly", "Choices for Matt", "Questions", "First-pass count",
+              "Reviewer independence", "Rejected by Matt"]:
         v = find(s, k)
         if v is None:
             miss.append("redteam_notes: section '## %s' is missing" % k)
@@ -166,6 +167,9 @@ def gate_redteam(folder, suf, miss):
     fp = find(s, "First-pass count") or ""
     if fp and not re.search(r"\d", fp):
         miss.append("First-pass count: no number of corrections and choices")
+    ri = find(s, "Reviewer independence") or ""
+    if ri and not re.search(r"^\s*[-*]?\s*\**Deviations\**\s*:\s*\S", ri, re.I | re.M):
+        miss.append("Reviewer independence: no 'Deviations:' line (write 'Deviations: None' when the reviewer was a new agent that read only the packet)")
     for r in rows(find(s, "Questions")):
         if len(r) < 3 or not re.search(r"asked|dropped|open", r[2], re.I):
             miss.append("question '%s': state is not 'asked', 'dropped: reason' or 'open'" % (r[1][:50] if len(r) > 1 else "?"))

@@ -12,7 +12,8 @@ a French CV that must pass (labels, "80 à 90 %", non-breaking spaces), a letter
 redline.py (tracked, untracked, cut, text split across runs, failure on a bad edit);
 docx_dump.py views; to_a4.py; profile_search.py (with the sibling log); build_facts.py; base_audit.py;
 gate.py (brief, draft, redteam, and that the
-templates printed in the three SKILL.md files still carry every heading the gate reads).
+templates printed in the three SKILL.md files still carry every heading the gate reads);
+build_packet.py (what the reviewer gets, what is cut, what is refused).
 """
 import argparse, json, os, shutil, subprocess, sys, tempfile
 import docx
@@ -29,6 +30,7 @@ BASES = os.path.join(SK, "application-brief", "scripts", "base_audit.py")
 FRSP = os.path.join(SK, "resume-tailor", "scripts", "fr_spaces.py")
 RED = os.path.join(SK, "resume-redteam", "scripts", "redline.py")
 DUMP = os.path.join(SK, "resume-redteam", "scripts", "docx_dump.py")
+PACKET = os.path.join(SK, "resume-redteam", "scripts", "build_packet.py")
 results = []
 
 
@@ -286,8 +288,13 @@ None.
 ## Rejected by Matt
 """)
     rc, out = run(GATE, "redteam", g)
-    check("gate redteam: a question with no state and a missing redline fail",
-          rc == 1 and "state is not" in out and "redline" in out, out)
+    check("gate redteam: a question with no state, a missing redline and no independence section fail",
+          rc == 1 and "state is not" in out and "redline" in out and "Reviewer independence" in out, out)
+    t = open(gp("redteam_notes.md"), encoding="utf-8").read().replace("## Rejected by Matt", "## Reviewer independence\n- Reviewer: new general-purpose agent\n- Packet: built by build_packet.py\n\n## Rejected by Matt")
+    open(gp("redteam_notes.md"), "w", encoding="utf-8").write(t)
+    rc, out = run(GATE, "redteam", g)
+    check("gate redteam: an independence section with no Deviations line fails", rc == 1 and "Deviations" in out, out)
+    open(gp("redteam_notes.md"), "w", encoding="utf-8").write(t.replace("- Packet: built by build_packet.py", "- Packet: built by build_packet.py\n- Deviations: None"))
     t = open(gp("redteam_notes.md"), encoding="utf-8").read().replace("| pending | |", "| dropped: answered in the log (2026-10-15) | |")
     open(gp("redteam_notes.md"), "w", encoding="utf-8").write(t)
     build_cv(gp("CORNET_Acme_PS-Manager_2026-11-17_redline.docx"))
@@ -388,6 +395,58 @@ None.
     check("base_audit: the Notes section survives a rerun",
           "prefer the Acme CV" in open(os.path.join(pr, "_assets", "cv_bases.md"), encoding="utf-8").read())
 
+    # --- build_packet: the reviewer's packet is copied by rule and holds no drafting note
+    pk = tempfile.mkdtemp(prefix="jobsearch_packet_")
+    pp = lambda *n: os.path.join(pk, *n)
+    app, assets = pp("proj", "applications", "acme"), pp("proj", "_assets")
+    os.makedirs(app)
+    os.makedirs(os.path.join(assets, "facts"))
+    w = lambda path, text: open(path, "w", encoding="utf-8").write(text)
+    w(os.path.join(app, "job_description.md"), "# Old copy\n")
+    w(os.path.join(app, "job_description_2026-11-20.md"),
+      "# PS Manager\n\n## What you will do\nWrite SOWs.\n\n## Why you are a good fit\nYou ship.\n\n## Requirement coverage\n| Req | Coverage |\n|---|---|\n| SOW | Strong: ANGLE-LEAK |\n")
+    w(os.path.join(app, "company_overview.md"),
+      "# Acme\n\n## What they sell\nSoftware.\n\n## Positioning implications for Matt\n- Lead with delivery: ANGLE-LEAK\n\n## Sources\n- acme.example\n")
+    for n in ("application_brief.md", "tailoring_notes.md", "cover_letter_notes.md"):
+        w(os.path.join(app, n), "ANGLE-LEAK\n")
+    w(os.path.join(assets, "candidate_profile.md"), "# Profile\n\n## Current values (read before printing any figure)\n| Fact | Print as |\n|---|---|\n| Margin | 27% to 32% |\n\n## Experience\n- Built things\n")
+    w(os.path.join(assets, "profile_log.md"), "- **2026-09-01 : SOW:** wrote them\n")
+    w(os.path.join(assets, "facts", "INDEX.md"), "- sow.md\n")
+    w(os.path.join(assets, "cv_rules.md"), "# Rules\n\n## Part 1: rules\n- R1 no PDF\n\n## Part 2: checks\nMACHINE\n")
+    w(pp("identity.md"), "# Jane\n\n## Framing guardrails\n- Never VP\n\n## Technology and scope ceilings\n- SQL: reads, does not design\n\n## Private\nPRIVATE-LINE\n")
+    w(pp("motivations.md"), "I want to do the work myself.\n")
+    build_cv(pp("CORNET_Acme_PS-Manager_2026-11-20.docx"))
+    base = ["--app", app, "--assets", assets, "--identity", pp("identity.md")]
+    cvp = pp("CORNET_Acme_PS-Manager_2026-11-20.docx")
+    rc, out = run(PACKET, "--kind", "cv", *base, "--doc", cvp, "--out", os.path.join(app, "packet"))
+    check("build_packet: refuses a packet inside the project folder", rc == 1 and "NOT BUILT" in out and "inside the project" in out, out)
+    rc, out = run(PACKET, "--kind", "letter", *base, "--doc", cvp, "--cv", cvp, "--out", pp("p0"),
+                  "--extra", "plan=" + os.path.join(app, "cover_letter_notes.md"))
+    check("build_packet: refuses a drafting note passed as an extra, and writes nothing",
+          rc == 1 and "never goes to the reviewer" in out and not os.path.exists(pp("p0")), out)
+    rc, out = run(PACKET, "--kind", "letter", *base, "--doc", cvp, "--cv", cvp, "--out", pp("p1"),
+                  "--extra", "motivations=" + pp("motivations.md"))
+    got = sorted(os.listdir(pp("p1"))) if os.path.isdir(pp("p1")) else []
+    check("build_packet: a letter packet holds the numbered files, the record and the extra",
+          rc == 0 and "PACKET: BUILT" in out and got == ["00_READ_ME.md", "01_job_description.md", "02_company_overview.md", "03_cv.txt",
+          "04_letter.txt", "05_truth_ceilings.md", "06_current_values.md", "07_cv_rules.md", "extra_motivations.md", "record"]
+          and sorted(os.listdir(pp("p1", "record"))) == ["candidate_profile.md", "facts", "profile_log.md"], out + str(got))
+    everything = ""
+    for root, _, fs in os.walk(pp("p1")):
+        for f in fs:
+            everything += open(os.path.join(root, f), encoding="utf-8").read()
+    jdp = open(pp("p1", "01_job_description.md"), encoding="utf-8").read() if got else ""
+    check("build_packet: positioning advice, the coverage matrix and the private part of the note are cut",
+          got and "ANGLE-LEAK" not in everything and "PRIVATE-LINE" not in everything and "MACHINE" not in everything
+          and "Sources" in everything and "Never VP" in everything, everything[:600])
+    check("build_packet: the latest dated posting is used and a real 'good fit' section is kept",
+          "PS Manager" in jdp and "good fit" in jdp and "Old copy" not in jdp, jdp)
+    check("build_packet: the manifest stays outside the packet and names the removed sections",
+          os.path.exists(pp("p1.manifest.md")) and "Requirement coverage" in out and os.sep + "proj" + os.sep not in everything, out)
+    rc, out = run(PACKET, "--kind", "cv", *base, "--doc", cvp, "--out", pp("p1"))
+    check("build_packet: never reuses a packet folder", rc == 1 and "not empty" in out, out)
+    shutil.rmtree(pk, ignore_errors=True)
+
     # --- the templates printed in the skills carry every heading the gate reads
     def heads(skill):
         txt = open(os.path.join(SK, skill, "SKILL.md"), encoding="utf-8").read()
@@ -395,7 +454,8 @@ None.
     want = {"application-brief": ["Role", "Requirements and evidence", "Not claimable", "Top-third keywords", "First-hand facts",
                                   "Questions put to Matt", "Decisions", "Lessons applied", "Base file", "Form questions", "Angle"],
             "resume-tailor": ["Check result", "Evidence used", "Decisions applied"],
-            "resume-redteam": ["Verdict", "Corrections applied directly", "Choices for Matt", "Questions", "First-pass count", "Rejected by Matt"]}
+            "resume-redteam": ["Verdict", "Corrections applied directly", "Choices for Matt", "Questions", "First-pass count",
+                               "Reviewer independence", "Rejected by Matt"]}
     for skill, keys in want.items():
         missing = [k for k in keys if k not in heads(skill)]
         check("template of %s has every heading the gate reads" % skill, not missing, "missing: %s" % missing)

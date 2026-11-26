@@ -123,7 +123,7 @@ Before writing, list in a few lines:
 - **Q5 Situation:** current status and why this move, languages, location, availability.
 - **Close.**
 
-This plan is also the checklist the red team tests against. Keep it in `cover_letter_notes.md`.
+Keep this plan in `cover_letter_notes.md`. **It never goes to the reviewer (changed 2026-11-26):** `cover-letter-redteam` reads the letter with no knowledge of the plan, and you compare its report with the plan only after the report is in. A reviewer that knows what each paragraph was meant to do checks the letter against your intent, not against what a recruiter reads.
 
 ### Step 4: Draft
 
