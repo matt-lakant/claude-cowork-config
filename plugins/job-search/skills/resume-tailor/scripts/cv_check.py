@@ -194,6 +194,11 @@ def main():
                 for l in lines:
                     if re.search(c["if"], l, flags) and not rx.search(l):
                         add(level, c["id"], c.get("message", "") + " | " + l[:120])
+        elif kind == "require":
+            # document-level: the pattern must appear somewhere in the file
+            rx = re.compile(c["pattern"], flags)
+            if not any(rx.search(l) for l in lines):
+                add(level, c["id"], c.get("message", ""))
         elif kind == "last_line":
             last = lines[-1].strip() if lines else ""
             if not re.search(c["pattern"], last, flags):

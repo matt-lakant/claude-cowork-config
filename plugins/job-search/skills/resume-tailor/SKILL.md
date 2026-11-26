@@ -60,7 +60,7 @@ Work in this order. The role tag in the brief decides the framing before a singl
 - **`leadership` role:** scale and seniority lead and are not deflated. Keep one or two first-hand facts in the bullets.
 - **Job titles are facts and are never altered**, whatever the tag. The tag follows what the role requires, never the title or the contract type.
 
-**3.2 Header.** Name, then the title on two lines (role, then specialty), then one contact line starting with "Paris". Every line fits on one line. No citizenship line. Languages go in Education.
+**3.2 Header.** Name, then the title on two lines (role, then specialty), then one contact line (phone, email, LinkedIn). No location line: "Paris" is not written in the header (R2, 2026-11-26). Every line fits on one line. No citizenship line. Languages go in Education.
 
 **3.3 Profile (3 to 4 sentences).** Impersonal constructions, never third person, "I" only if unavoidable. Open on the experience that answers the core of the role. Name two or three of his most relevant contexts. BlueMatrix is "last engagement at BlueMatrix, with notably...", never "9 months at BlueMatrix". No self-awarded adjective, no degree repeated from Education, no sentence that grades his fit.
 
